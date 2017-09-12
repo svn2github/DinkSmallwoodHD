@@ -1,0 +1,877 @@
+/*
+ *  App.cpp
+ *  Created by Seth Robinson on 3/6/09.
+ *  For license info, check the license.txt file that should have come with this.
+ *
+ */
+#include "PlatformPrecomp.h"
+#include "App.h"
+#include "GUI/MainMenu.h"
+#include "Entity/EntityUtils.h"//create the classes that our globally library expects to exist somewhere.
+#include "dink/dink.h"
+#include "GUI/GameMenu.h"
+#include "util/archive/TarHandler.h"
+#include "Renderer/SoftSurface.h"
+#include "GUI/BrowseMenu.h"
+#include "Entity/SliderComponent.h"
+#include "GUI/OptionsMenu.h"
+#include "FileSystem/FileSystemZip.h"
+#include "Entity/ArcadeInputComponent.h"
+#include "GUI/ExpiredMenu.h"
+#include <time.h>
+#include "Gamepad/GamepadManager.h"
+#include "Gamepad/GamepadProvideriCade.h"
+
+#ifdef WINAPI
+
+#include "StackWalker/StackUtils.h"
+
+#endif
+
+
+extern Surface g_transitionSurf;
+
+#ifdef RT_MOGA_ENABLED
+#include "Gamepad/GamepadProviderMoga.h"
+#endif
+
+#ifdef RT_CHARTBOOST_ENABLED
+#include "Ad/AdProviderChartBoost.h"
+#endif
+
+#ifdef RT_IOS_60BEAT_GAMEPAD_SUPPORT
+#include "Gamepad/GamepadProvider60Beat.h"
+#endif
+
+//#define FORCE_DMOD_SUPPORT
+
+MessageManager g_messageManager;
+MessageManager * GetMessageManager() {return &g_messageManager;}
+
+FileManager g_fileManager;
+FileManager * GetFileManager() {return &g_fileManager;}
+
+GamepadManager g_gamepadManager;
+GamepadManager * GetGamepadManager() {return &g_gamepadManager;}
+
+#ifdef __APPLE__
+
+#if TARGET_OS_IPHONE == 1
+  //it's an iPhone or iPad
+  //#include "Audio/AudioManagerOS.h"
+  //AudioManagerOS g_audioManager;
+	//#include "Audio/AudioManagerDenshion.h"
+
+  //AudioManagerDenshion g_audioManager;
+
+  #include "Audio/AudioManagerFMODStudio.h"
+  AudioManagerFMOD g_audioManager;
+#else
+  //it's being compiled as a native OSX app
+#include "Audio/AudioManagerFMODStudio.h"
+  AudioManagerFMOD g_audioManager; //dummy with no sound
+
+  //in theory, CocosDenshion should work for the Mac builds, but right now it seems to want a big chunk of
+  //Cocos2d included so I'm not fiddling with it for now
+
+  //#include "Audio/AudioManagerDenshion.h"
+  //AudioManagerDenshion g_audioManager;
+#endif
+
+#else
+
+#if defined RT_WEBOS || defined RTLINUX
+#include "Audio/AudioManagerSDL.h"
+  AudioManagerSDL g_audioManager; //sound in windows and WebOS
+  //AudioManager g_audioManager; //to disable sound
+#elif defined ANDROID_NDK
+#include "Audio/AudioManagerAndroid.h"
+  AudioManagerAndroid g_audioManager; //sound for android
+#elif defined PLATFORM_BBX
+#include "Audio/AudioManagerBBX.h"
+  //AudioManager g_audioManager; //to disable sound
+  AudioManagerBBX g_audioManager;
+#elif defined PLATFORM_HTML5
+#include "Audio/AudioManagerSDL.h"
+//AudioManager g_audioManager; //to disable sound
+AudioManagerSDL g_audioManager;
+
+#elif defined PLATFORM_FLASH
+  //AudioManager g_audioManager; //to disable sound
+#include "Audio/AudioManagerFlash.h"
+  AudioManagerFlash g_audioManager;
+#else
+
+  //in windows
+  //AudioManager g_audioManager; //to disable sound
+
+#ifdef RT_FLASH_TEST
+	#include "Audio/AudioManagerFlash.h"
+    AudioManagerFlash g_audioManager;
+#else
+	// #include "Audio/AudioManagerAudiere.h"
+	// AudioManagerAudiere g_audioManager;  //Use Audiere for audio
+
+	#include "Gamepad/GamepadProviderDirectX.h"
+	#include "Audio/AudioManagerFMODStudio.h"
+	 AudioManagerFMOD g_audioManager; //if we wanted FMOD sound in windows
+#endif
+
+#endif
+#endif
+
+
+
+#ifdef ANDROID_NDK
+void SetPreferSDCardForStorage(bool bNew);
+#endif
+
+AudioManager * GetAudioManager(){return &g_audioManager;}
+
+App *g_pApp = NULL;
+BaseApp * GetBaseApp() 
+{
+	if (!g_pApp)
+	{
+		g_pApp = new App;
+	}
+
+	return g_pApp;
+}
+
+App * GetApp() 
+{
+	return g_pApp;
+}
+
+const char * GetAppName() {return "Dink Smallwood HD";};
+
+
+App::App()
+{
+	http://www.rtsoft.com
+
+
+#ifdef ANDROID_NDK
+	SetPreferSDCardForStorage(true);
+#endif
+	
+	m_bDidPostInit = false;
+	m_bHasDMODSupport = true;
+	//for mobiles
+	m_version = 1.71f;
+	m_versionString = "V1.7.1";
+	m_build = 1;
+	m_bCheatsEnabled = false;
+
+	//for Win/mac
+	m_desktopVersion = m_version;
+	m_desktopVersionString = m_versionString; 
+	m_desktopBuild = 1;
+	m_bForceAspectRatio = true;
+}
+
+App::~App()
+{
+
+	//L_ParticleSystem::deinit();
+}
+
+
+void App::AddIcadeProvider()
+{
+	GamepadProvider * pProv = GetGamepadManager()->AddProvider(new GamepadProvideriCade); //use iCade, this actually should work with any platform...
+	GetBaseApp()->SetAllowScreenDimming(false);
+	if (pProv)
+	{
+		pProv->m_sig_failed_to_connect.connect(1, boost::bind(&App::OniCadeDisconnected, this, _1));
+	}
+}
+
+bool App::GetForceAspectRatio()
+{
+	return m_bForceAspectRatio;
+}
+
+void App::OniCadeDisconnected(GamepadProvider *pProvider)
+{
+	LogMsg("Dealing with icade disconnect");
+	GetGamepadManager()->RemoveProviderByName("iCade");
+	GetApp()->RemoveAndroidKeyboardKeys();
+
+	GetApp()->GetVar("check_icade")->Set(uint32(0));
+
+	Entity *pOptions = GetEntityRoot()->GetEntityByName("OptionsMenu");
+	if (pOptions)
+	{
+        LogMsg("Found options");
+		Entity *pCheckBox = pOptions->GetEntityByName("check_icade");
+		if (pCheckBox)
+		{
+            LogMsg("Found checkbox");
+			SetCheckBoxChecked(pCheckBox, false, true);
+		}
+	}
+}
+
+bool App::Init()
+{
+
+#ifdef WINAPI
+	InitUnhandledExceptionFilter();
+#endif
+
+	SetDefaultButtonStyle(Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH_RELEASE);
+	SetManualRotationMode(false);
+
+	bool bScaleScreenActive = true; //if true, we'll stretch every screen to the coords below
+	int scaleToX = 480;
+	int scaleToY = 320;
+
+	if (IsTabletSize())
+	{
+		scaleToX = 1024;
+		scaleToY = 768;
+	}
+
+
+	/*
+	if (IsIphoneSize || IsIphone4Size || IsIPADSize)
+	{
+		bScaleScreenActive = false;
+	}
+	*/
+
+	switch (GetEmulatedPlatformID())
+	{
+		//special handling for certain platforms to tweak the video settings
+
+	case PLATFORM_ID_WEBOS:
+		//if we do this, everything will be stretched/zoomed to fit the screen
+		if (IsIPADSize)
+		{
+			//doesn't need rotation
+			SetLockedLandscape(false);  //because it's set in the app manifest, we don't have to rotate ourselves
+			SetupScreenInfo(GetPrimaryGLX(), GetPrimaryGLY(), ORIENTATION_PORTRAIT);
+			if (bScaleScreenActive)
+				SetupFakePrimaryScreenSize(scaleToX,scaleToY); //game will think it's this size, and will be scaled up
+		} 
+		else
+		{
+			//but the phones do
+			SetLockedLandscape(true); //we don't allow portrait mode for this game
+			if (bScaleScreenActive)
+				SetupFakePrimaryScreenSize(scaleToX,scaleToY); //game will think it's this size, and will be scaled up
+		}
+
+		break;
+
+	case PLATFORM_ID_IOS:
+		SetLockedLandscape(true); //we stay in portrait but manually rotate, gives better fps on older devices
+		if (bScaleScreenActive)
+			SetupFakePrimaryScreenSize(scaleToX,scaleToY); //game will think it's this size, and will be scaled up
+		break;
+
+	default:
+
+		//Default settings for other platforms
+
+		SetLockedLandscape(false); //we don't allow portrait mode for this game
+		SetupScreenInfo(GetPrimaryGLX(), GetPrimaryGLY(), ORIENTATION_PORTRAIT);
+		if (bScaleScreenActive)
+			SetupFakePrimaryScreenSize(scaleToX,scaleToY); //game will think it's this size, and will be scaled up
+	}
+
+
+	//L_ParticleSystem::init(2000);
+	SetInputMode(INPUT_MODE_SEPARATE_MOVE_TOUCHES); //this game has so much move touching, I handle them separately for performance reasons
+
+	if (m_bInitted)	
+	{
+		return true;
+	}
+	
+	if (!BaseApp::Init())
+	{
+		return false;
+	}
+
+	m_adManager.Init();
+
+#ifdef RT_CHARTBOOST_ENABLED
+	AdProviderChartBoost *pProvider = new AdProviderChartBoost;
+
+#ifdef PLATFORM_ANDROID
+	assert(!"No longer using chartboost!");
+
+	pProvider->SetupInfo("", ""); //Dink HD Android
+
+#else
+	
+	pProvider->SetupInfo("", ""); //Dink HD iOS 
+
+#endif
+	
+	
+	
+	m_adManager.AddProvider(pProvider);
+	pProvider->CacheShowInterstitial();
+//	pProvider->CacheShowMoreApps();
+
+	m_adManager.GetProviderByType(AD_PROVIDER_CHARTBOOST)->ShowInterstitial();
+	//m_adManager.GetProviderByType(AD_PROVIDER_CHARTBOOST)->ShowMoreApps();
+#endif
+
+	LogMsg("Save path is %s", GetSavePath().c_str());
+
+	if (GetEmulatedPlatformID() == PLATFORM_ID_HTML5)
+	{
+		g_dglo.m_bUsingDinkPak = true;
+	}
+
+
+
+	if (g_dglo.m_bUsingDinkPak)
+	{
+		FileSystemZip *pFileSystem = new FileSystemZip();
+		if (!pFileSystem->Init(GetBaseAppPath()+ "dink/dink.pak"))
+		{
+			LogMsg("Error finding APK file to load resources");
+		}
+
+		//pFileSystem->SetRootDirectory("dink");
+
+		GetFileManager()->MountFileSystem(pFileSystem);
+		
+	}
+
+	if (GetPlatformID() != PLATFORM_ID_ANDROID)
+	{
+	/*
+			FileSystemZip *pFileSystem = new FileSystemZip();
+			if (!pFileSystem->Init(GetBaseAppPath()+ "dink/dink.pak"))
+			{
+				LogMsg("Error finding APK file to load resources");
+			}
+
+			GetFileManager()->MountFileSystem(pFileSystem);
+			*/
+	/*	
+			vector<string> contents = pFileSystem->GetContents();
+			LogMsg("Listing all %d files.", contents.size());
+			
+			for (int i=0; i < contents.size(); i++)
+			{
+				LogMsg("%s", contents[i].c_str());
+			}
+	*/
+
+		RemoveFile(GetDMODRootPath()+"temp.dmod");
+		RemoveFile("temp.dmod");
+	}
+
+	switch (GetPlatformID())
+	{
+	case PLATFORM_ID_WINDOWS:
+	case PLATFORM_ID_BBX:
+	case PLATFORM_ID_WEBOS:
+	case PLATFORM_ID_HTML5:
+		CreateDirectoryRecursively("", GetDMODRootPath());
+		break;
+
+
+	default:
+		
+		CreateAppCacheDirIfNeeded();
+		break;
+	}
+
+	
+	if (IsLargeScreen())
+	{
+		if (!GetFont(FONT_SMALL)->Load("interface/font_normalx2.rtfont")) return false;
+		if (!GetFont(FONT_LARGE)->Load("interface/font_bigx2.rtfont")) return false;
+	} else
+	{
+		if (!GetFont(FONT_SMALL)->Load("interface/font_normal.rtfont")) return false;
+		if (!GetFont(FONT_LARGE)->Load("interface/font_big.rtfont")) return false;
+	}
+
+	//GetFont(FONT_SMALL)->SetSmoothing(false);
+	#ifndef FORCE_DMOD_SUPPORT
+
+		if (GetEmulatedPlatformID() == PLATFORM_ID_IOS)
+		{
+			//m_bHasDMODSupport = false;
+		}
+	#endif
+
+	#ifdef _DEBUG
+		GetBaseApp()->SetFPSVisible(true);
+	#endif
+
+	bool bFileExisted;
+	m_varDB.Load("save.dat", &bFileExisted);
+	
+	GetApp()->GetVarWithDefault("smoothing",uint32(1))->GetUINT32();
+
+	GetApp()->GetVarWithDefault("buttons",uint32(0));
+
+	GetApp()->GetVarWithDefault("music_vol",1.0f)->GetFloat();
+	GetApp()->GetVarWithDefault("gui_transparency",0.35f)->GetFloat();
+
+  
+	#ifdef PLATFORM_WINDOWS
+		//If you don't have directx, just comment out this and remove the dx lib dependency, directx is only used for the
+		//gamepad input on windows
+		GetGamepadManager()->AddProvider(new GamepadProviderDirectX); //use directx joysticks
+	#endif
+
+#ifdef RT_MOGA_ENABLED
+		GetGamepadManager()->AddProvider( new GamepadProviderMoga);
+		GetBaseApp()->SetAllowScreenDimming(false);
+#endif
+
+	if (GetVar("check_icade")->GetUINT32() != 0)
+	{
+		AddIcadeProvider();
+	}
+
+#if defined(PLATFORM_IOS) && defined(RT_IOS_60BEAT_GAMEPAD_SUPPORT)
+	//startup the 60beat gamepad stuff.. really, we should only do this if they've checked to use it in options
+	//or such because their driver may slow us down.. unsure
+	if (GetVar("check_60beat")->GetUINT32() != 0)
+	{
+		//startup the 60beat gamepad stuff
+		GetGamepadManager()->AddProvider(new GamepadProvider60Beat);
+		GetBaseApp()->SetAllowScreenDimming(false);
+	}
+#endif
+
+
+
+	if (GetEmulatedPlatformID() == PLATFORM_ID_WINDOWS || GetEmulatedPlatformID() == PLATFORM_ID_OSX || GetEmulatedPlatformID() == PLATFORM_ID_HTML5)
+	{
+		//should we draw that onscreen GUI stuff for Dink?	
+		m_bUsingTouchScreen = false;
+	} else
+	{
+		m_bUsingTouchScreen = true;
+	}
+
+	if (IsIPADSize && GetEmulatedPlatformID() != PLATFORM_ID_WEBOS)
+	{
+		GetApp()->GetVarWithDefault("fpsLimit", Variant(uint32(VIDEO_FPS_LIMIT_OFF)))->GetUINT32();
+	}
+	
+	UpdateVideoSettings();
+	//preload audio
+
+
+if (GetEmulatedPlatformID() == PLATFORM_ID_IOS)
+{
+	//use our own DLS, as iPhone/iPad don't have any midi system
+	g_audioManager.SetDLS("dink/midi/TimGM6mbTiny.dls");
+}
+
+#ifdef _DEBUG
+	GetApp()->SetCheatsEnabled(true);
+
+#endif
+#ifdef _WIN32
+
+	//temporary while I make movies
+	//GetApp()->SetCheatsEnabled(true);
+#endif
+	
+	bool bSound = m_varDB.GetVarWithDefault("sound", uint32(1))->GetUINT32() != 0;
+	GetAudioManager()->SetSoundEnabled(bSound);
+
+	//GetAudioManager()->SetMusicEnabled(!GetApp()->GetVar("musicDisabled")->GetUINT32());
+	GetAudioManager()->SetMusicVol(GetApp()->GetVar("music_vol")->GetFloat());
+	GetAudioManager()->Preload("audio/click.wav");
+	InitDinkPaths(GetBaseAppPath(), "dink", "");
+	
+	GetBaseApp()->m_sig_pre_enterbackground.connect(1, boost::bind(&App::OnPreEnterBackground, this, _1));
+	
+	
+	GetBaseApp()->m_sig_loadSurfaces.connect(1, boost::bind(&App::OnLoadSurfaces, this));
+
+	//when screen size changes we'll unload surfaces
+	GetBaseApp()->m_sig_unloadSurfaces.connect(1, boost::bind(&App::OnUnloadSurfaces, this));
+	
+
+	
+
+	return true;
+}
+
+void App::OnPreEnterBackground(VariantList *pVList)
+{
+	SaveAllData();
+}
+
+void App::OnExitApp(VariantList *pVarList)
+{
+	LogMsg("Exiting the app");
+
+	OSMessage o;
+	o.m_type = OSMessage::MESSAGE_FINISH_APP;
+	GetBaseApp()->AddOSMessage(o);
+}
+
+void App::Kill()
+{
+	
+	if (!IsInBackground())
+	{
+		SaveAllData();
+	}
+	
+	finiObjects();
+	
+	BaseApp::Kill();
+	g_pApp = NULL; //make sure nobody elses access this
+}
+
+
+void App::RemoveAndAttachAllAvailableGamepads()
+{
+	ArcadeInputComponent *pComp = (ArcadeInputComponent*) GetEntityRoot()->GetComponentByName("ArcadeInput");
+	assert(pComp);
+
+	for (int i=0; i < GetGamepadManager()->GetGamepadCount(); i++)
+	{
+		Gamepad *pPad = GetGamepadManager()->GetGamepad((eGamepadID)i);
+		pPad->ConnectToArcadeComponent(pComp, true, true);
+
+		//if we cared about the analog sticks too, we'd do this:
+		//pPad->m_sig_left_stick.connect(1, boost::bind(&OnGamepadStickUpdate, this, _1));	
+		//pPad->m_sig_right_stick.connect(1, boost::bind(&OnGamepadStickUpdate, this, _1));	
+	}
+}
+
+void App::RemoveAndroidKeyboardKeys()
+{
+	ArcadeInputComponent *pComp = (ArcadeInputComponent*) GetEntityRoot()->GetComponentByName("ArcadeInput");
+	//first clear out all old ones to be safe
+	VariantList vList((string)"Keyboard");
+	pComp->GetFunction("RemoveKeyBindingsStartingWith")->sig_function(&vList);
+}
+
+void App::AddDroidKeyboardKeys()
+{
+	if (GetEmulatedPlatformID() == PLATFORM_ID_ANDROID)
+	{
+
+	
+	ArcadeInputComponent *pComp = (ArcadeInputComponent*) GetEntityRoot()->GetComponentByName("ArcadeInput");
+
+	RemoveAndroidKeyboardKeys();
+
+	//I think the ASWZ binding thing is for the control pad on the xperia play??
+
+	AddKeyBinding(pComp, "KeyboardLeft",'A', VIRTUAL_KEY_DIR_LEFT);
+	AddKeyBinding(pComp, "KeyboardRight",'S', VIRTUAL_KEY_DIR_RIGHT);
+	AddKeyBinding(pComp, "KeyboardUp", 'W', VIRTUAL_KEY_DIR_UP);
+	AddKeyBinding(pComp, "KeyboardDown", 'Z', VIRTUAL_KEY_DIR_DOWN);
+	AddKeyBinding(pComp, "KeyboardAltMagic", 8, VIRTUAL_KEY_GAME_MAGIC);
+
+	AddKeyBinding(pComp, "KeyboardInventory", 'I', VIRTUAL_KEY_GAME_INVENTORY);
+	AddKeyBinding(pComp, "KeyboardAltTalk", 13, VIRTUAL_KEY_GAME_TALK);
+	AddKeyBinding(pComp, "KeyboardFire", VIRTUAL_KEY_DIR_CENTER, VIRTUAL_KEY_GAME_FIRE);
+	AddKeyBinding(pComp, "KeyboardFire2", 'X', VIRTUAL_KEY_GAME_FIRE);
+//	AddKeyBinding(pComp, "KeyboardAltFire", VIRTUAL_KEY_SHIFT, VIRTUAL_KEY_GAME_FIRE);
+	}
+}
+
+void App::Update()
+{
+	BaseApp::Update();
+	m_adManager.Update();
+	g_gamepadManager.Update();
+
+	if (!m_bDidPostInit)
+	{
+		m_bDidPostInit = true;
+		m_special = GetSystemData() != C_PIRATED_NO;
+		
+		//build a GUI node
+		Entity *pGUIEnt = GetEntityRoot()->AddEntity(new Entity("GUI"));
+
+#ifdef RT_EXPIRING
+		time_t rawtime, expiretime;
+		time(&rawtime);
+	
+		expiretime = 1290050035 + ((3600)*24)*8; //expire in 8 days from Nov 18
+		bool bExpired = expiretime < rawtime;
+
+		if (bExpired)
+		{
+			ExpiredMenuCreate(pGUIEnt);
+			return;
+		}
+	
+#endif
+
+		ArcadeInputComponent *pComp = (ArcadeInputComponent*) GetEntityRoot()->AddComponent(new ArcadeInputComponent);
+		
+		RemoveAndAttachAllAvailableGamepads();
+
+		//add key bindings, I may want to move these later if I add a custom key config...
+
+		AddKeyBinding(pComp, "Left", VIRTUAL_KEY_DIR_LEFT, VIRTUAL_KEY_DIR_LEFT);
+		AddKeyBinding(pComp, "Right", VIRTUAL_KEY_DIR_RIGHT, VIRTUAL_KEY_DIR_RIGHT);
+		AddKeyBinding(pComp, "Up", VIRTUAL_KEY_DIR_UP, VIRTUAL_KEY_DIR_UP);
+		AddKeyBinding(pComp, "Down", VIRTUAL_KEY_DIR_DOWN, VIRTUAL_KEY_DIR_DOWN);
+		AddKeyBinding(pComp, "Talk", ' ', VIRTUAL_KEY_GAME_TALK);
+
+		AddKeyBinding(pComp, "GamePadInventory", VIRTUAL_DPAD_SELECT, VIRTUAL_KEY_GAME_INVENTORY);
+		AddKeyBinding(pComp, "GamePadInventory2", VIRTUAL_DPAD_BUTTON_UP, VIRTUAL_KEY_GAME_INVENTORY);
+		AddKeyBinding(pComp, "GamePadEscape", VIRTUAL_DPAD_START, VIRTUAL_KEY_BACK, true);
+		AddKeyBinding(pComp, "GamePadFire", VIRTUAL_DPAD_BUTTON_DOWN, VIRTUAL_KEY_GAME_FIRE);
+		AddKeyBinding(pComp, "GamePadTalk", VIRTUAL_DPAD_BUTTON_RIGHT, VIRTUAL_KEY_GAME_TALK);
+		AddKeyBinding(pComp, "GamePadMagic", VIRTUAL_DPAD_BUTTON_LEFT, VIRTUAL_KEY_GAME_MAGIC);
+		
+		AddKeyBinding(pComp, "GamePadSpeedup", VIRTUAL_DPAD_LBUTTON, 'M', true);
+		AddKeyBinding(pComp, "GamePadSpeedup2", VIRTUAL_DPAD_RBUTTON, 9);
+	
+		AddKeyBinding(pComp, "GamePadInventory3", VIRTUAL_DPAD_LTRIGGER, VIRTUAL_KEY_GAME_INVENTORY);
+		AddKeyBinding(pComp, "GamePadPause", VIRTUAL_DPAD_RTRIGGER, VIRTUAL_KEY_BACK, true);
+
+
+//if (IsDesktop())
+{
+		AddKeyBinding(pComp, "Inventory", 13, VIRTUAL_KEY_GAME_INVENTORY);
+		AddKeyBinding(pComp, "Magic", VIRTUAL_KEY_SHIFT, VIRTUAL_KEY_GAME_MAGIC);
+		AddKeyBinding(pComp, "Fire", VIRTUAL_KEY_CONTROL, VIRTUAL_KEY_GAME_FIRE);
+		AddKeyBinding(pComp, "Speedup", 9, 9); //handle tab
+		AddKeyBinding(pComp, "Quicksave", VIRTUAL_KEY_F1, VIRTUAL_KEY_F1);
+		AddKeyBinding(pComp, "Quickload", VIRTUAL_KEY_F8, VIRTUAL_KEY_F8);
+}
+
+
+
+if (GetVar("check_icade")->GetUINT32() == 0)
+	{
+
+		AddDroidKeyboardKeys();
+	}
+
+		MainMenuCreate(pGUIEnt);
+	}
+}
+
+void App::Draw()
+{
+	BaseApp::Draw();
+}
+
+void App::OnScreenSizeChange()
+{
+#ifdef _DEBUG
+	LogMsg("Got OnScreenSizeChange");
+#endif
+
+	BaseApp::OnScreenSizeChange();
+	if (GetPrimaryGLX() != 0)
+	{
+		SetupOrtho();
+		DinkOnForeground(); //rebuild lost surfaces
+		
+		if (GetDinkGameState() != DINK_GAME_STATE_PLAYING)
+		{
+			PrepareForGL();
+		}
+
+	}
+}
+
+void App::GetServerInfo( string &server, uint32 &port )
+{
+#if defined (_DEBUG) && defined(WIN32)
+//	server = "localhost";
+//	port = 8080;
+
+	server = "rtsoft.com";
+	port = 80;
+
+#else
+
+	server = "rtsoft.com";
+	port = 80;
+#endif
+}
+
+int App::GetSpecial()
+{
+	return m_special; //1 means pirated copy
+}
+
+Variant * App::GetVar( const string &keyName )
+{
+	return GetShared()->GetVar(keyName);
+}
+
+std::string App::GetVersionString()
+{
+	if (IsDesktop()) return m_desktopVersionString;
+	return m_versionString;
+}
+
+float App::GetVersion()
+{
+	if (IsDesktop()) return m_desktopVersion;
+	return m_version;
+}
+
+int App::GetBuild()
+{
+	if (IsDesktop()) return m_desktopBuild;
+	return m_build;
+}
+
+void App::OnMemoryWarning()
+{
+	BaseApp::OnMemoryWarning();
+
+	GetAudioManager()->KillCachedSounds(false, true, 0, 1, false);
+	DinkUnloadUnusedGraphicsByUsageTime(100); //unload anything not used in the last second
+}
+
+void App::UpdateVideoSettings()
+{
+	eVideoFPS v = (eVideoFPS)GetApp()->GetVarWithDefault("fpsLimit", Variant(uint32(VIDEO_FPS_LIMIT_OFF)))->GetUINT32();
+	OSMessage o;
+	o.m_type = OSMessage::MESSAGE_SET_FPS_LIMIT;
+
+	switch (v)
+	{
+	case VIDEO_FPS_LIMIT_ON:
+		o.m_x = 30;
+		break;
+
+	case VIDEO_FPS_LIMIT_OFF:
+		o.m_x = 2000;
+		break;
+	}
+
+	GetBaseApp()->AddOSMessage(o);
+};
+
+void App::SaveAllData()
+{
+
+	if (GetDinkGameState() == DINK_GAME_STATE_PLAYING)
+	{
+	//	SaveState(GetSavePath()+"state.dat");
+		SaveState(g_dglo.m_savePath+"continue_state.dat");
+		WriteLastPathSaved(g_dglo.m_savePath); //so we know what to reload
+	}
+
+	//GetAudioManager()->StopMusic();
+	m_varDB.Save("save.dat");
+}
+
+void App::OnEnterBackground()
+{
+	//SaveAllData();
+//	DinkUnloadGraphicsCache();
+
+
+/*
+//I don't think we really need to uncache everything.  If low memory is a problem we could though..
+
+	GetAudioManager()->KillCachedSounds(false, true, 0, 1, false);
+	LogMsg("Unloading some graphics");
+	DinkUnloadUnusedGraphicsByUsageTime(0); //unload anything not used in the last second
+*/
+
+	BaseApp::OnEnterBackground();
+}
+
+void App::OnEnterForeground()
+{
+	if (GetPrimaryGLX() == 0) return; //not ready, probably minimized on Windows
+
+	BaseApp::OnEnterForeground();
+    
+}
+
+bool App::GetIconsOnLeft()
+{
+	return GetShared()->GetVar("buttons")->GetUINT32() != 0;
+}
+
+//below is a sort of hack that allows "release" builds on windows to override the settings of whatever the shared main.cpp is telling
+//us for window sizes
+#ifdef _WINDOWS_
+#include "win/app/main.h"
+#endif
+
+extern int g_winVideoScreenX;
+extern int g_winVideoScreenY;
+
+bool App::OnPreInitVideo()
+{
+	if (!BaseApp::OnPreInitVideo()) return false;
+
+#ifdef PLATFORM_HTML5
+	g_winVideoScreenX = 1024;
+	g_winVideoScreenY = 768;
+#endif
+
+//#if !defined(_DEBUG) && defined(WINAPI)
+#ifdef WINAPI
+
+#ifdef RT_SCRIPT_BUILD
+		
+		SetEmulatedPlatformID(PLATFORM_ID_WINDOWS);
+		g_winVideoScreenX = 1024;
+		g_winVideoScreenY = 768;
+#endif
+
+//		g_winVideoScreenX = 800;
+//		g_winVideoScreenY = 1280;
+
+		
+#endif
+		return true;
+}
+
+//for palm webos and android
+const char * GetBundlePrefix()
+{
+
+	char * bundlePrefix = "com.rtsoft.";
+	return bundlePrefix;
+}
+
+//applicable to Palm WebOS builds only
+const char * GetBundleName()
+{
+	char * bundleName = "rtdink";
+	return bundleName;
+}
+
+void App::OnMessage( Message &m )
+{
+	m_adManager.OnMessage(m); //gives the AdManager a way to handle messages
+	BaseApp::OnMessage(m);
+}
+
+
+void App::OnLoadSurfaces()
+{
+	LogMsg("Reloading dink engine surfaces");
+	DinkOnForeground();
+
+}
+
+void App::OnUnloadSurfaces()
+{
+	LogMsg("Unloading dink engine surfaces");
+	DinkUnloadUnusedGraphicsByUsageTime(0);
+	
+	//g_transitionSurf.Kill();
+}
