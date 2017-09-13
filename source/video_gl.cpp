@@ -111,6 +111,7 @@ IDirectDrawSurface * InitOffscreenSurface(int x, int y, IDirectDrawSurface::eMod
 			{
 				pdds->m_pGLSurf = new Surface;
 				
+				pdds->m_pGLSurf->SetSmoothing(GetApp()->GetVar("smoothing")->GetUINT32() != 0);
 				if (GetApp()->GetVar("smoothing")->GetUINT32())
 				{
 					pdds->m_pGLSurf->SetTextureType(Surface::TYPE_GUI);
@@ -247,6 +248,9 @@ void IDirectDrawSurface::UpdateShadowSurface()
 		if (!m_pGLSurf)
 		{
 			m_pGLSurf = new Surface;
+			
+			m_pGLSurf->SetSmoothing(GetApp()->GetVar("smoothing")->GetUINT32() != 0);
+
 			if (GetApp()->GetVar("smoothing")->GetUINT32())
 			{
 				m_pGLSurf->SetTextureType(Surface::TYPE_GUI);			

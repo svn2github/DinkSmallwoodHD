@@ -58,3 +58,4 @@ www.rtsoft.com
 * Default color under status bar is now black, fixes issue when transparent colors are used in the stats area, random garbage would show through
 * (windows) Version # is now shown in title bar
 * (bugfix) Fixed some issues with how default offsets are calculated, it fixed some problems where sprites would be in the wrong place in certain DMODs
+* (bugfix, windows) "Smoothing" no longer incorrectly turns on if you lose/regain focus
