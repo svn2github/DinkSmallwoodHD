@@ -958,6 +958,8 @@ void OnGameMenuRender(VariantList *pVList)
 	glMatrixMode(GL_MODELVIEW);
 	
 	
+	//well, we might as well always clear the BG, because some dmods like redink1 set transparency in the status bar which causes glitches if we don't
+
 	if (g_dglo.GetActiveView() != DinkGlobals::VIEW_ZOOMED)
 	{
 		//clear background if needed
@@ -1026,17 +1028,26 @@ void OnArcadeInput(VariantList *pVList)
 		{
 			if (bIsDown)
 			{
+				if (GetDinkGameState() == DINK_GAME_STATE_PLAYING)
+				{
 
-			
-			string fName = DinkGetSavePath()+"quicksave.dat";
 
-			if (FileExists(fName))
-			{
-				LoadStateWithExtra();			
-			} else
-			{
-				ShowQuickMessage("No state to load yet.");
-			}
+
+					string fName = DinkGetSavePath() + "quicksave.dat";
+
+					if (FileExists(fName))
+					{
+						LoadStateWithExtra();
+					}
+					else
+					{
+						ShowQuickMessage("No state to load yet.");
+					}
+				}
+				else
+				{
+					ShowQuickMessage("(can't load state yet, still loading game!)");
+				}
 			}
 		}
 		break;

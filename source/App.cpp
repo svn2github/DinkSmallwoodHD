@@ -25,7 +25,7 @@
 #ifdef WINAPI
 
 #include "StackWalker/StackUtils.h"
-
+extern bool g_bIsFullScreen;
 #endif
 
 
@@ -228,7 +228,7 @@ bool App::Init()
 	int scaleToX = 480;
 	int scaleToY = 320;
 
-	if (IsTabletSize())
+	if (IsTabletSize() || IsDesktop)
 	{
 		scaleToX = 1024;
 		scaleToY = 768;
@@ -500,8 +500,27 @@ if (GetEmulatedPlatformID() == PLATFORM_ID_IOS)
 	//when screen size changes we'll unload surfaces
 	GetBaseApp()->m_sig_unloadSurfaces.connect(1, boost::bind(&App::OnUnloadSurfaces, this));
 	
+#ifdef WINAPI
+	int videox = GetApp()->GetVarWithDefault("video_x", uint32(0))->GetUINT32();
+	int videoy = GetApp()->GetVarWithDefault("video_y", uint32(0))->GetUINT32();
+	int fullscreen = GetApp()->GetVarWithDefault("fullscreen", uint32(0))->GetUINT32();
 
-	
+	if (fullscreen)
+	{
+		LogMsg("Setting fullscreen...");
+		//GetMessageManager()->SendGUI(MESSAGE_TYPE_GUI_TOGGLE_FULLSCREEN, 0, 0);  //lParam holds a lot of random data about the press, look it up if
+
+		OnFullscreenToggleRequest();
+	}
+	else
+	{
+		if (videox != 0 && videoy != 0)
+		{
+			//remember old setup
+			SetVideoMode(videox, videoy, false, 0);
+		}
+	}
+#endif
 
 	return true;
 }
@@ -685,6 +704,13 @@ void App::OnScreenSizeChange()
 		}
 
 	}
+
+#ifdef WINAPI
+	GetApp()->GetVar("fullscreen")->Set(uint32(g_bIsFullScreen));
+	GetApp()->GetVar("videox")->Set(uint32(GetPrimaryGLX()));
+	GetApp()->GetVar("videoy")->Set(uint32(GetPrimaryGLY()));
+#endif
+
 }
 
 void App::GetServerInfo( string &server, uint32 &port )
@@ -834,6 +860,18 @@ bool App::OnPreInitVideo()
 //		g_winVideoScreenX = 800;
 //		g_winVideoScreenY = 1280;
 
+//windows only
+		VariantDB temp;
+		temp.Load("save.dat");
+		Variant *pVarX = temp.GetVarIfExists("videox");
+		Variant *pVarY = temp.GetVarIfExists("videoy");
+		if (pVarX && pVarY && pVarX->GetUINT32() != 0 && pVarY->GetUINT32() != 0)
+		{
+
+			g_winVideoScreenX = pVarX->GetUINT32();
+			g_winVideoScreenY = pVarY->GetUINT32();
+
+		}
 		
 #endif
 		return true;

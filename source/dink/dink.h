@@ -146,6 +146,7 @@ public:
 	float m_aspectRatioModX;
 	float m_aspectRatioModY;
 	CL_Vec3f m_centeringOffset;
+	CL_Mat4f m_dink_matrix;
 };
 //#define KYLES_CRAZY_VERSION
 

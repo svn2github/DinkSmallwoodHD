@@ -104,6 +104,11 @@ if (GetEmulatedPlatformID() != PLATFORM_ID_WEBOS)
 	pButtonEntity->GetComponentByName("InputTextRender")->GetVar("filtering")->Set(uint32(InputTextRenderComponent::FILTERING_LOOSE));
 	pButtonEntity->GetComponentByName("InputTextRender")->GetVar("inputType")->Set(uint32(InputTextRenderComponent::INPUT_TYPE_URL));
 	//pButtonEntity->GetComponentByName("InputTextRender")->GetVar("font")->Set(uint32(FONT_LARGE));
+	
+	
+	if (IsDesktop())
+		pButtonEntity->GetComponentByName("InputTextRender")->GetFunction("ActivateKeyboard")->sig_function(NULL); //give it focus
+	
 
 	//a way to get our CreateTextBox function called in 500 seconds, but not called if the entity doesn't exist at that time
 

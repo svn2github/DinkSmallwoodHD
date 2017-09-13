@@ -48,6 +48,8 @@ enum eTransparencyType
 
 };
 
+
+
 //blt flags
 #define DDBLT_KEYSRC                            0x00008000l
 #define DDBLT_COLORFILL                         0x00000400l

@@ -45,4 +45,12 @@ www.rtsoft.com
 
 ------ Change log for 1.7.1 ----------
 
+(big thanks to Redink1 for most of these bug reports!)
+
 * (Windows) Fixed app icon
+* (Windows) Mouse-controlled screens in DMODs control better and hide the original mouse cursor
+* (Windows) Now remembers screen size and fullscreen mode (don't forget, you can drag the window corners around to customize the screen size as well)
+* (Windows) Input URL input area gets focus by default when installing a DMOD by URL
+* (bugfix) Can no longer tap F8 during a game load to load a save state too early which can freeze the game
+* (bugfix) Fixed issue where 32 bit tilebitmaps would go wonky when reloading the surface
+* Default color under status bar is now black, fixes issue when transparent colors are used in the stats area, random garbage would show through

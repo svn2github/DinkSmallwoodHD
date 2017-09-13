@@ -756,10 +756,35 @@ void DrawCollision()
 bool LoadTileScreenIfNeeded(int h, bool &bRequireRebuild)
 {
 	 bRequireRebuild = false;
-	if (g_tileScreens[h]) return true; //already loaded
+
 	string fName = "tiles/ts";
 	if (h < 10) fName += "0";
 	fName += toString(h)+".bmp";
+
+
+
+	if (g_tileScreens[h])
+	{
+
+#ifdef _DEBUG
+		//LogMsg("tilescreen %s already loaded, skipping", fName.c_str());
+#endif
+
+#ifdef _DEBUG
+		if (g_tileScreens[h] && g_tileScreens[h]->m_pSurf->GetSurfaceType() != SoftSurface::SURFACE_PALETTE_8BIT)
+		{
+			//we're going to require a hicolor backbuffer.
+			if (lpDDSBackGround->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_PALETTE_8BIT)
+			{
+				LogMsg("BIG ERROR: Detected high color tilescreen bmps.  Converting backbuffers to 32 bit on the fly.");
+
+			}
+		}
+#endif
+
+		return true; //already loaded
+	}
+
 	assert(!g_tileScreens[h]);
 #ifdef _DEBUG
 LogMsg("Loading tilescreen %s", fName.c_str());
@@ -1843,6 +1868,13 @@ void ReadFromLoadSequenceString(char ev[15][100] )
 	assert(strlen(ev[2]) < C_SPRITE_MAX_FILENAME_SIZE);
 	strcpy(g_dglos.g_seq[seqID].m_fileName, ev[2]);
 
+#ifdef _DEBUG
+	if (seqID == 423)
+	{
+		LogMsg("He");
+	}
+#endif
+
 	if (compare(ev[4], "BLACK"))
 	{
 		g_dglos.g_seq[seqID].m_transType = TRANSPARENT_BLACK;
@@ -1854,12 +1886,7 @@ void ReadFromLoadSequenceString(char ev[15][100] )
 	}else if (compare(ev[4], "NOTANIM") /*|| compare(ev[4], "NOTANIN")*/ ) //to work around a typo in MsDink's DMOD, but not to work around the notanin error in seq 424 in original dini.ini's.. yeah, complicated.  Why!?!?
 	{
 		
-#ifdef _DEBUG
-if (seqID == 424)
-{
-	LogMsg("He");
-}
-#endif
+
 		g_dglos.g_seq[seqID].m_transType = GetTransparencyOverrideForSequence(TRANSPARENT_WHITE, seqID);
 	}  else
 	{
@@ -2487,6 +2514,24 @@ void draw_status_all(void)
 	
 }
 
+
+bool SwitchToRGBAIfNeeded(LPDIRECTDRAWSURFACE *pDXSurf, SoftSurface *pSoftSurf)
+{
+	if ( (*pDXSurf) || (*pDXSurf)->m_pSurf) return false;
+
+	 	if ( (*pDXSurf)->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_PALETTE_8BIT
+		&& 
+			(pSoftSurf->GetSurfaceType() == SoftSurface::SURFACE_RGBA
+		|| pSoftSurf->GetSurfaceType() == SoftSurface::SURFACE_RGB)
+				)
+	{
+		delete *pDXSurf;
+		*pDXSurf = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL, true);
+		return true;
+	}
+	
+	return false;
+}
 void BlitGUIOverlay()
 {
 	
@@ -2538,6 +2583,22 @@ void BlitGUIOverlay()
 	
 	if (!check_seq_status(180)) return;
 
+	/*
+	if (lpDDSBack && lpDDSBack->m_pSurf && lpDDSBack->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_PALETTE_8BIT
+		&& g_pSpriteSurface[g_dglos.g_seq[180].frame[3]]->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGBA
+		|| g_pSpriteSurface[g_dglos.g_seq[180].frame[3]]->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGBA)
+	{
+		LogMsg("Freak out!");
+		//delete lpDDSBuffer;
+		//lpDDSBuffer = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL, true);
+
+	}
+
+	SwitchToRGBAIfNeeded(&lpDDSBack, g_pSpriteSurface[g_dglos.g_seq[180].frame[1]]->m_pSurf);
+	SwitchToRGBAIfNeeded(&lpDDSBack, g_pSpriteSurface[g_dglos.g_seq[180].frame[2]]->m_pSurf);
+	SwitchToRGBAIfNeeded(&lpDDSBack, g_pSpriteSurface[g_dglos.g_seq[180].frame[3]]->m_pSurf);
+	*/
+		
 	lpDDSBack->BltFast( 0, 400, g_pSpriteSurface[g_dglos.g_seq[180].frame[3]], &rcRect  , DDBLTFAST_NOCOLORKEY );
 	rcRect.left = 0;
 	rcRect.top = 0;
@@ -5460,6 +5521,12 @@ void CopyBitmapToBackBuffer (char *pName)
 		LogMsg("Error: Can't find bitmap at %s.",fName.c_str());
 		return;
 	}
+	
+	if (lpDDSBuffer && lpDDSBuffer->m_pSurf && lpDDSBuffer->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGBA || lpDDSBuffer->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGB)
+	{
+		LogMsg("Warning, losing high color back buffer");
+		//assert(0);
+	}
 	SAFE_DELETE(lpDDSBuffer);
 	assert(!lpDDSBuffer);
 	lpDDSBuffer = LoadBitmapIntoSurface(fName.c_str(), TRANSPARENT_NONE);
@@ -5498,7 +5565,14 @@ void copy_bmp( char *pName)
 		LogMsg("Error: Can't find bitmap at %s.",fName.c_str());
 		return;
 	}
-SAFE_DELETE(lpDDSBuffer);
+	
+	if (lpDDSBuffer && lpDDSBuffer->m_pSurf && lpDDSBuffer->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGBA || lpDDSBuffer->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGB)
+	{
+		LogMsg("Warning, losing high color back buffer");
+		assert(0);
+	}
+
+	SAFE_DELETE(lpDDSBuffer);
 	assert(!lpDDSBuffer);
 	lpDDSBuffer = LoadBitmapIntoSurface(fName.c_str(), TRANSPARENT_NONE);
 
@@ -5509,6 +5583,7 @@ SAFE_DELETE(lpDDSBuffer);
 	ddrval = lpDDSBack->BltFast( 0, 0, lpDDSBuffer,
 		&rcRect, DDBLTFAST_NOCOLORKEY);
 
+	assert(!"Clear this?");
 	ddrval = lpDDSBackGround->BltFast( 0, 0, lpDDSBuffer,
 		&rcRect, DDBLTFAST_NOCOLORKEY);
 
@@ -5888,6 +5963,9 @@ void BuildScreenBackground( bool bFullRebuild )
 
 	if (bFullRebuild)
 	{
+#ifdef _DEBUG
+		LogMsg("Doing full rebuild of screen background...");
+#endif
 		while (kill_last_sprite()); 
 		kill_repeat_sounds();
 		kill_all_scripts();
@@ -14309,7 +14387,16 @@ fin:
 
 CL_Vec2f NativeToDinkCoords(CL_Vec2f vPos)
 {
-	return CL_Vec2f( g_dglo.m_orthoRenderRect.left+ vPos.x * g_dglo.m_orthoRenderRect.GetWidth()/GetScreenSizeXf(), vPos.y *g_dglo.m_orthoRenderRect.GetHeight()/GetScreenSizeYf()); 
+
+	CL_Vec2f r = CL_Vec2f(
+		g_dglo.m_orthoRenderRect.left + vPos.x * (g_dglo.m_orthoRenderRect.GetWidth() / GetScreenSizeXf()),
+		vPos.y * (g_dglo.m_orthoRenderRect.GetHeight() / GetScreenSizeYf())
+	);
+
+	r.x /= g_dglo.m_aspectRatioModX;
+	r.y /= g_dglo.m_aspectRatioModY;
+	r -= g_dglo.m_centeringOffset;
+	return r;
 }
 
 
@@ -15343,6 +15430,8 @@ if (IsDesktop())
 	
 	ProcessGraphicGarbageCollection();
 	//620
+
+
 	SetOrthoRenderSize(g_dglo.m_orthoRenderRect.right, g_dglo.m_orthoRenderRect.GetHeight(), -g_dglo.m_orthoRenderRect.left, -g_dglo.m_orthoRenderRect.top);
 	if (5 > 9)
 	{
@@ -15350,6 +15439,7 @@ if (IsDesktop())
 		g_bInitiateScreenMove = false;
 		bCaptureScreen = true;    
 	}
+
 
 	check_joystick();
 
@@ -15482,8 +15572,11 @@ LastWindowsTimer = GetTickCount();
 		if (*pupdate_status == 1) update_status_all();
 
 		update_sound();
+	
+	
+	
 		//TODO Animated tiles
-		if (IsDesktop())
+		//if (IsDesktop())
 		{
 			//TODO:  Maybe mobile can handle this now?
 				process_animated_tiles();
@@ -15509,6 +15602,7 @@ LastWindowsTimer = GetTickCount();
 	}
 
 	ProcessTransition();
+
 
 	if (g_dglos.process_upcycle) 
 	{
@@ -15569,7 +15663,13 @@ LastWindowsTimer = GetTickCount();
 
 	//Blit from Two, which holds the base scene.
 
-	lpDDSBack->BltFast( 0, 0, lpDDSBackGround, &rcRect, DDBLTFAST_NOCOLORKEY);
+//	lpDDSBack->BltFast( 0, 0, lpDDSBackGround, &rcRect, DDBLTFAST_NOCOLORKEY);
+
+	rtRect32 rcRectGameArea(g_dglo.m_gameArea.left, g_dglo.m_gameArea.top, g_dglo.m_gameArea.right, g_dglo.m_gameArea.bottom);
+	lpDDSBack->BltFast(g_dglo.m_gameArea.left, g_dglo.m_gameArea.top, lpDDSBackGround,
+		&rcRectGameArea, DDBLTFAST_NOCOLORKEY);
+
+
 	g_dglo.m_bgSpriteMan.Render(lpDDSBack); //blit sprites that have been shoved into the bg, too slow to actually add them, so we fake it until the screen is rebuilt
 
 	if (!g_bTransitionActive)
@@ -16002,6 +16102,7 @@ bool LoadGameChunk(int gameIDToLoad, float &progressOut)
 		//init back buffer at 8 bit, if highcolor is needed later it will auto convert
 		lpDDSBackGround = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL, false);
 		fill_screen(0); //fill background with blank to start things off
+		
 		lpDDSBuffer = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL);
 
 		
@@ -16953,7 +17054,7 @@ void ApplyAspectRatioGLMatrix()
 
 	CL_Mat4f mat;
 	glGetFloatv(GL_MODELVIEW_MATRIX, &mat[0]);
-	
+	g_dglo.m_dink_matrix = mat;
 	//OPTIMIZE - All this can be cached... maybe done in RecomputeAspectRatio()
 
 	mat.inverse();
@@ -17025,8 +17126,13 @@ void DinkReInitSurfacesAfterVideoChange()
 	{
 		g_transitionSurf.HardKill();
 		//CheckTransitionSurface();
+		
+		bool bHighColor = false;
+		if (lpDDSBackGround && lpDDSBackGround->m_pSurf && lpDDSBackGround->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGBA)
+			bHighColor = true;
+
 		SAFE_DELETE(lpDDSBackGround);
-		lpDDSBackGround = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL, false);
+		lpDDSBackGround = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL, bHighColor);
 
 		g_onePixelSurf.HardKill();
 	}

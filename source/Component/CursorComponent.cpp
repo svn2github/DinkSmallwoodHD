@@ -6,11 +6,17 @@
 
 CursorComponent::CursorComponent()
 {
+#ifdef WINAPI
+	ShowCursor(false);
+#endif
 	SetName("Cursor");
 }
 
 CursorComponent::~CursorComponent()
 {
+#ifdef WINAPI
+	ShowCursor(true);
+#endif
 }
 
 void CursorComponent::OnAdd(Entity *pEnt)
@@ -28,6 +34,7 @@ void CursorComponent::OnAdd(Entity *pEnt)
 	GetParent()->GetFunction("OnInput")->sig_function.connect(1, boost::bind(&CursorComponent::OnInput, this, _1));
 	GetParent()->GetParent()->GetFunction("OnKillingControls")->sig_function.connect(1, boost::bind(&CursorComponent::OnKillingControls, this, _1));	
 
+	
 }
 
 void CursorComponent::OnRemove()
@@ -58,30 +65,73 @@ void CursorComponent::OnUpdate(VariantList *pVList)
 
 void CursorComponent::OnInput( VariantList *pVList )
 {
+
 	//0 = message type, 1 = parent coordinate offset
 	CL_Vec2f pt = pVList->Get(1).GetVector2();
 	//pt += GetAlignmentOffset(*m_pSize2d, eAlignment(*m_pAlignment));
 
-	switch (eMessageType( int(pVList->Get(0).GetFloat())))
+
+
+	if (IsDesktop())
 	{
-	case MESSAGE_TYPE_GUI_CLICK_START:
-		//HandleClickStart(pt);
-		OnUpdatePos(pt);
-		break;
-	case MESSAGE_TYPE_GUI_CLICK_END:
-		if (!m_bDisable)
+
+		//controls for a real mouse
+
+		switch (eMessageType(int(pVList->Get(0).GetFloat())))
 		{
+		case MESSAGE_TYPE_GUI_CLICK_START:
+			//HandleClickStart(pt);
 			OnUpdatePos(pt);
 			g_dglo.m_dirInput[DINK_INPUT_BUTTON1] = true;
 			g_dglo.m_dirInputFinished[DINK_INPUT_BUTTON1] = true;
-		}
+
+			break;
+		case MESSAGE_TYPE_GUI_CLICK_END:
+			if (!m_bDisable)
+			{
 		
-		//HandleClickEnd(pt);
-		break;
-	case MESSAGE_TYPE_GUI_CLICK_MOVE:
-	case MESSAGE_TYPE_GUI_CLICK_MOVE_RAW:
-		OnUpdatePos(pt);
-		break;
-	}	
+			}
+
+			//HandleClickEnd(pt);
+			break;
+		case MESSAGE_TYPE_GUI_CLICK_MOVE:
+		case MESSAGE_TYPE_GUI_CLICK_MOVE_RAW:
+			OnUpdatePos(pt);
+			break;
+
+			
+		}
+	}
+	else
+
+	{
+
+		//controls for a touch screen.  Selecting is different
+
+
+		switch (eMessageType(int(pVList->Get(0).GetFloat())))
+		{
+		case MESSAGE_TYPE_GUI_CLICK_START:
+			//HandleClickStart(pt);
+			OnUpdatePos(pt);
+			break;
+		case MESSAGE_TYPE_GUI_CLICK_END:
+			if (!m_bDisable)
+			{
+				OnUpdatePos(pt);
+				g_dglo.m_dirInput[DINK_INPUT_BUTTON1] = true;
+				g_dglo.m_dirInputFinished[DINK_INPUT_BUTTON1] = true;
+			}
+
+			//HandleClickEnd(pt);
+			break;
+		case MESSAGE_TYPE_GUI_CLICK_MOVE:
+		case MESSAGE_TYPE_GUI_CLICK_MOVE_RAW:
+			OnUpdatePos(pt);
+			break;
+		}
+	}
+
+	
 
 }
