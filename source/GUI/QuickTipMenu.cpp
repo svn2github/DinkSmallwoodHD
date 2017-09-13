@@ -51,7 +51,7 @@ Entity * CreateQuickTipFirstTimeOnly(Entity *pParentEnt, string tipFileName, boo
 
 #ifdef _DEBUG
 	//cheat to always show quicktips
-	GetApp()->GetShared()->DeleteVarsStartingWith("tip_"); //for testing
+	//GetApp()->GetShared()->DeleteVarsStartingWith("tip_"); //for testing
 #endif
 
 	if (GetApp()->GetShared()->GetVarIfExists(key))

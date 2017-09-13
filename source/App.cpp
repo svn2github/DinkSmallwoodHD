@@ -144,7 +144,24 @@ App * GetApp()
 	return g_pApp;
 }
 
-const char * GetAppName() {return "Dink Smallwood HD";};
+const char * GetAppName()
+{
+
+#ifdef WINAPI
+
+	if (GetApp())
+	{
+		static char name[64];
+		sprintf(name, "Dink Smallwood HD %s", GetApp()->GetVersionString().c_str());
+		return name;
+   }
+#endif
+
+	return "Dink Smallwood HD";
+
+
+	
+};
 
 
 App::App()

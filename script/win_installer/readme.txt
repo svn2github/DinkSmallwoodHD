@@ -5,6 +5,8 @@ Requires OpenGL, if you have any problems running this, try installing the lates
 To change screen size, drag the window borders around.  (Hold shift while dragging to toggle aspect-ratio lock)
 To toggle a psuedo full screen mode, click Full Screen Toggle in the options.  (Or hit Alt-Enter)
 
+NOTE: Quick saves might give a "Can't load old version" error if the data format has changed.  However, normal Dink saves (using save machines, etc) will always work.
+
 ------------- BETA VERSION -----------------
 
 This is a beta version which means it probably has bugs and isn't ready for general consumption.  However, it means you've been recruited to help us make it better!
@@ -54,3 +56,5 @@ www.rtsoft.com
 * (bugfix) Can no longer tap F8 during a game load to load a save state too early which can freeze the game
 * (bugfix) Fixed issue where 32 bit tilebitmaps would go wonky when reloading the surface
 * Default color under status bar is now black, fixes issue when transparent colors are used in the stats area, random garbage would show through
+* (windows) Version # is now shown in title bar
+* (bugfix) Fixed some issues with how default offsets are calculated, it fixed some problems where sprites would be in the wrong place in certain DMODs

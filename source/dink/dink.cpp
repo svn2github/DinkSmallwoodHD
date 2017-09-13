@@ -16,7 +16,7 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly);
 
 #define C_DINK_SCREEN_TRANSITION_TIME_MS 400
 
-const float SAVE_FORMAT_VERSION = 1.8f;
+const float SAVE_FORMAT_VERSION = 1.9f;
 const int C_DINK_FADE_TIME_MS = 300;
 
 const float G_TRANSITION_SCALE_TRICK = 1.01f;
@@ -1576,45 +1576,93 @@ if (fName == "ds-cr-01.bmp")
 	{
 
 #ifdef _DEBUG
-		if (seq == 180 && oo == 3)
+		if (seq == 9)
 		{
 			//LogMsg("Woah nelly");
 		}
+
+		if (seq == 453)
+		{
+		//	LogMsg("Found seq %d", 453);
+		}
+
 #endif
 		//set the default offset stuff
 		
-	
-		if ( (oo > 1) && g_dglos.g_seq[seq].m_bIsAnim) //yes, it should be a &, but it breaks old dmods
+		//if ((oo > 1) & g_dglos.g_seq[seq].m_bIsAnim) //yes, it should be a &&, but it breaks old dmods
+		
+		if ( (oo > 1) & (g_dglos.g_seq[seq].m_bIsAnim)) //COMPATIBILITY WARNING:  I fixed this, but do old mods depend on it being wrong?
 		{
-//			g_dglos.g_picInfo[picIndex].yoffset = g_dglos.g_picInfo[g_dglos.g_seq[seq].s+1].yoffset;
-//			g_dglos.g_picInfo[picIndex].xoffset =  g_dglos.g_picInfo[g_dglos.g_seq[seq].s+1].xoffset;
 
-			g_dglos.g_picInfo[picIndex].yoffset = yoffset;
-			g_dglos.g_picInfo[picIndex].xoffset =  xoffset;
+			//g_dglos.g_picInfo[picIndex].yoffset = g_dglos.g_seq[seq].m_yoffset;
+			//g_dglos.g_picInfo[picIndex].xoffset = g_dglos.g_seq[seq].m_xoffset;
 
-		} else
-		{
+
 			if (yoffset > 0)
 				g_dglos.g_picInfo[picIndex].yoffset = yoffset; else
 			{
-				g_dglos.g_picInfo[picIndex].yoffset = (g_dglos.g_picInfo[picIndex].box.bottom - 
+				g_dglos.g_picInfo[picIndex].yoffset = (g_dglos.g_picInfo[picIndex].box.bottom -
 					(g_dglos.g_picInfo[picIndex].box.bottom / 4)) - (g_dglos.g_picInfo[picIndex].box.bottom / 30);
 			}
 
 			if (xoffset > 0)
 				g_dglos.g_picInfo[picIndex].xoffset = xoffset; else
 			{
-				g_dglos.g_picInfo[picIndex].xoffset = (g_dglos.g_picInfo[picIndex].box.right - 
+				g_dglos.g_picInfo[picIndex].xoffset = (g_dglos.g_picInfo[picIndex].box.right -
 					(g_dglos.g_picInfo[picIndex].box.right / 2)) + (g_dglos.g_picInfo[picIndex].box.right / 6);
 			}
 
-			if (oo == 1 && g_dglos.g_seq[seq].m_bIsAnim)
+			g_dglos.g_seq[seq].m_xoffset = g_dglos.g_picInfo[picIndex].xoffset;
+			g_dglos.g_seq[seq].m_yoffset = g_dglos.g_picInfo[picIndex].yoffset;
+
+
+			//make to the first frame of the anim?
+			//g_dglos.g_picInfo[picIndex].yoffset = g_dglos.g_picInfo[g_dglos.g_seq[seq].s+1].yoffset;
+			//g_dglos.g_picInfo[picIndex].xoffset =  g_dglos.g_picInfo[g_dglos.g_seq[seq].s+1].xoffset;
+
+			//i'm not too sure about this...
+			//save it to this seq's settings
+			//g_dglos.g_seq[seq].m_xoffset = g_dglos.g_picInfo[picIndex].xoffset;
+			//g_dglos.g_seq[seq].m_yoffset = g_dglos.g_picInfo[picIndex].yoffset;
+
+//			g_dglos.g_picInfo[picIndex].yoffset = yoffset;
+	//		g_dglos.g_picInfo[picIndex].xoffset =  xoffset;
+
+		} else
+		{
+
+			/*
+			if (!g_dglos.g_seq[seq].m_bIsAnim)
 			{
-				//save it to this seq's settings
+				g_dglos.g_picInfo[picIndex].yoffset = yoffset;
+					g_dglos.g_picInfo[picIndex].xoffset = xoffset;
+
 				g_dglos.g_seq[seq].m_xoffset = g_dglos.g_picInfo[picIndex].xoffset;
 				g_dglos.g_seq[seq].m_yoffset = g_dglos.g_picInfo[picIndex].yoffset;
+
 			}
+			else
+			*/
+			{
+				if (yoffset > 0)
+					g_dglos.g_picInfo[picIndex].yoffset = yoffset; else
+				{
+					g_dglos.g_picInfo[picIndex].yoffset = (g_dglos.g_picInfo[picIndex].box.bottom -
+						(g_dglos.g_picInfo[picIndex].box.bottom / 4)) - (g_dglos.g_picInfo[picIndex].box.bottom / 30);
+				}
+
+				if (xoffset > 0)
+					g_dglos.g_picInfo[picIndex].xoffset = xoffset; else
+				{
+					g_dglos.g_picInfo[picIndex].xoffset = (g_dglos.g_picInfo[picIndex].box.right -
+						(g_dglos.g_picInfo[picIndex].box.right / 2)) + (g_dglos.g_picInfo[picIndex].box.right / 6);
+				}
+			}
+
+			
 		}
+
+	
 	}
 
 	if (!g_dglos.g_picInfo[picIndex].m_bCustomSettingsApplied)
@@ -1678,11 +1726,15 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 
 #ifdef _DEBUG
 
-	if (seq == 424)
+	if (seq == 35)
 	{
-		LogMsg("Loading status bar");
+		//LogMsg("Loading seq %d", seq);
 	}
+
+
 #endif
+
+
 	char hold[5];
 
 	ToLowerCase(org);
@@ -1750,6 +1802,12 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 		{
 			if (oo < 10) strcpy(hold, "0"); else strcpy(hold,"");
 
+#ifdef _DEBUG
+			if (seq == 35 && oo == 22)
+			{
+			//	LogMsg("Loading seq %d frame %d", seq, oo);
+			}
+#endif
 			if (reader.DoesFileExist(fNameBase+string(hold)+toString(oo)+".bmp"))
 			{
 				g_dglos.g_curPicIndex++;
@@ -1785,6 +1843,16 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 	for (int oo = 1; oo <= C_MAX_SPRITE_FRAMES; oo++)
 	{
 	
+		//LogMsg("Loading seq %d, oo is %d", seq, oo);
+
+#ifdef _DEBUG
+		if (seq == 35 && oo == 22)
+		{
+			LogMsg("Gotcha");
+		}
+
+#endif
+
 		if (LoadSpriteSingleFrame(fNameBase, seq, oo, g_dglos.g_curPicIndex, transType, &reader, hardbox, xoffset, yoffset, false))
 		{
 			g_dglos.g_curPicIndex++;
@@ -1843,7 +1911,7 @@ void ReadFromLoadSequenceString(char ev[15][100] )
 
 #ifdef _DEBUG
 
-	if (seqID == 452)
+	if (seqID == 35)
 	{
 		LogMsg("Found seq %d", seqID);
 	}
@@ -1928,6 +1996,58 @@ void ReadFromLoadSequenceString(char ev[15][100] )
 		g_dglos.g_seq[seqID].m_hardbox.right = atol(ev[9]);
 		g_dglos.g_seq[seqID].m_hardbox.bottom = atol(ev[10]);
 
+		/*
+		if (g_dglos.g_seq[seqID].m_bIsAnim)
+		{
+			//let's set some default offsets and hardboxes for this
+
+			if (ev[5][0] == 0)
+			{
+				//guess on the offset.  This should match the guess elsewhere but I'm too lazy to put it in a function
+				g_dglos.g_seq[seqID].m_xoffset = (g_dglos.g_picInfo[picIndex].box.bottom -
+					(g_dglos.g_picInfo[picIndex].box.bottom / 4)) - (g_dglos.g_picInfo[picIndex].box.bottom / 30);
+			}
+
+			if (ev[6][0] == 0)
+			{
+				//guess on the offset.  This should match the guess elsewhere but I'm too lazy to put it in a function
+				g_dglos.g_seq[seqID].m_yoffset = g_dglos.g_picInfo[picIndex].xoffset = (g_dglos.g_picInfo[picIndex].box.right -
+					(g_dglos.g_picInfo[picIndex].box.right / 2)) + (g_dglos.g_picInfo[picIndex].box.right / 6);
+			}
+
+
+			//ok, setup main offsets, lets build the hard block
+			/*
+			if (hardbox.right > 0)
+			{
+				//forced setting      
+				g_dglos.g_picInfo[picIndex].hardbox.left = hardbox.left;
+				g_dglos.g_picInfo[picIndex].hardbox.right = hardbox.right;
+			}
+			else
+			{
+				//guess setting   
+				work = g_dglos.g_picInfo[picIndex].box.right / 4;
+				g_dglos.g_picInfo[picIndex].hardbox.left -= work;
+				g_dglos.g_picInfo[picIndex].hardbox.right += work;
+			}
+
+			if (hardbox.bottom > 0)
+			{
+				g_dglos.g_picInfo[picIndex].hardbox.top = hardbox.top;
+				g_dglos.g_picInfo[picIndex].hardbox.bottom = hardbox.bottom;
+			}
+			else
+			{
+				work = g_dglos.g_picInfo[picIndex].box.bottom / 10;
+				g_dglos.g_picInfo[picIndex].hardbox.top -= work;
+				g_dglos.g_picInfo[picIndex].hardbox.bottom += work;
+			}
+		*/
+
+
+		
+
 #ifdef _DEBUG
 		//LogMsg("Hardbox: %s", PrintRect(hardbox).c_str());
 #endif
@@ -1977,11 +2097,19 @@ bool figure_out(const char *line, int load_seq)
 		
 		int seqID = atol(ev[3]);
 		
+#ifdef _DEBUG
+		if (seqID == 453)
+		{
 
+		//	LogMsg("Loading sand stuff");
+		}
+
+#endif
 
 		if (!g_dglos.g_seq[seqID].active)
 		{
 			ReadFromLoadSequenceString(ev);
+
 
 			//first time, actually init it
 			bReturn = load_sprites(g_dglos.g_seq[seqID].m_fileName,seqID,g_dglos.g_seq[seqID].m_speed,g_dglos.g_seq[seqID].m_xoffset,g_dglos.g_seq[seqID].m_yoffset, g_dglos.g_seq[seqID].m_hardbox
@@ -2036,6 +2164,14 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly)
 		{
 			int seqID = atol(ev[3]);
 
+#ifdef _DEBUG
+			if (seqID == 453)
+			{
+
+			//	LogMsg("Loading sand stuff prefigure out");
+			}
+
+#endif
 			ReadFromLoadSequenceString(ev);
 			
 			bReturn = load_sprites(g_dglos.g_seq[seqID].m_fileName,seqID,g_dglos.g_seq[seqID].m_speed,g_dglos.g_seq[seqID].m_xoffset,g_dglos.g_seq[seqID].m_yoffset, g_dglos.g_seq[seqID].m_hardbox
@@ -2069,6 +2205,7 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly)
 	g_dglos.g_picInfo[g_dglos.g_seq[myseq].frame[myframe]].m_bCustomSettingsApplied = true;
 	
 	
+	/*
 	if (myframe == 1 && g_dglos.g_seq[myseq].m_bIsAnim)
 	{
 		//set these to be the default for the whole anim.. (replacing that idata crap from  the old source)
@@ -2079,6 +2216,7 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly)
 		g_dglos.g_seq[myseq].m_yoffset = g_dglos.g_picInfo[g_dglos.g_seq[myseq].frame[myframe]].yoffset;
 		//g_dglos.g_seq[myseq].m_hardbox = g_dglos.g_picInfo[g_dglos.g_seq[myseq].frame[myframe]].hardbox;
 	}
+	*/
 	
 	
 	}
@@ -2642,7 +2780,7 @@ int add_sprite_dumb(int x1, int y, int brain,int pseq, int pframe,int size )
 {
 
 #ifdef _DEBUG
-
+	 
 	if (pseq == 180)
 	{
 		LogMsg("wtf!");
@@ -2694,6 +2832,7 @@ int add_sprite_dumb(int x1, int y, int brain,int pseq, int pframe,int size )
 			g_sprite[x].strength = 0;
 			g_sprite[x].damage = 0;
 			g_sprite[x].defense = 0;
+			
 
 			if ( g_customSpriteMap[x] == NULL )
 			{
@@ -4850,14 +4989,19 @@ void draw_sprite_game(LPDIRECTDRAWSURFACE lpdest,int h)
 	}
 
 #endif
-#ifdef _DEBUG
-	if (g_sprite[h].pseq == 66 && g_sprite[h].pframe == 1)
-	{
 
-		//LogMsg("Drawing it");
+ 
+#ifdef _DEBUG
+	if (g_sprite[h].pseq == 35 && g_sprite[h].pframe == 22)
+	{
+		//LogMsg("Drawing the rock");
+	}
+
+	if (g_sprite[h].pseq == 453)
+	{
+	//	LogMsg("Drawing a title");
 	}
 #endif
- 
 
 	if (get_box(h, &dstRect, &srcRect))
 	{
@@ -4933,6 +5077,9 @@ void draw_sprite_game(LPDIRECTDRAWSURFACE lpdest,int h)
 			}
 
 		}
+
+
+		
 			ddrval = lpdest->Blt(&dstRect, g_pSpriteSurface[getpic(h)],
 				&srcRect  , DDBLT_KEYSRC ,&ddbltfx );
 
@@ -5353,13 +5500,7 @@ void place_sprites_game(bool bBackgroundOnly )
 		//Msg("Ok, rank[%d] is %d.",oo,rank[oo]);       
 		j = rank[oo];
 
-#ifdef _DEBUG
-		if (g_dglos.g_smallMap.sprite[j].seq == 66 && g_dglos.g_smallMap.sprite[j].frame == 1)
-		{
 
-			//LogMsg("Drawing it");
-		}
-#endif
 
 
 		if (g_dglos.g_smallMap.sprite[j].active == true) if ( ( g_dglos.g_smallMap.sprite[j].vision == 0) || (g_dglos.g_smallMap.sprite[j].vision == *pvision))
@@ -5429,7 +5570,6 @@ void place_sprites_game(bool bBackgroundOnly )
 				g_sprite[sprite].hard = g_dglos.g_smallMap.sprite[j].hard;
 				g_sprite[sprite].timer = g_dglos.g_smallMap.sprite[j].timer;
 				g_sprite[sprite].que = g_dglos.g_smallMap.sprite[j].que;
-				g_sprite[sprite].sp_index = j;
 				g_sprite[sprite].alt = g_dglos.g_smallMap.sprite[j].alt;
 				g_sprite[sprite].base_die = g_dglos.g_smallMap.sprite[j].base_die;
 				g_sprite[sprite].strength = g_dglos.g_smallMap.sprite[j].strength;
@@ -5441,6 +5581,15 @@ void place_sprites_game(bool bBackgroundOnly )
 				g_sprite[sprite].hitpoints = g_dglos.g_smallMap.sprite[j].hitpoints;
 				g_sprite[sprite].sound = g_dglos.g_smallMap.sprite[j].sound;
 				check_sprite_status_full(sprite);   
+			
+#ifdef _DEBUG
+				if (g_dglos.g_smallMap.sprite[j].seq == 35 && g_dglos.g_smallMap.sprite[j].frame == 22)
+				{
+
+					LogMsg("Drawing it");
+				}
+#endif
+				
 				if (g_dglos.g_smallMap.sprite[j].prop == 0) if (g_sprite[sprite].sound != 0)
 				{
 					//make looping sound
@@ -15664,10 +15813,11 @@ LastWindowsTimer = GetTickCount();
 	//Blit from Two, which holds the base scene.
 
 //	lpDDSBack->BltFast( 0, 0, lpDDSBackGround, &rcRect, DDBLTFAST_NOCOLORKEY);
-
-	rtRect32 rcRectGameArea(g_dglo.m_gameArea.left, g_dglo.m_gameArea.top, g_dglo.m_gameArea.right, g_dglo.m_gameArea.bottom);
-	lpDDSBack->BltFast(g_dglo.m_gameArea.left, g_dglo.m_gameArea.top, lpDDSBackGround,
-		&rcRectGameArea, DDBLTFAST_NOCOLORKEY);
+	{
+		rtRect32 rcRectGameArea(g_dglo.m_gameArea.left, g_dglo.m_gameArea.top, g_dglo.m_gameArea.right, g_dglo.m_gameArea.bottom);
+		lpDDSBack->BltFast(g_dglo.m_gameArea.left, g_dglo.m_gameArea.top, lpDDSBackGround,
+			&rcRectGameArea, DDBLTFAST_NOCOLORKEY);
+	}
 
 
 	g_dglo.m_bgSpriteMan.Render(lpDDSBack); //blit sprites that have been shoved into the bg, too slow to actually add them, so we fake it until the screen is rebuilt
