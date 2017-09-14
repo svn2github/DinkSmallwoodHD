@@ -24,6 +24,10 @@
 
 #ifdef WINAPI
 
+extern int g_winVideoScreenX;
+extern int g_winVideoScreenY;
+extern bool g_bUseBorderlessFullscreenOnWindows;
+
 #include "StackWalker/StackUtils.h"
 extern bool g_bIsFullScreen;
 #endif
@@ -518,26 +522,32 @@ if (GetEmulatedPlatformID() == PLATFORM_ID_IOS)
 	GetBaseApp()->m_sig_unloadSurfaces.connect(1, boost::bind(&App::OnUnloadSurfaces, this));
 	
 #ifdef WINAPI
-	int videox = GetApp()->GetVarWithDefault("video_x", uint32(0))->GetUINT32();
-	int videoy = GetApp()->GetVarWithDefault("video_y", uint32(0))->GetUINT32();
-	int fullscreen = GetApp()->GetVarWithDefault("fullscreen", uint32(0))->GetUINT32();
+	int videox = GetApp()->GetVarWithDefault("video_x", uint32(640))->GetUINT32();
+	int videoy = GetApp()->GetVarWithDefault("video_y", uint32(480))->GetUINT32();
+	int fullscreen = GetApp()->GetVarWithDefault("fullscreen", uint32(1))->GetUINT32();
+	//bool borderlessfullscreen = GetApp()->GetVarWithDefault("fullscreen", uint32(1))->GetUINT32();
 
-	if (fullscreen)
+	
+	if (fullscreen && g_bUseBorderlessFullscreenOnWindows)
 	{
 		LogMsg("Setting fullscreen...");
 		//GetMessageManager()->SendGUI(MESSAGE_TYPE_GUI_TOGGLE_FULLSCREEN, 0, 0);  //lParam holds a lot of random data about the press, look it up if
-
+		g_bIsFullScreen = false; //because we're using toggle..
 		OnFullscreenToggleRequest();
 	}
 	else
 	{
+		/*
 		if (videox != 0 && videoy != 0)
 		{
 			//remember old setup
 			SetVideoMode(videox, videoy, false, 0);
 		}
+		*/
 	}
+	
 #endif
+
 
 	return true;
 }
@@ -726,6 +736,8 @@ void App::OnScreenSizeChange()
 	GetApp()->GetVar("fullscreen")->Set(uint32(g_bIsFullScreen));
 	GetApp()->GetVar("videox")->Set(uint32(GetPrimaryGLX()));
 	GetApp()->GetVar("videoy")->Set(uint32(GetPrimaryGLY()));
+	//GetApp()->GetVarWithDefault("borderless_fullscreen", uint32(g_bUseBorderlessFullscreenOnWindows))->Set(uint32(0));
+
 #endif
 
 }
@@ -852,8 +864,7 @@ bool App::GetIconsOnLeft()
 #include "win/app/main.h"
 #endif
 
-extern int g_winVideoScreenX;
-extern int g_winVideoScreenY;
+
 
 bool App::OnPreInitVideo()
 {
@@ -870,14 +881,18 @@ bool App::OnPreInitVideo()
 #ifdef RT_SCRIPT_BUILD
 		
 		SetEmulatedPlatformID(PLATFORM_ID_WINDOWS);
-		g_winVideoScreenX = 1024;
-		g_winVideoScreenY = 768;
+		g_winVideoScreenX = 640;
+		g_winVideoScreenY = 480;
+
 #endif
 
 //		g_winVideoScreenX = 800;
 //		g_winVideoScreenY = 1280;
 
 //windows only
+		
+		
+		
 		VariantDB temp;
 		temp.Load("save.dat");
 		Variant *pVarX = temp.GetVarIfExists("videox");
@@ -887,8 +902,11 @@ bool App::OnPreInitVideo()
 
 			g_winVideoScreenX = pVarX->GetUINT32();
 			g_winVideoScreenY = pVarY->GetUINT32();
-
+			g_bIsFullScreen = temp.GetVarWithDefault("fullscreen", uint32(1))->GetUINT32();
+			g_bUseBorderlessFullscreenOnWindows = temp.GetVarWithDefault("borderless_fullscreen", uint32(0))->GetUINT32() != 0;
 		}
+
+		
 		
 #endif
 		return true;

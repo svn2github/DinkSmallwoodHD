@@ -59,3 +59,5 @@ www.rtsoft.com
 * (windows) Version # is now shown in title bar
 * (bugfix) Fixed some issues with how default offsets are calculated, it fixed some problems where sprites would be in the wrong place in certain DMODs
 * (bugfix, windows) "Smoothing" no longer incorrectly turns on if you lose/regain focus
+* (windows) Added "Windowed Borderless fullscreen mode" toggle, defaults to off.  It will try to do 640X480 at your native monitor resolution by default now on
+	a clean install. It's a bit wacky how fullscreen/bordlerless fullscreen and clicking screen sizes works, but it usually gets you to where you want to go eventually

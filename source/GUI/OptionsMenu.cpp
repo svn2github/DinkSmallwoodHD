@@ -14,6 +14,10 @@
 #include "Gamepad/GamepadProvider60Beat.h"
 #endif
 
+#ifdef WINAPI
+extern bool g_bUseBorderlessFullscreenOnWindows;
+extern bool g_bIsFullScreen;
+#endif
 #include "Gamepad/GamepadProvideriCade.h"
 
 void UpdateOptionsGUI();
@@ -57,6 +61,12 @@ void OptionsMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity 
 	{
 		GetBaseApp()->SetVideoMode(1280, 960, false);
 	}
+
+	if (pEntClicked->GetName() == "vid_hd")
+	{
+		GetBaseApp()->SetVideoMode(1920, 1080, false);
+	}
+	
 
 	if (pEntClicked->GetName() == "controls_0")
 	{
@@ -123,6 +133,49 @@ void OptionsMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity 
 		DinkReInitSurfacesAfterVideoChange();
 		DinkOnForeground();
 	}
+
+#ifdef WINAPI
+	if (pEntClicked->GetName() == "check_borderless")
+	{
+		bool bChecked = IsCheckboxChecked(pEntClicked);
+		GetApp()->GetVar("borderless_fullscreen")->Set(uint32(bChecked));
+		
+		if (g_bIsFullScreen)
+		{
+			if (!g_bUseBorderlessFullscreenOnWindows)
+			{
+				g_bUseBorderlessFullscreenOnWindows = bChecked;
+				ChangeDisplaySettings(NULL, 0);
+				//GetBaseApp()->SetVideoMode(640, 480, false);
+				g_bIsFullScreen = false;
+				GetBaseApp()->OnFullscreenToggleRequest();
+			}
+			else
+			{
+				//we're currently borderless.. how to we remove that?
+				g_bUseBorderlessFullscreenOnWindows = bChecked;
+				GetBaseApp()->SetVideoMode(640, 480, true);
+
+			}
+
+		}
+		else
+		{
+
+		}
+		
+
+		g_bUseBorderlessFullscreenOnWindows = bChecked;
+		
+		/*
+		GetApp()->UpdateVideoSettings();
+		DinkUnloadUnusedGraphicsByUsageTime(0); //unload anything not used in the last second
+		DinkReInitSurfacesAfterVideoChange();
+		DinkOnForeground();
+		*/
+	}
+
+#endif
 
 	if (pEntClicked->GetName() == "sbeat_ad")
 	{
@@ -401,6 +454,13 @@ void OptionsMenuAddScrollContent(Entity *pParent)
 	y += GetSize2DEntity(pEnt).y;
 	y += spacerY;
 
+#ifdef WINAPI
+	bool bBorderlessFullscreen = GetApp()->GetVar("borderless_fullscreen")->GetUINT32() != 0;
+	pEnt = CreateCheckbox(pBG, "check_borderless", "Use Windowed borderless fullscreen mode", startX, y, bBorderlessFullscreen, FONT_SMALL, 1.0f);
+	pEnt->GetFunction("OnButtonSelected")->sig_function.connect(&OptionsMenuOnSelect);
+	y += GetSize2DEntity(pEnt).y;
+	y += spacerY;
+#endif
 
 
 	//fps limit
