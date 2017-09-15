@@ -232,7 +232,7 @@ void PauseMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity se
 			
 	}
 	
-	GetEntityRoot()->PrintTreeAsText(); //useful for Pause
+	//GetEntityRoot()->PrintTreeAsText(); //useful for Pause
 }
 
 

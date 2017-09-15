@@ -279,7 +279,7 @@ void OptionsMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity 
 		return;
 	}
 
-	GetEntityRoot()->PrintTreeAsText(); //useful for debugging
+	//GetEntityRoot()->PrintTreeAsText(); //useful for debugging
 }
 
 
@@ -479,7 +479,7 @@ void OptionsMenuAddScrollContent(Entity *pParent)
 
 
 	//fps limit
-	pEnt = CreateTextLabelEntity(pBG, "", startX, y, "FPS lock:");
+	pEnt = CreateTextLabelEntity(pBG, "", startX, y, "Lock to 30 FPS:");
 	SetupTextEntity(pEnt,fontID);
 	offsetX =  iPhoneMapX(columnX);
 	pEnt = CreateTextButtonEntity(pBG, "fps_limit_0", offsetX, y, "On", false);

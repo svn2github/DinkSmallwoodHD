@@ -83,6 +83,8 @@ public:
 	void RemoveAndroidKeyboardKeys();
 	void AddIcadeProvider();
 	bool GetForceAspectRatio();
+	bool GetGhostMode() {return m_bGhostMode;}
+	void SetGhostMode(bool bNew) { m_bGhostMode = bNew; }
 
 private:
 
@@ -93,6 +95,7 @@ private:
 	int m_special;
 	bool m_bUsingTouchScreen;
 	bool m_bForceAspectRatio;
+	bool m_bGhostMode; //lets dink walk anywhere and ignore screenlocks
 
 	void SaveAllData();
 	void OnPreEnterBackground(VariantList *pVList);

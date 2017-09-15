@@ -163,7 +163,7 @@ void GameOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sent fr
 		return;
 	}
 
-	GetEntityRoot()->PrintTreeAsText(); //useful for debugging
+	//GetEntityRoot()->PrintTreeAsText(); //useful for debugging
 }
 
 void GameOnStopSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sent from
@@ -203,7 +203,7 @@ void GameOnStopSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sen
 		return;
 	}
 
-	GetEntityRoot()->PrintTreeAsText(); //useful for debugging
+	//GetEntityRoot()->PrintTreeAsText(); //useful for debugging
 }
 
 

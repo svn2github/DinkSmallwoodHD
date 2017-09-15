@@ -20,6 +20,8 @@ const float SAVE_FORMAT_VERSION = 1.9f;
 const int C_DINK_FADE_TIME_MS = 300;
 
 const float G_TRANSITION_SCALE_TRICK = 1.01f;
+bool g_forceRebuildBackground = false;
+
 
 float g_dinkFadeAlpha = 0;
 DinkGlobals g_dglo;
@@ -528,11 +530,15 @@ byte get_hard(int h,int x1, int y1)
 	}
 	if (x1 < 0 || y1 < 0 || x1 > 599 || y1 > 399) return(0);
 	value =  g_dglos.g_hitmap.x[x1].y[y1];    
+	
+	//if (GetApp()->GetGhostMode() && value != 100) return 0; //cheat enabled
+
 	return(value);  
 }
 
 byte get_hard_play(int h,int x1, int y1)
 {
+
 	int value;
 	x1 -= 20;
 
@@ -557,6 +563,9 @@ byte get_hard_play(int h,int x1, int y1)
 			value = 0;
 		}
 	}
+
+	//if (GetApp()->GetGhostMode() && value != 100) return 0; //cheat enabled
+
 	return(value);  
 }
 
@@ -761,7 +770,12 @@ bool LoadTileScreenIfNeeded(int h, bool &bRequireRebuild)
 	if (h < 10) fName += "0";
 	fName += toString(h)+".bmp";
 
-
+	
+	if (g_dglos.g_playerInfo.tile[h].file[0] != 0)
+	{
+		//LogMsg("We should load %s", g_dglos.g_playerInfo.tile[h].file);
+		fName = ToLowerCaseString(g_dglos.g_playerInfo.tile[h].file);
+	}
 
 	if (g_tileScreens[h])
 	{
@@ -4823,7 +4837,7 @@ void check_midi(void)
 bool StopMidi()
 {
 	g_dglo.m_lastMusicPath = "";
-	LogMsg("Stopping midi");
+	//LogMsg("Stopping midi");
 	GetAudioManager()->StopMusic();
 	// Yahoo!
 	return true;
@@ -6111,6 +6125,12 @@ void BuildScreenBackground( bool bFullRebuild )
 	rtRect32                rcRect;
 	int pa, cool;   
 	*pvision = 0;
+
+	if (g_forceRebuildBackground)
+	{
+		bFullRebuild = true;
+		g_forceRebuildBackground = false;
+	}
 
 	if (bFullRebuild)
 	{
@@ -9528,9 +9548,17 @@ LogMsg("%d scripts used", g_dglos.g_returnint);
 			h = &h[strlen(ev[1])];
 			int32 p[20] = {2,1,0,0,0,0,0,0,0,0};  
 			if (get_parms(ev[1], script, h, p))
-			{   
-				assert(!"Unsupported");
-				LogMsg("Command load_tile unsupported");
+			{  
+				string fName = ToLowerCaseString(slist[0]);
+				int tileIndex = g_nlist[1];
+
+				//force a reload of this tile screen (Dink loads all graphics "on demand")
+				SAFE_DELETE(g_tileScreens[tileIndex]); //logically
+				
+				//remember this change
+				strncpy(g_dglos.g_playerInfo.tile[tileIndex].file, fName.c_str(), 50); //this 50 is hardcoded in the player data
+				g_forceRebuildBackground = true;
+																					   //BuildScreenBackground(true); //trigger full rebuild, this could be optimized by setting a flag and only doing it once...
 			}
 
 			strcpy(pLineIn, h);  
@@ -12086,7 +12114,9 @@ int check_if_move_is_legal(int u)
     if (u == 1) if (in_this_base(g_sprite[u].seq, g_dglos.mDinkBasePush)) return(0);
 
     if (u == 1) if (!no_cheat) if (debug_mode) return(0);
-    int hardness = 0;
+    
+	
+	int hardness = 0;
     if (g_sprite[u].moveman > 0)
     {
         for (int i=1; i <= g_sprite[u].moveman; i++)
@@ -12098,30 +12128,41 @@ int check_if_move_is_legal(int u)
                 // redink1 changed so flying works properly
                 return(0);
             }
+			
+			if (u == 1)
+			{
+				//it's dink, should we cheat and walk through stuff?
+				if (GetApp()->GetGhostMode()) return 0;
+			}
 
 			if (hardness > 0)
-            {
-                g_sprite[u].x = g_sprite[u].lpx[i-1];
-                g_sprite[u].y = g_sprite[u].lpy[i-1];
-                g_sprite[u].moveman = 0;         
+			{
 
-                if (g_dglos.g_pushingEnabled)
-                    if (u == 1) if (hardness != 2) if (g_dglos.g_playerInfo.push_active == false)
-                    {
-                        if (  (g_sprite[u].dir == 2) | (g_sprite[u].dir == 4) |  (g_sprite[u].dir == 6) | (g_sprite[u].dir == 8) )
-                        {
-                            //he  (dink)  is definatly pushing on something
-                            g_dglos.g_playerInfo.push_active = true;
-                            g_dglos.g_playerInfo.push_dir = g_sprite[u].dir;
-                            g_dglos.g_playerInfo.push_timer = g_dglos.g_dinkTick;
+			
+				g_sprite[u].x = g_sprite[u].lpx[i - 1];
+				g_sprite[u].y = g_sprite[u].lpy[i - 1];
+				g_sprite[u].moveman = 0;
 
-                        }
-                    } else
-                    {
-                        if (g_dglos.g_playerInfo.push_dir != g_sprite[1].dir) g_dglos.g_playerInfo.push_active = false;
-                    }
-                    return(hardness);
-            }
+				if (g_dglos.g_pushingEnabled)
+					if (u == 1) if (hardness != 2) if (g_dglos.g_playerInfo.push_active == false)
+					{
+						if ((g_sprite[u].dir == 2) | (g_sprite[u].dir == 4) | (g_sprite[u].dir == 6) | (g_sprite[u].dir == 8))
+						{
+							//he  (dink)  is definatly pushing on something
+							g_dglos.g_playerInfo.push_active = true;
+							g_dglos.g_playerInfo.push_dir = g_sprite[u].dir;
+							g_dglos.g_playerInfo.push_timer = g_dglos.g_dinkTick;
+
+						}
+					}
+					else
+					{
+						if (g_dglos.g_playerInfo.push_dir != g_sprite[1].dir) g_dglos.g_playerInfo.push_active = false;
+					}
+				
+		
+				return(hardness);
+			}
         }
     }
 
@@ -12476,13 +12517,16 @@ void BlitSecondTransitionScreen()
 
 void did_player_cross_screen(bool bCheckWithoutMoving, int playerID)
 {
-bool move_gonna = false;
+	bool move_gonna = false;
+
+	bool bNotScreenLocked = (g_dglos.screenlock == 0);
+	if (GetApp()->GetGhostMode()) bNotScreenLocked = true;
 
     if (g_dglos.walk_off_screen == 1) return;
 	//DO MATH TO SEE IF THEY HAVE CROSSED THE SCREEN, IF SO LOAD NEW ONE
     if ((g_sprite[playerID].x) < g_gameAreaLeftOffset) 
     {
-        if ((g_MapInfo.loc[*pmap-1] > 0) && (g_dglos.screenlock == 0) )
+        if ((g_MapInfo.loc[*pmap-1] > 0) && bNotScreenLocked)
         {
             //move one map to the left
             if (bCheckWithoutMoving)
@@ -12508,7 +12552,7 @@ bool move_gonna = false;
 
     if ((g_sprite[playerID].x) > 619) 
     {
-        if ((g_MapInfo.loc[*pmap+1] > 0)  && (g_dglos.screenlock == 0) )
+        if ((g_MapInfo.loc[*pmap+1] > 0)  && bNotScreenLocked)
         {
             //move one map to the right
             if (bCheckWithoutMoving)
@@ -12535,7 +12579,7 @@ bool move_gonna = false;
 
     if (g_sprite[playerID].y < 0)
     {
-        if ((g_MapInfo.loc[*pmap-32] > 0)  && (g_dglos.screenlock == 0) )
+        if ((g_MapInfo.loc[*pmap-32] > 0)  && bNotScreenLocked)
         {
             //move one map up
             if (bCheckWithoutMoving)
@@ -12562,7 +12606,7 @@ bool move_gonna = false;
 
     if ( (g_sprite[playerID].y > 399 ) )
     {
-        if ( (g_MapInfo.loc[*pmap+32] > 0)  && (g_dglos.screenlock == 0) )
+        if ( (g_MapInfo.loc[*pmap+32] > 0)  && bNotScreenLocked)
         {
             //move one map down
             if (bCheckWithoutMoving)
@@ -15899,16 +15943,6 @@ LastWindowsTimer = GetTickCount();
 
 	if (g_dglos.screenlock == 1)
 	{
-#ifdef _DEBUG
-		
-		/*
-		if (debug_mode)
-		{
-		//CHEAT - ignore screenlocks
-			g_dglos.screenlock = 0;
-		}
-		*/
-#endif
 		drawscreenlock();
 	}
 	

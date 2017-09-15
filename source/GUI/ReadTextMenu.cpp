@@ -30,7 +30,7 @@ void ReadTextMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity
 		return;
 	}
 
-	GetEntityRoot()->PrintTreeAsText(); //useful for debugging
+	//GetEntityRoot()->PrintTreeAsText(); //useful for debugging
 }
 
 

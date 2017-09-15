@@ -156,7 +156,7 @@ void DMODMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sen
 	}
 */	
 
-	GetEntityRoot()->PrintTreeAsText(); //useful for debugging
+	//GetEntityRoot()->PrintTreeAsText(); //useful for debugging
 }
 
 CL_Vec2f GetDMODBarIconOffset()

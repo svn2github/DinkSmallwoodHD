@@ -138,7 +138,7 @@ void PopUpMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity se
 
 						}
 
-						GetEntityRoot()->PrintTreeAsText(); //useful for debugging
+						//GetEntityRoot()->PrintTreeAsText(); //useful for debugging
 }
 
 void PopUpCreate(Entity *pEnt, string msg, string url, string button1Action, string button1Label, string button2Action, string button2Label, 
@@ -247,5 +247,5 @@ void PopUpCreate(Entity *pEnt, string msg, string url, string button1Action, str
 		}
 	}
 
-	GetEntityRoot()->PrintTreeAsText(); //useful for debugging
+	//GetEntityRoot()->PrintTreeAsText(); //useful for debugging
 }

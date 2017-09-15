@@ -27,7 +27,7 @@ void LogMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sent
 		LogEnd(pMenu);
 	}
 
-	GetEntityRoot()->PrintTreeAsText(); //useful for Log
+	//GetEntityRoot()->PrintTreeAsText(); //useful for Log
 }
 
 

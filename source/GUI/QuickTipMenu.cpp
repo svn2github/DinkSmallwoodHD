@@ -11,7 +11,7 @@ void QuickTipMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity
 
 	GetAudioManager()->Play("audio/tip_end.wav");
 	LogMsg("Clicked %s entity at %s", pEntClicked->GetName().c_str(),pVList->m_variant[1].Print().c_str());
-	GetEntityRoot()->PrintTreeAsText(); //useful for debugging
+	//GetEntityRoot()->PrintTreeAsText(); //useful for debugging
 	Entity *pDarken = GetEntityRoot()->GetEntityByName("pop_up_darken");
 	FadeScreen(pDarken, 0, 0, 400, true);
 	KillEntity(pDarken, 400);
@@ -114,7 +114,7 @@ Entity * CreateQuickTip(Entity *pParentEnt, string tipFileName, bool bRequireMov
 	//pButtonEntity = CreateOverlayButtonEntity(pBG, "continue", "interface/quicktips/tip_continue.rttex", 178, 184);
 	pButtonEntity->GetFunction("OnButtonSelected")->sig_function.connect(&QuickTipMenuOnSelect);
 	SlideScreen(pBG, true);
-	GetEntityRoot()->PrintTreeAsText(); //useful for debugging
+	//GetEntityRoot()->PrintTreeAsText(); //useful for debugging
 	//FadeInEntity(pBG, true, 300);
 	GetAudioManager()->Play("audio/tip_start.wav");
 

@@ -44,7 +44,7 @@ void DMODInstallMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=ent
 		
 	}
 	
-	GetEntityRoot()->PrintTreeAsText(); //useful for Loading
+	//GetEntityRoot()->PrintTreeAsText(); //useful for Loading
 }
 
 void DMODInstallUpdateStatus(Entity *pMenu, string msg)

@@ -74,7 +74,7 @@ void BrowseMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity s
 	}
 	*/	
 
-	GetEntityRoot()->PrintTreeAsText(); //useful for debugging
+	//GetEntityRoot()->PrintTreeAsText(); //useful for debugging
 }
 
 

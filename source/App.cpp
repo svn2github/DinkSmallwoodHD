@@ -172,7 +172,7 @@ App::App()
 {
 	http://www.rtsoft.com
 
-
+	m_bGhostMode = false;
 #ifdef ANDROID_NDK
 	SetPreferSDCardForStorage(true);
 #endif
@@ -180,8 +180,8 @@ App::App()
 	m_bDidPostInit = false;
 	m_bHasDMODSupport = true;
 	//for mobiles
-	m_version = 1.71f;
-	m_versionString = "V1.7.1";
+	m_version = 1.72f;
+	m_versionString = "V1.7.2";
 	m_build = 1;
 	m_bCheatsEnabled = false;
 

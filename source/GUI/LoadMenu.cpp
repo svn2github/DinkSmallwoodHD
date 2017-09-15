@@ -42,7 +42,7 @@ void LoadMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sen
 		}
 		
 	}
-	GetEntityRoot()->PrintTreeAsText(); //useful for Loading
+	//GetEntityRoot()->PrintTreeAsText(); //useful for Loading
 }
 
 void SetupLoadButton(Entity *pParent, int x, float *pY, int gameID)

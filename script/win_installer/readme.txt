@@ -80,3 +80,9 @@ www.rtsoft.com
 * Added redink1's "soft shadow improvement" patch
 * (proton) Fixed issue with blitting alpha things to the background, fixed the soft shadows for things rendered into the background
 
+------ Change log for 1.7.2 ----------
+
+* Changed "FPS lock:" to "Lock to 30 FPS:" in options, makes it more clear it's actually bad to use and not vsync
+* (Windows) Handles alt-tab and clicking on a different monitor while in native fullscreen modes better
+* Added "Ghost walk toggle" to in-game cheat menu.  Allows you to walk through solid objects and screenlocks
+* (DinkC) Added support for Dan's load_tile() command

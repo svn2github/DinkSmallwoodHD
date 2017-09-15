@@ -3,6 +3,7 @@
 #include "Entity/EntityUtils.h"
 #include "dink/dink.h"
 #include "LogMenu.h"
+#include "GameMenu.h"
 
 void DebugMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sent from
 {
@@ -80,11 +81,26 @@ void DebugMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity se
 		DinkModGold(100);
 	}
 
+	if (pEntClicked->GetName() == "ghost_walk")
+	{
+		GetApp()->SetGhostMode(!GetApp()->GetGhostMode());
+		if (GetApp()->GetGhostMode())
+		{
+			ShowQuickMessage("Ghost walk enabled - can walk through hardness and screenlocks");
+		}
+		else
+		{
+			ShowQuickMessage("Ghost walk disabled");
+
+		}
+	}
+
 	if (pEntClicked->GetName() == "empty_cache")
 	{
 		DinkUnloadGraphicsCache();
 		LogMsg("Cache emptied");
 	}
+	
 	if (pEntClicked->GetName() == "AddBow")
 	{
 		//slide it off the screen and then kill the whole menu tree
@@ -92,7 +108,7 @@ void DebugMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity se
 	}
 
 	
-	GetEntityRoot()->PrintTreeAsText(); //useful for debugging
+	//GetEntityRoot()->PrintTreeAsText(); //useful for debugging
 }
 
 
@@ -116,6 +132,9 @@ Entity * DebugMenuCreate(Entity *pParentEnt)
 if (GetApp()->GetCheatsEnabled())
 {
 	pButtonEntity = CreateTextButtonEntity(pBG, "empty_cache", x, y, "Empty graphic cache"); y += ySpacer;
+	pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&DebugMenuOnSelect);
+
+	pButtonEntity = CreateTextButtonEntity(pBG, "ghost_walk", x, y, "Ghost walk toggle"); y += ySpacer;
 	pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&DebugMenuOnSelect);
 
 }

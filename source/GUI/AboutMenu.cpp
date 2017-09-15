@@ -139,7 +139,7 @@ void AboutMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity se
 	}
 	*/
 
-	GetEntityRoot()->PrintTreeAsText(); //useful for debugging
+	//GetEntityRoot()->PrintTreeAsText(); //useful for debugging
 }
 
 void AddBlurb(Entity* pParent, float x, float y, string fileName, string msg)
