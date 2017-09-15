@@ -134,6 +134,16 @@ void OptionsMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity 
 		DinkOnForeground();
 	}
 
+	if (pEntClicked->GetName() == "check_checkboard")
+	{
+		bool bChecked = IsCheckboxChecked(pEntClicked);
+		GetApp()->GetVar("checkerboard_fix")->Set(uint32(bChecked));
+		GetApp()->UpdateVideoSettings();
+		DinkUnloadUnusedGraphicsByUsageTime(0); //unload anything not used in the last second
+		DinkReInitSurfacesAfterVideoChange();
+		DinkOnForeground();
+	}
+
 #ifdef WINAPI
 	if (pEntClicked->GetName() == "check_borderless")
 	{
@@ -446,8 +456,7 @@ void OptionsMenuAddScrollContent(Entity *pParent)
 	y += spacerY;
 	}
 
-
-
+	
 	bool bStretchToFit = GetApp()->GetVar("check_stretch")->GetUINT32() != 0;
 	pEnt = CreateCheckbox(pBG, "check_stretch", "Force screen stretching (ignore aspect ratio)", startX, y, bStretchToFit, FONT_SMALL, 1.0f);
 	pEnt->GetFunction("OnButtonSelected")->sig_function.connect(&OptionsMenuOnSelect);
@@ -461,6 +470,12 @@ void OptionsMenuAddScrollContent(Entity *pParent)
 	y += GetSize2DEntity(pEnt).y;
 	y += spacerY;
 #endif
+
+	bool bCheckerboardFix = GetApp()->GetVar("checkerboard_fix")->GetUINT32() != 0;
+	pEnt = CreateCheckbox(pBG, "check_checkboard", "Apply improved shadows", startX, y, bCheckerboardFix, FONT_SMALL, 1.0f);
+	pEnt->GetFunction("OnButtonSelected")->sig_function.connect(&OptionsMenuOnSelect);
+	y += GetSize2DEntity(pEnt).y;
+	y += spacerY;
 
 
 	//fps limit

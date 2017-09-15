@@ -36,19 +36,21 @@ IDirectDrawSurface * LoadBitmapIntoSurface(const char *pName, eTransparencyType 
 	pSurf->m_mode = mode;
 	pSurf->m_pSurf = new SoftSurface;
 	
+	bool bUseCheckerboardFix = GetApp()->GetVar("checkerboard_fix")->GetUINT32() != 0;
+
 	if (pMem)
 	{
 #ifdef _DEBUG
 		//LogMsg("loading DDRAW bmp from mem");
 #endif
 		//if this is set, ignore the filename
-		pSurf->m_pSurf->LoadFileFromMemory(pMem, SoftSurface::eColorKeyType(trans));
+		pSurf->m_pSurf->LoadFileFromMemory(pMem, SoftSurface::eColorKeyType(trans), 0, false, bUseCheckerboardFix);
 	} else
 	{
 #ifdef _DEBUG
 		//LogMsg("loading DDRAW bmp from file");
 #endif
-		pSurf->m_pSurf->LoadFile(pName, SoftSurface::eColorKeyType(trans), false);
+		pSurf->m_pSurf->LoadFile(pName, SoftSurface::eColorKeyType(trans), false, bUseCheckerboardFix);
 	}
 	
 	//LogMsg("loaded bitmap");
@@ -96,6 +98,7 @@ IDirectDrawSurface * InitOffscreenSurface(int x, int y, IDirectDrawSurface::eMod
 			{
 				pdds->m_pSurf->Init(x,y, SoftSurface::SURFACE_RGBA);
 				pdds->m_pSurf->SetHasPremultipliedAlpha(true);
+				pdds->m_pSurf->SetUsesAlpha(true);
 			} else
 			{
 				pdds->m_pSurf->Init(x,y, SoftSurface::SURFACE_PALETTE_8BIT);
@@ -335,7 +338,7 @@ int IDirectDrawSurface::BltFast( int x, int y, IDirectDrawSurface *pSrcSurf, rtR
 			//we need to copy from what is already on the screen
 			m_pSurf->BlitFromScreen(x, y, pSrcRect->left, pSrcRect->top, pSrcRect->GetWidth(), pSrcRect->GetHeight());
 			//m_pSurf->Blit(x, y, lpDDSBackGround->m_pSurf, pSrcRect->left, pSrcRect->top, pSrcRect->GetWidth(), pSrcRect->GetHeight());
-			m_pSurf->SetUsesAlpha(false);
+			//m_pSurf->SetUsesAlpha(false);
 		} else
 		{
 			m_pSurf->Blit(x, y, pSrcSurf->m_pSurf, pSrcRect->left, pSrcRect->top, pSrcRect->GetWidth(), pSrcRect->GetHeight());

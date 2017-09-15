@@ -7,6 +7,21 @@ To toggle a psuedo full screen mode, click Full Screen Toggle in the options.  (
 
 NOTE: Quick saves might give a "Can't load old version" error if the data format has changed.  However, normal Dink saves (using save machines, etc) will always work.
 
+Keyboard controls:
+
+F1 - Quick save
+F10 - Quick load
+Control - Attack
+Arrow keys - Movement
+Space - Talk
+Enter - Inventory
+Shift - Magic
+Escape - Bring up menu
+
+NOTE: If you have a controller (like an xbox 360 pad) plugged in when you start the game, you can use that instead of keyboard, but you still need to use the
+mouse to navigate the initial menus to start the game
+
+
 ------------- BETA VERSION -----------------
 
 This is a beta version which means it probably has bugs and isn't ready for general consumption.  However, it means you've been recruited to help us make it better!
@@ -47,7 +62,7 @@ www.rtsoft.com
 
 ------ Change log for 1.7.1 ----------
 
-(big thanks to Redink1 for most of these bug reports!)
+(big thanks to Redink1 for most of these bug reports and the fancy shadows patch!)
 
 * (Windows) Fixed app icon
 * (Windows) Mouse-controlled screens in DMODs control better and hide the original mouse cursor
@@ -60,4 +75,8 @@ www.rtsoft.com
 * (bugfix) Fixed some issues with how default offsets are calculated, it fixed some problems where sprites would be in the wrong place in certain DMODs
 * (bugfix, windows) "Smoothing" no longer incorrectly turns on if you lose/regain focus
 * (windows) Added "Windowed Borderless fullscreen mode" toggle, defaults to off.  It will try to do 640X480 at your native monitor resolution by default now on
-	a clean install. It's a bit wacky how fullscreen/bordlerless fullscreen and clicking screen sizes works, but it usually gets you to where you want to go eventually
+	a clean install. If you've dragged the dink window to a weird size it won't be able to go fullscreen which is kind of weird, but it does give a clear error message. It should probably
+	enumerate graphic modes and choose one if the current one is invalid, or let the user choose, meh
+* Added redink1's "soft shadow improvement" patch
+* (proton) Fixed issue with blitting alpha things to the background, fixed the soft shadows for things rendered into the background
+

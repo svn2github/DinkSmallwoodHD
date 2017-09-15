@@ -434,7 +434,7 @@ bool App::Init()
 	bool bFileExisted;
 	m_varDB.Load("save.dat", &bFileExisted);
 	
-	GetApp()->GetVarWithDefault("smoothing",uint32(1))->GetUINT32();
+	GetApp()->GetVarWithDefault("smoothing",uint32(0))->GetUINT32();
 
 	GetApp()->GetVarWithDefault("buttons",uint32(0));
 
@@ -443,7 +443,10 @@ bool App::Init()
 
   
 	#ifdef PLATFORM_WINDOWS
-		//If you don't have directx, just comment out this and remove the dx lib dependency, directx is only used for the
+	
+	GetApp()->GetVarWithDefault("checkerboard_fix", uint32(1)); //default to on for Windows
+
+	//If you don't have directx, just comment out this and remove the dx lib dependency, directx is only used for the
 		//gamepad input on windows
 		GetGamepadManager()->AddProvider(new GamepadProviderDirectX); //use directx joysticks
 	#endif
@@ -525,7 +528,8 @@ if (GetEmulatedPlatformID() == PLATFORM_ID_IOS)
 	int videox = GetApp()->GetVarWithDefault("video_x", uint32(640))->GetUINT32();
 	int videoy = GetApp()->GetVarWithDefault("video_y", uint32(480))->GetUINT32();
 	int fullscreen = GetApp()->GetVarWithDefault("fullscreen", uint32(1))->GetUINT32();
-	//bool borderlessfullscreen = GetApp()->GetVarWithDefault("fullscreen", uint32(1))->GetUINT32();
+	
+	bool borderlessfullscreen = GetApp()->GetVarWithDefault("fullscreen", uint32(0))->GetUINT32();
 
 	
 	if (fullscreen && g_bUseBorderlessFullscreenOnWindows)
@@ -902,11 +906,11 @@ bool App::OnPreInitVideo()
 
 			g_winVideoScreenX = pVarX->GetUINT32();
 			g_winVideoScreenY = pVarY->GetUINT32();
-			g_bIsFullScreen = temp.GetVarWithDefault("fullscreen", uint32(1))->GetUINT32();
-			g_bUseBorderlessFullscreenOnWindows = temp.GetVarWithDefault("borderless_fullscreen", uint32(0))->GetUINT32() != 0;
 		}
 
-		
+		g_bIsFullScreen = temp.GetVarWithDefault("fullscreen", uint32(1))->GetUINT32();
+		g_bUseBorderlessFullscreenOnWindows = temp.GetVarWithDefault("borderless_fullscreen", uint32(0))->GetUINT32() != 0;
+
 		
 #endif
 		return true;

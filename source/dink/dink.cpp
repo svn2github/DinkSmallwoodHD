@@ -5063,6 +5063,7 @@ void draw_sprite_game(LPDIRECTDRAWSURFACE lpdest,int h)
 				//convert it to a high color surface on the fly, without losing the data on it
 				
 				LPDIRECTDRAWSURFACE pNewSurf = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL, true, lpdest->m_pSurf);
+				
 				LogMsg("Detected high color bmps that need to drawn to the static landscape, converting backbuffers to 32 bit on the fly.");
 				delete lpDDSBackGround;
 
@@ -5070,16 +5071,16 @@ void draw_sprite_game(LPDIRECTDRAWSURFACE lpdest,int h)
 				if (lpDDSBuffer->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_PALETTE_8BIT)
 				{
 				//this one too
-				delete lpDDSBuffer;
-				lpDDSBuffer = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL, true);
+					delete lpDDSBuffer;
+					lpDDSBuffer = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL, true);
+					lpDDSBuffer->m_pGLSurf->SetUsesAlpha(true);
 				}
 
 			}
 
 		}
 
-
-		
+	
 			ddrval = lpdest->Blt(&dstRect, g_pSpriteSurface[getpic(h)],
 				&srcRect  , DDBLT_KEYSRC ,&ddbltfx );
 
@@ -5528,7 +5529,8 @@ void place_sprites_game(bool bBackgroundOnly )
 							//it requires scaling, need to do things differently as our low mem fast custom blits won't work with this
 							bScaledBackgroundSpritesRequired = true;
 						}
-					if (bScaledBackgroundSpritesRequired)
+					
+						if (bScaledBackgroundSpritesRequired)
 					{
 						g_dglo.m_bgSpriteMan.Add(sprite);
 
@@ -6145,6 +6147,7 @@ restart:
 		if (bRequireRebuild) goto restart;
 			g_tileScreens[tileScreenID]->UpdateLastUsedTime();
 
+		
 		lpDDSBackGround->BltFast( (x * 50 - ((x / 12) * 600))+g_gameAreaLeftOffset, (x / 12) * 50, g_tileScreens[tileScreenID],
 			&rcRect, DDBLTFAST_NOCOLORKEY| DDBLTFAST_WAIT );
 	}
@@ -15841,6 +15844,7 @@ LastWindowsTimer = GetTickCount();
 	
 	EndProcessTransition(); 
 
+	
 	if (g_dglos.g_stopEntireGame == 1)
 	{
 		if (g_dglos.g_talkInfo.active)
@@ -15896,10 +15900,14 @@ LastWindowsTimer = GetTickCount();
 	if (g_dglos.screenlock == 1)
 	{
 #ifdef _DEBUG
+		
+		/*
 		if (debug_mode)
 		{
+		//CHEAT - ignore screenlocks
 			g_dglos.screenlock = 0;
 		}
+		*/
 #endif
 		drawscreenlock();
 	}
@@ -15941,16 +15949,14 @@ flip:
 	if (turn_on_plane) g_dglos.plane_process = true;
 
 	BlitSecondTransitionScreen();
-	
-	
+		
 	if (g_bTransitionActive)	
 	{
 		SetOrthoRenderSize(C_DINK_SCREENSIZE_X, g_dglo.m_orthoRenderRect.GetHeight(), 0, -g_dglo.m_orthoRenderRect.top);
 		BlitGUIOverlay();
 		RemoveOrthoRenderSize();
 	}
-
-
+	
 	if (bCaptureScreen)
 	{
 		//reset the timer because we probably just wasted a bunch loading crap
