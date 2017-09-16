@@ -224,7 +224,7 @@ if (IsDesktop())
 	"\n`wAuto Save:`` Your game is automatically saved every five minutes to save slot 10 as long as you have more than 30% health.\n"\
 
 	"\n`wQuick save/load:`` In addition to the full auto state save whenever you exit the game, and the normal save system, you can use `wQuick Save/Load`` from the pause menu.  It's very useful to beat a tough boss.  Each add-on you install will also remember its own unique save states as well.\n"\
-	"\n`wTo use an existing DMOD directory:`` Start the game with a command line parm of `w-dmodpath <dmod dir path>`` to use it instead of the default dmod directory.\n"\
+	"\n`wTo use an existing DMOD directory:`` Start the game with a command line parm of `w-dmodpath <dmod dir path>`` to use it instead of the default dmod directory.  `w-game <dmod path>`` is also supported to jump right into a dmod.\n"\
 "";
 	
 } else if (GetEmulatedPlatformID() == PLATFORM_ID_ANDROID)

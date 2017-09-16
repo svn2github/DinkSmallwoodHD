@@ -16,7 +16,7 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly);
 
 #define C_DINK_SCREEN_TRANSITION_TIME_MS 400
 
-const float SAVE_FORMAT_VERSION = 1.9f;
+const float SAVE_FORMAT_VERSION = 2.0f;
 const int C_DINK_FADE_TIME_MS = 300;
 
 const float G_TRANSITION_SCALE_TRICK = 1.01f;
@@ -142,7 +142,7 @@ void get_word(char line[300], int word, char *crap);
 void run_script (int script);
 
 void program_idata(void);
-void BuildScreenBackground( bool bFullRebuild = true);
+void BuildScreenBackground( bool bFullRebuild = true, bool buildImageFromScratch = true);
 int realhard(int tile);
 void kill_repeat_sounds_all( void );
 int process_line (int script, char *s, bool doelse);
@@ -762,9 +762,9 @@ void DrawCollision()
 }
 
 
-bool LoadTileScreenIfNeeded(int h, bool &bRequireRebuild)
+bool LoadTileScreenIfNeeded(int h, bool &bRequireRebuildOut)
 {
-	 bRequireRebuild = false;
+	 bRequireRebuildOut = false;
 
 	string fName = "tiles/ts";
 	if (h < 10) fName += "0";
@@ -816,7 +816,12 @@ LogMsg("Loading tilescreen %s", fName.c_str());
 			delete lpDDSBackGround;
 			lpDDSBackGround = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL, true);
 			
-			bRequireRebuild = true;
+			
+				DDBLTFX     ddbltfx;
+				ddbltfx.dwFillColor = g_dglos.last_fill_screen_palette_color;
+				lpDDSBackGround->Blt(NULL, NULL, NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbltfx);
+			
+			bRequireRebuildOut = true;
 
 		}
 
@@ -836,7 +841,11 @@ LogMsg("Loading tilescreen %s", fName.c_str());
 				//switch it
 				delete lpDDSBackGround;
 				lpDDSBackGround = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL, true);
-				bRequireRebuild = true;
+				bRequireRebuildOut = true;
+
+				DDBLTFX     ddbltfx;
+				ddbltfx.dwFillColor = g_dglos.last_fill_screen_palette_color;
+				lpDDSBackGround->Blt(NULL, NULL, NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbltfx);
 
 			}
 
@@ -906,7 +915,7 @@ void load_map(const int num)
 
 //	fp = fopen( GetFileLocationString(g_dglos.current_map).c_str(), "rb");
 
-
+	//g_dglos.last_fill_screen_palette_color = 0; //it's ok to forget the last fillscreen command
 
 	if (!pFile)
 	{
@@ -934,13 +943,8 @@ void load_map(const int num)
 	while (holdme > 0)
 	{
 		int bytesRead = pFile->Read((byte*)buffer, rt_min(holdme, bufferSize));
-
 		holdme -= bytesRead;
-
-
 	}
-
-
 	
 	//Msg("Trying to read %d bytes with offset of %d",lsize,holdme);
 	pFile->Read((byte*)&g_dglos.g_smallMap, lsize);
@@ -954,6 +958,7 @@ void load_map(const int num)
 	g_sprite[1].move_nohard = false;
 	g_sprite[1].freeze = false;
 	g_dglos.screenlock = 0;
+	*pvision = 0; //reset vision
 	fill_whole_hard();
 	fix_dead_sprites();          
 	check_midi();
@@ -2656,6 +2661,7 @@ void draw_mlevel(int percent, bool bDraw)
 
 void draw_status_all(void)
 {
+	ClearBitmapCopy();
 
 	g_dglos.g_guiStrength = *pstrength;
 	g_dglos.g_guiMagic = *pmagic;
@@ -2692,7 +2698,7 @@ void BlitGUIOverlay()
 	if (GetDinkSubGameMode() == DINK_SUB_GAME_MODE_SHOWING_BMP) return;
 
 	
-
+	if (g_dglos.status_might_not_require_update == 1) return;
 
 	rtRect32 rcRect;
 	rcRect.left = 0;
@@ -5078,16 +5084,24 @@ void draw_sprite_game(LPDIRECTDRAWSURFACE lpdest,int h)
 				
 				LPDIRECTDRAWSURFACE pNewSurf = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL, true, lpdest->m_pSurf);
 				
+
+			
 				LogMsg("Detected high color bmps that need to drawn to the static landscape, converting backbuffers to 32 bit on the fly.");
 				delete lpDDSBackGround;
 
 				lpdest = lpDDSBackGround = pNewSurf;
+				
+				DDBLTFX     ddbltfx;
+				ddbltfx.dwFillColor = g_dglos.last_fill_screen_palette_color;
+				lpDDSBackGround->Blt(NULL, NULL, NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbltfx);
+
 				if (lpDDSBuffer->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_PALETTE_8BIT)
 				{
 				//this one too
 					delete lpDDSBuffer;
 					lpDDSBuffer = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL, true);
 					lpDDSBuffer->m_pGLSurf->SetUsesAlpha(true);
+
 				}
 
 			}
@@ -5515,8 +5529,14 @@ void place_sprites_game(bool bBackgroundOnly )
 		//Msg("Ok, rank[%d] is %d.",oo,rank[oo]);       
 		j = rank[oo];
 
-
-
+#ifdef _DEBUG
+		if (g_dglos.g_smallMap.sprite[j].seq == 66)
+		{
+			LogMsg("Garden");
+			//bScaledBackgroundSpritesRequired = true;
+			//continue;
+		}
+#endif
 
 		if (g_dglos.g_smallMap.sprite[j].active == true) if ( ( g_dglos.g_smallMap.sprite[j].vision == 0) || (g_dglos.g_smallMap.sprite[j].vision == *pvision))
 		{
@@ -5526,11 +5546,16 @@ void place_sprites_game(bool bBackgroundOnly )
 			if (  (g_dglos.g_smallMap.sprite[j].type == 0)  || (g_dglos.g_smallMap.sprite[j].type == 2) )
 
 			{
+
+
 				//make it part of the background (much faster)
 				sprite = add_sprite_dumb(g_dglos.g_smallMap.sprite[j].x,g_dglos.g_smallMap.sprite[j].y,0,
 					g_dglos.g_smallMap.sprite[j].seq,g_dglos.g_smallMap.sprite[j].frame,
 					g_dglos.g_smallMap.sprite[j].size);
-				//Msg("Background sprite %d has hard of %d..", j, pam.sprite[j].hard);
+				
+
+				
+				//("Background sprite %d has hard of %d..", j, pam.sprite[j].hard);
 				g_sprite[sprite].hard = g_dglos.g_smallMap.sprite[j].hard;
 				g_sprite[sprite].sp_index = j;
 				g_sprite[sprite].alt =  g_dglos.g_smallMap.sprite[j].alt;
@@ -5544,7 +5569,7 @@ void place_sprites_game(bool bBackgroundOnly )
 							bScaledBackgroundSpritesRequired = true;
 						}
 					
-						if (bScaledBackgroundSpritesRequired)
+					if (bScaledBackgroundSpritesRequired)
 					{
 						g_dglo.m_bgSpriteMan.Add(sprite);
 
@@ -5561,6 +5586,7 @@ void place_sprites_game(bool bBackgroundOnly )
 					add_hardness(sprite,100+j);
 				}
 				
+
 				g_sprite[sprite].active = false;
 			}
 
@@ -5671,6 +5697,27 @@ crazy:;
 }
 
 
+void SetBitmapCopy(char *pFileName)
+{
+
+	g_dglos.status_might_not_require_update = 1;
+	strncpy(g_dglos.copy_bmp_to_screen, pFileName, C_SHOWN_BITMAP_SIZE);
+
+}
+
+void ClearBitmapCopy()
+{
+	g_dglos.status_might_not_require_update = 0;
+	g_dglos.copy_bmp_to_screen[0] = 0;
+}
+
+bool IsBitmapCopySet()
+{
+	return g_dglos.copy_bmp_to_screen[0] != 0;
+}
+
+
+
 void CopyBitmapToBackBuffer (char *pName)
 {
 	
@@ -5734,7 +5781,7 @@ void copy_bmp( char *pName)
 	if (lpDDSBuffer && lpDDSBuffer->m_pSurf && lpDDSBuffer->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGBA || lpDDSBuffer->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGB)
 	{
 		LogMsg("Warning, losing high color back buffer");
-		assert(0);
+		//assert(0);
 	}
 
 	SAFE_DELETE(lpDDSBuffer);
@@ -5748,10 +5795,17 @@ void copy_bmp( char *pName)
 	ddrval = lpDDSBack->BltFast( 0, 0, lpDDSBuffer,
 		&rcRect, DDBLTFAST_NOCOLORKEY);
 
-	assert(!"Clear this?");
+	//assert(!"Clear this?");
 	ddrval = lpDDSBackGround->BltFast( 0, 0, lpDDSBuffer,
 		&rcRect, DDBLTFAST_NOCOLORKEY);
-
+	
+	/*
+	g_dglos.g_bShowingBitmap.active = true;
+	g_dglos.g_bShowingBitmap.showdot = showdot;
+	g_dglos.g_bShowingBitmap.script = script;
+	strncpy(g_dglos.g_lastBitmapShown, pNam, C_SHOWN_BITMAP_SIZE - 1);
+	*/
+	
 }
 
 
@@ -6120,11 +6174,11 @@ bool InitSound()
 	return true;
 } /* InitSound */
 
-void BuildScreenBackground( bool bFullRebuild )
+void BuildScreenBackground( bool bFullRebuild, bool bBuildImageFromScratch )
 {
 	rtRect32                rcRect;
 	int pa, cool;   
-	*pvision = 0;
+//	*pvision = 0; //this was bad because save stats call this.  Moved to where new maps are loaded
 
 	if (g_forceRebuildBackground)
 	{
@@ -6134,6 +6188,7 @@ void BuildScreenBackground( bool bFullRebuild )
 
 	if (bFullRebuild)
 	{
+		bBuildImageFromScratch = true;
 #ifdef _DEBUG
 		LogMsg("Doing full rebuild of screen background...");
 #endif
@@ -6141,35 +6196,53 @@ void BuildScreenBackground( bool bFullRebuild )
 		kill_repeat_sounds();
 		kill_all_scripts();
 		g_dglo.m_bgSpriteMan.Clear();
+
+	}
+
+	if (bBuildImageFromScratch)
+	{
+
+		if (lpDDSBackGround)
+		{
+			DDBLTFX     ddbltfx;
+			ddbltfx.dwFillColor = g_dglos.last_fill_screen_palette_color;
+			lpDDSBackGround->Blt(NULL, NULL, NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbltfx);
+		}
 	}
 
 restart:
-	int tileScreenID;
-
-	for (int x=0; x<96; x++)
+	
+	if (g_dglos.g_gameMode > 2)
 	{
-		cool = g_dglos.g_smallMap.t[x].num / 128;
-		pa = g_dglos.g_smallMap.t[x].num - (cool * 128);
-		rcRect.left = (pa * 50- (pa / 12) * 600);
-		rcRect.top = (pa / 12) * 50;
-		rcRect.right = rcRect.left + 50;
-		rcRect.bottom = rcRect.top + 50;
+		//we want to render tiles to the BG too
 
-		tileScreenID = cool+1;
+		int tileScreenID;
 
-		bool bRequireRebuild;
-
-		if (!LoadTileScreenIfNeeded(tileScreenID, bRequireRebuild))
+		for (int x = 0; x < 96; x++)
 		{
-			continue;
-		}
-		
-		if (bRequireRebuild) goto restart;
+			cool = g_dglos.g_smallMap.t[x].num / 128;
+			pa = g_dglos.g_smallMap.t[x].num - (cool * 128);
+			rcRect.left = (pa * 50 - (pa / 12) * 600);
+			rcRect.top = (pa / 12) * 50;
+			rcRect.right = rcRect.left + 50;
+			rcRect.bottom = rcRect.top + 50;
+
+			tileScreenID = cool + 1;
+
+			bool bRequireRebuild;
+
+			if (!LoadTileScreenIfNeeded(tileScreenID, bRequireRebuild))
+			{
+				continue;
+			}
+
+			if (bRequireRebuild) goto restart;
 			g_tileScreens[tileScreenID]->UpdateLastUsedTime();
 
-		
-		lpDDSBackGround->BltFast( (x * 50 - ((x / 12) * 600))+g_gameAreaLeftOffset, (x / 12) * 50, g_tileScreens[tileScreenID],
-			&rcRect, DDBLTFAST_NOCOLORKEY| DDBLTFAST_WAIT );
+
+			lpDDSBackGround->BltFast((x * 50 - ((x / 12) * 600)) + g_gameAreaLeftOffset, (x / 12) * 50, g_tileScreens[tileScreenID],
+				&rcRect, DDBLTFAST_NOCOLORKEY | DDBLTFAST_WAIT);
+		}
 	}
 
 	if (bFullRebuild)
@@ -6332,12 +6405,13 @@ void add_item(char name[10], int mseq, int mframe, bool magic)
 void fill_screen(int num)
 {
 
-	//assert(!"Seth, fix this");
-
+#ifdef _DEBUG
+	LogMsg("Filling screen with %d", num);
+#endif
 	DDBLTFX     ddbltfx;
 	ddbltfx.dwFillColor = num;
 	lpDDSBackGround->Blt(NULL ,NULL,NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbltfx);
-	
+
 /*
 	
 	DDBLTFX     ddbltfx;
@@ -7027,9 +7101,12 @@ pass:
 			LogMsg("copying BMP");
 			h = &h[strlen(ev[1])];
 			int32 p[20] = {2,0,0,0,0,0,0,0,0,0};  
+			
+
 			if (get_parms(ev[1], script, h, p))
 			{
 				copy_bmp(slist[0]);
+				SetBitmapCopy(slist[0]);
 			}
 
 			strcpy(pLineIn, h);  
@@ -7782,8 +7859,11 @@ pass:
 			int32 p[20] = {1,0,0,0,0,0,0,0,0,0};  
 			if (get_parms(ev[1], script, h, p))
 			{
+				g_dglos.last_fill_screen_palette_color = g_nlist[0];
+
 				fill_screen(g_nlist[0]);
-				g_dglos.m_bRenderBackgroundOnLoad = false;
+				SetBitmapCopy(""); //no bitmap, but it will trigger the no status bar rendering until "something happens"
+				g_dglos.m_bRenderBackgroundOnLoad = true;
 
 			}
 
@@ -10395,7 +10475,9 @@ void init_scripts(void)
 		{
 			if (locate(k,"main"))
 			{
-				if (debug_mode) LogMsg("Screendraw: running main of script %s..", g_scriptInstance[k]->name);
+#ifdef _DEBUG
+				LogMsg("Screendraw: running main of script %s..", g_scriptInstance[k]->name);
+#endif
 				run_script(k);
 			}
 		}
@@ -15537,87 +15619,27 @@ void updateFrame()
 		if (g_sprite[i].active) cur = i;
 	}
 	assert(cur <= g_dglos.last_sprite_created);
-
-	//LogMsg("Script: %d, callbacks: %d", GetScriptsActive(), GetCallbacksActive());
-	//check_seq_status(18);
-	//check_seq_status(102);
-	//check_seq_status(104);
-	
-	//FreeSequence();
 	
 #endif
-
 
 	bool bSpeedUp = false;
 
-
-if (IsDesktop())
-{
-
-
-#ifdef WIN32
-
-	//skip the slow ass transition if TAB is held, useful for testing
-	/*
-	if (GetAsyncKeyState(9))
+	if (DinkGetSpeedUpMode())
 	{
 		bSpeedUp = true;
 	}
-	*/
-#endif
-/*
-		if (GetAsyncKeyState(VK_F1))
+
+	if (bSpeedUp)
+	{
+		if (!GetApp()->GetGameTickPause())
 		{
-			SaveStateWithExtra();
+			GetApp()->SetGameTick(GetApp()->GetGameTick() + GetApp()->GetDeltaTick() * 5);
 		}
-
-		if (GetAsyncKeyState(VK_F8))
-		{
-			string fName = DinkGetSavePath()+"quicksave.dat";
-
-			if (FileExists(fName))
-			{
-				LoadStateWithExtra();			
-			} else
-			{
-				ShowQuickMessage("No state to load yet.");
-			}
-
-		}
-*/
-}
-#ifdef _DEBUG
-/*	
-		if (GetAsyncKeyState('C'))
-		{
-			LogMsg("Writing and loading state");
-			
-			SaveState(GetSavePath()+"state.dat");
-			LoadState(GetSavePath()+"state.dat", false);
-			//DinkUnloadGraphicsCache();
-			
-		}
-*/
-
-	#endif
-
-
-		if (DinkGetSpeedUpMode()) 
-		{
-			bSpeedUp = true;
-		}
-	
-		if (bSpeedUp)
-		{
-			if (!GetApp()->GetGameTickPause())
-			{
-				GetApp()->SetGameTick(GetApp()->GetGameTick()+GetApp()->GetDeltaTick()*5);
-			}
-		}
-	byte state[256]; 
+	}
+	byte state[256];
 	rtRect32 rcRect;
 	bool bCaptureScreen = false;
-	int h,j;
+	int h, j;
 
 	bool bs[C_MAX_SPRITES_AT_ONCE];
 	int highest_sprite;
@@ -15625,22 +15647,19 @@ if (IsDesktop())
 	g_abort_this_flip = false;
 	
 	ProcessGraphicGarbageCollection();
-	//620
-
-
+	
 	SetOrthoRenderSize(g_dglo.m_orthoRenderRect.right, g_dglo.m_orthoRenderRect.GetHeight(), -g_dglo.m_orthoRenderRect.left, -g_dglo.m_orthoRenderRect.top);
-	if (5 > 9)
+	
+	if (5 > 9) //I'm sorry about this
 	{
 		trigger_start:
 		g_bInitiateScreenMove = false;
 		bCaptureScreen = true;    
 	}
 
-
 	check_joystick();
 
 #ifdef C_DINK_KEYBOARD_INPUT
-	
 	
 if (GetApp()->GetCheatsEnabled())
 {
@@ -15665,7 +15684,6 @@ if (GetApp()->GetCheatsEnabled())
 	}
 }
 
-
 #endif
 	
 	if (g_dglos.g_gameMode == 1) 
@@ -15680,8 +15698,6 @@ if (GetApp()->GetCheatsEnabled())
 		}
 	}
 
-
-	
 
 #ifdef _WIN32
 	static int LastWindowsTimer = 0;
@@ -15718,7 +15734,6 @@ LastWindowsTimer = GetTickCount();
 
 	g_dglos.lastTickCount = g_dglos.g_dinkTick;
 	g_dglos.g_dinkTick = GetBaseApp()->GetGameTick();
-
 	
 	int fps_final = g_dglos.g_dinkTick - g_dglos.lastTickCount;
 
@@ -15769,8 +15784,6 @@ LastWindowsTimer = GetTickCount();
 
 		update_sound();
 	
-	
-	
 		//TODO Animated tiles
 		//if (IsDesktop())
 		{
@@ -15782,7 +15795,6 @@ LastWindowsTimer = GetTickCount();
 	state[1] = 0;  
 
 	//figure out frame rate
-
 
 	if (g_itemScreenActive)
 	{
@@ -15798,7 +15810,6 @@ LastWindowsTimer = GetTickCount();
 	}
 
 	ProcessTransition();
-
 
 	if (g_dglos.process_upcycle) 
 	{
@@ -15861,9 +15872,20 @@ LastWindowsTimer = GetTickCount();
 
 //	lpDDSBack->BltFast( 0, 0, lpDDSBackGround, &rcRect, DDBLTFAST_NOCOLORKEY);
 	{
-		rtRect32 rcRectGameArea(g_dglo.m_gameArea.left, g_dglo.m_gameArea.top, g_dglo.m_gameArea.right, g_dglo.m_gameArea.bottom);
-		lpDDSBack->BltFast(g_dglo.m_gameArea.left, g_dglo.m_gameArea.top, lpDDSBackGround,
-			&rcRectGameArea, DDBLTFAST_NOCOLORKEY);
+		
+//		rtRect32 rcRectGameArea(g_dglo.m_gameArea.left, g_dglo.m_gameArea.top, g_dglo.m_gameArea.right, g_dglo.m_gameArea.bottom);
+		
+		//rtRect32 rcRectGameArea(g_dglo.m_nativeGameArea.left, g_dglo.m_nativeGameArea.top, g_dglo.m_nativeGameArea.right, g_dglo.m_nativeGameArea.bottom);
+
+		//rtRect32 rcRectGameArea(g_dglo.m_orthoRenderRect.left, g_dglo.m_nativeGameArea.top, g_dglo.m_nativeGameArea.right, g_dglo.m_nativeGameArea.bottom);
+
+	//	lpDDSBack->BltFast(g_dglo.m_gameArea.left, g_dglo.m_gameArea.top, lpDDSBackGround,
+		//	&rcRectGameArea, DDBLTFAST_NOCOLORKEY);
+
+
+		lpDDSBack->BltFast(0, 0, lpDDSBackGround,
+			&g_dglo.m_orthoRenderRect, DDBLTFAST_NOCOLORKEY);
+
 	}
 
 
@@ -16080,6 +16102,7 @@ void SetDefaultVars(bool bFullClear)
 	memset(g_dglo.m_dirInputFinished, 0, sizeof(DINK_INPUT_COUNT*sizeof(bool)));
 	clear_talk();
 	
+
 	no_transition = false;
 	g_abort_this_flip = false;
 	g_dglos.screenlock = 0;
@@ -16119,6 +16142,9 @@ void SetDefaultVars(bool bFullClear)
 	g_dglos.cycle_script = 0;
 	g_dglos.but_timer = 0;
 	g_dglo.m_bgSpriteMan.Clear();
+	g_dglos.last_fill_screen_palette_color = 0;
+	g_dglos.copy_bmp_to_screen[0] = 0;
+	g_dglos.status_might_not_require_update = 0;
 
 	no_cheat =  !GetApp()->GetCheatsEnabled();
 	g_itemScreenActive = false;
@@ -16171,9 +16197,20 @@ string GetDMODStaticRootPath()
 
 }
 
-string GetDMODRootPath()
+void ClearCommandLineParms()
 {
+
+	GetBaseApp()->GetCommandLineParms().clear();
+}
+
+string GetDMODRootPath(string *pDMODNameOutOrNull)
+{
+	if (pDMODNameOutOrNull)
+	{
+		*pDMODNameOutOrNull = "";
+	}
 	
+
 #if defined(WIN32) || defined(PLATFORM_HTML5)
 	
 	string dmodpath = "dmods/";
@@ -16204,6 +16241,45 @@ string GetDMODRootPath()
 			}
 		}
 
+		if (parms[i] == "-game")
+		{
+			if (parms.size() > i + 1)
+			{
+
+				dmodpath = "";
+				for (int n = i + 1; n < parms.size(); n++)
+				{
+					dmodpath += parms[n];
+					if (n < parms.size() - 1)
+					{
+						dmodpath += " ";
+					}
+				}
+				StringReplace("\\", "/", dmodpath);
+				if (dmodpath[dmodpath.size() - 1] != '/') dmodpath += '/'; //need a trailing slash
+
+
+				int len = dmodpath.find_last_of("/", dmodpath.length()-2);
+				if (len == string::npos)
+				{
+					//no demod dir?  Weird but ok
+					if (pDMODNameOutOrNull)
+						*pDMODNameOutOrNull = dmodpath;
+					dmodpath = "";
+				}
+				else
+				{
+					if (pDMODNameOutOrNull)
+						*pDMODNameOutOrNull = dmodpath.substr(len + 1, dmodpath.length());
+					dmodpath = dmodpath.substr(0, len+1);
+				}
+			}
+			else
+			{
+				LogMsg("-game used wrong");
+			}
+		}
+
 	}
 	
 	return dmodpath;
@@ -16222,10 +16298,10 @@ void InitDinkPaths(string gamePath, string gameDir, string dmodGameDir)
 	string dmodPath;
 	if (!dmodGameDir.empty())
 	{
-		dmodPath = RemoveTrailingBackslash(GetPathFromString(dmodGameDir));
+		dmodPath = RemoveTrailingBackslash(GetPathFromString(RemoveTrailingBackslash(dmodGameDir)));
 		dmodPath += "/"; //fixing problem with multiple slashes showing up on some OS's and am too lazy to "realyl" fix it or even correct that typo I just made
 		
-		dmodGameDir = RemoveTrailingBackslash (GetFileNameFromString(dmodGameDir));
+		dmodGameDir = RemoveTrailingBackslash (GetFileNameFromString(RemoveTrailingBackslash(dmodGameDir)));
 
 		if (dmodPath == dmodGameDir)
 		{
@@ -16291,8 +16367,10 @@ bool LoadGameChunk(int gameIDToLoad, float &progressOut)
 		
 		//init back buffer at 8 bit, if highcolor is needed later it will auto convert
 		lpDDSBackGround = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL, false);
-		fill_screen(0); //fill background with blank to start things off
-		
+		DDBLTFX     ddbltfx;
+		ddbltfx.dwFillColor = g_dglos.last_fill_screen_palette_color;
+		lpDDSBackGround->Blt(NULL, NULL, NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbltfx);
+
 		lpDDSBuffer = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL);
 
 		
@@ -16721,8 +16799,17 @@ bool LoadHeader(FILE *fp)
 		return false;
 	}
 
+	string tempGameDir = g_dglo.m_dmodGameDir;
+
 	LoadFromFile(g_dglo.m_dmodGameDir, fp);
 	LoadFromFile(g_dglo.m_gameDir, fp);
+
+	if (!FileExists(g_dglo.m_dmodGameDir + "dmod.diz"))
+	{
+		LogMsg("DMOD directory invalid. Trying original directory %s instead", g_dglo.m_savePath.c_str());
+		g_dglo.m_dmodGameDir = g_dglo.m_savePath;
+	}
+
 
 	uint32 gameTime;
 	LoadFromFile(gameTime, fp);
@@ -17058,9 +17145,9 @@ bool LoadState(string const &path, bool bLoadPathsOnly)
 		return false;
 	}
 
-	if ( g_dglos.g_gameMode > 2  || g_dglos.m_bRenderBackgroundOnLoad)
+//	if ( g_dglos.g_gameMode > 2  || g_dglos.m_bRenderBackgroundOnLoad)
 	{
-		BuildScreenBackground(false);
+		BuildScreenBackground(false, true);
 	}
 	
 	if (g_dglos.g_bShowingBitmap.active)
@@ -17322,7 +17409,11 @@ void DinkReInitSurfacesAfterVideoChange()
 			bHighColor = true;
 
 		SAFE_DELETE(lpDDSBackGround);
+		LogMsg("Initting Surface after video change");
 		lpDDSBackGround = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL, bHighColor);
+		DDBLTFX     ddbltfx;
+		ddbltfx.dwFillColor = g_dglos.last_fill_screen_palette_color;
+		lpDDSBackGround->Blt(NULL, NULL, NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbltfx);
 
 		g_onePixelSurf.HardKill();
 	}
@@ -17358,6 +17449,10 @@ void DinkOnForeground()
 		if (g_dglos.g_bShowingBitmap.active)
 		{
 			CopyBitmapToBackBuffer(g_dglos.g_lastBitmapShown);
+		}
+		if (g_dglos.copy_bmp_to_screen[0] != 0)
+		{
+			copy_bmp(g_dglos.copy_bmp_to_screen);
 		}
 	}
 

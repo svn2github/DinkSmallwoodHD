@@ -101,6 +101,7 @@ void DMODMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sen
 			PopUpCreate(pMenu, "This add-on appears to be missing or damaged.  Delete and re-install.", "", "cancel", "Continue", "", "", true);
 			return;
 		}
+		
 		InitDinkPaths(GetBaseAppPath(), "dink", dmoddir);
 
 		pMenu = GetEntityRoot()->GetEntityByName("DMODMenu");
@@ -254,7 +255,7 @@ void AddDMODBar(Entity *pParent, float &x, float &y, string title, string descri
 	//processing the icon image might be slow, lets do it a bit later, sequencing the timing by using the y, which should be going up
 	pBG->GetFunction("SetupExtra")->sig_function.connect(&DMODSetupExtra);
     VariantList vList(pBG);
-	GetMessageManager()->CallEntityFunction(pBG, 800+count*200, "SetupExtra", &vList); 
+	GetMessageManager()->CallEntityFunction(pBG, 300+count*50, "SetupExtra", &vList); 
 
 	//the delete icon part
 bool bCanDelete = true;
@@ -315,6 +316,7 @@ if (bCanDelete)
 	//add animation effect
 	ZoomToPositionFromThisOffsetEntity(pBG, CL_Vec2f(GetScreenSizeXf(), 0), 500, INTERPOLATE_EASE_TO, 10);
 }
+
 void GetParsedDMODInfo(string dmodPath, string &nameOut, float versionOut, string &copyright, string &dmodwebsite, string &description)
 {
 	

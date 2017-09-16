@@ -17,7 +17,7 @@ bool InitializeVideoSystem()
 	
 	g_palette.Init(8,8, SoftSurface::SURFACE_PALETTE_8BIT);
 	g_palette.SetPaletteFromBMP("dink/tiles/palette.bmp", SoftSurface::COLOR_KEY_NONE);
-
+	
 	return true;
 }
 
@@ -186,6 +186,22 @@ int IDirectDrawSurface::Blt( rtRect32 *pDestRect, IDirectDrawSurface * pSrcSurf,
 		{
 			assert(pFX);
 			assert(pDestRect == NULL && "Well, we only support modifying the entire screen");
+			
+			//don't ask me why, but the original directx had these backwards. Palette is correct
+
+			if (m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGB || m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGBA)
+			{
+				if (pFX->dwFillColor == 0)
+				{
+					pFX->dwFillColor = 255;
+				}
+				else if (pFX->dwFillColor == 255)
+				{
+					pFX->dwFillColor = 0;
+				}
+			}
+			
+
 			m_pSurf->FillColor(g_palette.GetPalette()[pFX->dwFillColor]);
 			return DD_OK;
 		}

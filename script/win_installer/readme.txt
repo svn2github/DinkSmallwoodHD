@@ -21,6 +21,11 @@ Escape - Bring up menu
 NOTE: If you have a controller (like an xbox 360 pad) plugged in when you start the game, you can use that instead of keyboard, but you still need to use the
 mouse to navigate the initial menus to start the game
 
+Supported command line options:
+
+-game <dmod directory> (Example:  dink.exe -game c:\dmods\island ) (this also sets -dmodpath automatically to the dmods parent directory)
+-dmodpath <dir containing DMOD dirs> (Example:  dink.exe -game c:\dmods )
+
 
 ------------- BETA VERSION -----------------
 
@@ -86,3 +91,11 @@ www.rtsoft.com
 * (Windows) Handles alt-tab and clicking on a different monitor while in native fullscreen modes better
 * Added "Ghost walk toggle" to in-game cheat menu.  Allows you to walk through solid objects and screenlocks
 * (DinkC) Added support for Dan's load_tile() command
+* (Windows) Added support for -game <dmod directory> parm to load a DMOD from anywhere on your HD. It also sets 
+	the active DMOD dir to the DMODs parent directory for that session.  Automatic state autosave, save/continue and quicksave/quickload work as expected by saving data to its directory
+* (bugfix) Save states now properly load even if the DMOD directory has been cut and pasted to a new place
+* (bugfix) Full state saves now properly setup backgrounds with correct vision modifications instead of assuming it was 0
+- Due to minor changes in the save state stuff, I've versioned it so the game will refuse to load old versions (as always, this doesn't affect the normal save files, just the full state saves HD does)
+* (DinkC) fill_screen works better and colors 0 and 255 are no longer sometimes reversed
+* (bugfix) M can now be used to turn off the map, previously it only worked to turn it on
+* (bugfix) Status no longer incorrectly draws over full screen bitmaps (like the map in Mystery Island) and is properly reconstructed in full save states

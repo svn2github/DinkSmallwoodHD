@@ -16,12 +16,14 @@ bool InitDinkEngine();
 bool LoadGameChunk(int gameIDToLoad, float &progressOut); //0 for new game
 void updateFrame();
 void finiObjects();
+void ClearCommandLineParms();
+
 struct SpriteStruct;
 
 //finished loading is used with g_dglo.m_curLoadState to fake the loader out
 #define FINISHED_LOADING 100
 
-
+void ClearBitmapCopy();
 
 enum eDinkInput
 {
@@ -702,7 +704,12 @@ struct DinkGlobalsStatic
 	
 	
 	char g_lastBitmapShown[C_SHOWN_BITMAP_SIZE];
-	char m_bufferForExpansion[4968];
+	int32 last_fill_screen_palette_color;
+
+	char copy_bmp_to_screen[C_SHOWN_BITMAP_SIZE];
+	int32 status_might_not_require_update;
+
+	char m_bufferForExpansion[4835];
 };
 
 
@@ -720,7 +727,7 @@ bool load_game_small(int num, char * line, int *mytime);
 void InitDinkPaths(string gamePath, string gameDir, string dmodGameDir);
 void DinkUnloadGraphicsCache();
 void ProcessGraphicGarbageCollection();
-string GetDMODRootPath(); //where dmods are stored
+string GetDMODRootPath(string *pDMODNameOutOrNull = NULL); //where dmods are stored
 bool DinkIsWaitingForSkippableDialog();
 bool DinkSkipDialogLine(); //returns true if a line was actually skipped
 void DinkSetCursorPosition(CL_Vec2f vPos);

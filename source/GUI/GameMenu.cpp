@@ -367,9 +367,6 @@ void OnGameProcessHWKey(VariantList *pVList)
 {
 	if (pVList->Get(0).GetFloat() != MESSAGE_TYPE_GUI_CHAR) return;
 
-	if (DinkCanRunScriptNow())
-	{
-
 		char c = toupper(char(pVList->Get(2).GetUINT32()));
 	
 		if (c > 28 && c < 255)
@@ -386,10 +383,13 @@ void OnGameProcessHWKey(VariantList *pVList)
 				break;
 
 			default:
-				DinkLoadPlayerScript(string("key-"+toString(int(c))));
+				if (DinkCanRunScriptNow())
+				{
+					DinkLoadPlayerScript(string("key-" + toString(int(c))));
+				}
 			}
 		}
-	}
+	
 	//LogMsg("Got a %c (%d)", char(pVList->Get(2).GetUINT32()), pVList->Get(2).GetUINT32());
 }
 
@@ -1324,6 +1324,7 @@ void GameLoadPiece(VariantList *pVList)
 			if (!bSuccess)
 			{
 				RemoveFile(stateToLoad, false);
+				WriteLastPathSaved("");
 				Entity *pMenu = DinkQuitGame();
 				PopUpCreate(pMenu, "Error loading save state.  Probably an older version, sorry.", "", "cancel", "Continue", "", "", true);
 				return;

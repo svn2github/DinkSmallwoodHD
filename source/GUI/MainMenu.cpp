@@ -19,6 +19,7 @@ bool g_bMainMenuFirstTime = true;
 bool g_bDidVersionCheck = false;
 
 Entity * VersionShowScoreMessage(Entity *pMenu, string msg);
+void GetParsedDMODInfo(string dmodPath, string &nameOut, float versionOut, string &copyright, string &dmodwebsite, string &description);
 
 void ReloadMainMenu(VariantList *pVList)
 {
@@ -41,6 +42,7 @@ void OnVersionDownloadError(VariantList *pVList)
 
 	//kill current menu
 	GetMessageManager()->CallEntityFunction(pMenu, 1000, "OnDelete", NULL);
+	pMenu->SetName("MainMenuDelete");
 
 	//reload the main menu in a bit
 	
@@ -108,6 +110,7 @@ void OnVersionDownloadHTTPFinish(VariantList *pVList)
 
 	//kill current menu
 	GetMessageManager()->CallEntityFunction(pMenu, 1000, "OnDelete", NULL);
+	pMenu->SetName("MainMenuDelete");
 
 	//reload the main menu in a bit
 
@@ -131,6 +134,7 @@ void MainMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sen
 		//slide it off the screen and then kill the whole menu tree
 		SlideScreen(pEntClicked->GetParent(), false);
 		GetMessageManager()->CallEntityFunction(pEntClicked->GetParent(), 500, "OnDelete", NULL);
+	
 		GameCreate(pEntClicked->GetParent()->GetParent(), 0, "");
 		GetApp()->GetVar("showViewHint")->Set(uint32(0)); //so this won't be shown here
 
@@ -234,6 +238,7 @@ void MainOnStartLoading(VariantList *pVList)
 	DisableAllButtonsEntity(pBG);
 	SlideScreen(pBG, false);
 	GetMessageManager()->CallEntityFunction(pBG, 500, "OnDelete", NULL);
+	pBG->SetName("MainMenuDelete");
 
 	string fName = GetNextDMODToInstall();
 	if (!fName.empty())
@@ -243,6 +248,82 @@ void MainOnStartLoading(VariantList *pVList)
 	{
 		GameCreate(pBG->GetParent(), 0, fileName, "Continuing last game...");
 	}
+}
+
+
+void MainMenuDMODMenuOnSessionNew(VariantList *pVList)
+{
+	Entity *pMenu = pVList->Get(0).GetEntity();
+
+	DisableAllButtonsEntity(pMenu);
+	SlideScreen(pMenu, false);
+	GetMessageManager()->CallEntityFunction(pMenu, 500, "OnDelete", NULL);
+	pMenu->SetName("MainMenuDelete");
+
+	GameCreate(pMenu->GetParent(), 0, "");
+}
+
+void MainMenuDMODMenuOnSessionContinue(VariantList *pVList)
+{
+	Entity *pMenu = pVList->Get(0).GetEntity();
+
+	DisableAllButtonsEntity(pMenu);
+	SlideScreen(pMenu, false);
+	GetMessageManager()->CallEntityFunction(pMenu, 500, "OnDelete", NULL);
+	pMenu->SetName("MainMenuDelete");
+
+	GameCreate(pMenu->GetParent(), 0, g_dglo.m_savePath + "continue_state.dat");
+}
+
+void MainMenuDMODCancel(VariantList *pVList)
+{
+	Entity *pMenu = pVList->Get(0).GetEntity();
+
+	DisableAllButtonsEntity(pMenu);
+	SlideScreen(pMenu, false);
+	GetMessageManager()->CallEntityFunction(pMenu, 500, "OnDelete", NULL);
+	pMenu->SetName("MainMenuDelete");
+	//reload the main menu
+	MainMenuCreate(pMenu->GetParent());
+}
+
+void MainOnStartLoadingDMOD(VariantList *pVList)
+{
+	Entity *pBG = pVList->m_variant[0].GetEntity();
+
+	string fileName = pVList->m_variant[1].GetString();
+
+
+	//first check to see if it's a valid dmod
+	string dmoddir = pBG->GetVar("start_full_dmod_dir")->GetString();
+	
+	if (!FileExists(dmoddir + "/dmod.diz"))
+	{
+		//don't look valid..
+		PopUpCreate(pBG, "The DMOD at "+dmoddir+" appears to be missing or damaged. Ignoring it.", "", "CancelDMODLoad", "Continue", "", "", true);
+		return;
+	}
+
+	string dmodName, dmodCopyright, dmodwebsite, description;
+	float version = 0;
+	GetParsedDMODInfo(dmoddir, dmodName, version, dmodCopyright, dmodwebsite, description);
+	
+	InitDinkPaths(GetBaseAppPath(), "dink", dmoddir);
+	
+	//next, see if there is a save-on-quit save state existing for this dmod
+	if (FileExists(g_dglo.m_savePath + "/continue_state.dat"))
+	{
+		PopUpCreate(pBG, "Continue your last session in "+ dmodName+"?", "",  "CancelDMODLoad", "Cancel", "SessionContinue", "Continue", true, "SessionNew", "New Game");
+		return;
+	}
+	
+	DisableAllButtonsEntity(pBG);
+	SlideScreen(pBG, false);
+	GetMessageManager()->CallEntityFunction(pBG, 500, "OnDelete", NULL);
+	pBG->SetName("MainMenuDelete");
+
+	GameCreate(pBG->GetParent(), 0, "", "Loading "+dmodName);
+	
 }
 
 
@@ -305,6 +386,8 @@ void CheckForImportedSavedGames()
 	}
 }
 
+
+
 void MainMenuContinueLast(VariantList *pVList)
 {
 	Entity *pBG = pVList->Get(0).GetEntity();
@@ -321,12 +404,13 @@ void MainMenuContinueLastNewStyle(VariantList *pVList)
 {
 	Entity *pBG = pVList->Get(0).GetEntity();
 
+	//ClearCommandLineParms();
 	pBG->GetFunction("OnStartLoading")->sig_function.connect(&MainOnStartLoading);
     VariantList vList(pBG, ReadLastPathSaved()+string("continue_state.dat"));
 	GetMessageManager()->CallEntityFunction(pBG, 1000, "OnStartLoading", &vList); 
 	g_bMainMenuFirstTime = false;
-	WriteLastPathSaved("");
-	LogMsg("Contining");
+	//WriteLastPathSaved("");
+	LogMsg("Continuing");
 }
 
 void MainMenuCancelLast(VariantList *pVList)
@@ -338,6 +422,7 @@ void MainMenuCancelLast(VariantList *pVList)
 
 	//kill current menu
 	GetMessageManager()->CallEntityFunction(pMenu, 0, "OnDelete", NULL);
+	pMenu->SetName("MainMenuDelete");
 
 	//reload the main menu
 	MainMenuCreate(pMenu->GetParent());
@@ -452,8 +537,7 @@ Entity * MainMenuCreate( Entity *pParentEnt, bool bFadeIn )
 		vAboutButPt = CL_Vec2f(512, 454);
 		vOptionsButPt = CL_Vec2f(716, 455);
 	}
-
-
+	
 
 #ifdef RT_IS_BETA
 	Entity *pText = CreateTextLabelEntity(pBG, "text", GetScreenSizeXf()/2, GetScreenSizeYf()-20, 
@@ -486,8 +570,36 @@ Entity * MainMenuCreate( Entity *pParentEnt, bool bFadeIn )
 	SetTouchPaddingEntity(pButtonEntity, CL_Rectf(0, 0, 0, -10)); //no padding, it overlaps other buttons..
 	pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&MainMenuOnSelect);
 	FadeInEntity(pButtonEntity, false, 300, 1000);
+	
 
+	static bool bOneTimeDMODLoaded = false;
 
+	if (!bOneTimeDMODLoaded)
+	{
+		bOneTimeDMODLoaded = true;
+		string dmodfilename;
+		string dmodDir = GetDMODRootPath(&dmodfilename);
+
+		if (dmodfilename != "")
+		{
+			//jump start a DMOD load
+			pBG->GetFunction("OnStartLoadingDMOD")->sig_function.connect(&MainOnStartLoadingDMOD);
+			pBG->GetVar("start_full_dmod_dir")->Set(dmodDir + dmodfilename);
+			pBG->GetVar("start_dmod_dir")->Set(dmodfilename);
+
+			VariantList vList(pBG, string(""));
+			GetMessageManager()->CallEntityFunction(pBG, 1000, "OnStartLoadingDMOD", &vList);
+
+			pBG->GetFunction("SessionNew")->sig_function.connect(&MainMenuDMODMenuOnSessionNew);
+			pBG->GetFunction("SessionContinue")->sig_function.connect(&MainMenuDMODMenuOnSessionContinue);
+			pBG->GetFunction("CancelDMODLoad")->sig_function.connect(&MainMenuDMODCancel);
+
+			return pBG;
+		}
+	}
+
+	
+	
 	if ( ! GetNextDMODToInstall().empty())
 	{
 		pBG->GetFunction("OnStartLoading")->sig_function.connect(&MainOnStartLoading);
@@ -501,13 +613,17 @@ Entity * MainMenuCreate( Entity *pParentEnt, bool bFadeIn )
 		{
 			PopUpCreate(pBG, "Continue your last session?", "", "CancelLast", "Cancel", "ContinueLast", "Continue", true);
 			return pBG;
-		} else 	if (!ReadLastPathSaved().empty())
-		{
-			PopUpCreate(pBG, "Continue your last session?", "", "CancelLast", "Cancel", "ContinueLastNewStyle", "Continue", true);
-			return pBG;
-		} else
+		};
+		
+		if (!ReadLastPathSaved().empty())
 		{
 
+			string lastDMOD = ReadLastPathSaved();
+
+			PopUpCreate(pBG, "Continue your last session?", "", "CancelLast", "Cancel", "ContinueLastNewStyle", "Continue", true);
+			return pBG;
+		}
+		
 			if (g_bMainMenuFirstTime)
 			{
 #ifdef RT_MOGA_ENABLED
@@ -555,9 +671,8 @@ Entity * MainMenuCreate( Entity *pParentEnt, bool bFadeIn )
 			pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&MainMenuOnSelect);
 			SetTouchPaddingEntity(pButtonEntity, CL_Rectf(0,0,0,0));
 			FadeInEntity(pButtonEntity, false, 500, 1500);
-
 			DestroyUnusedTextures();
-		}
+	
 
 	//pButtonEntity = CreateTextButtonEntity(pBG, "Debug", x, y, "Debug and MP3 Music"); y += ySpacer;
 	//pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&MainMenuOnSelect);

@@ -516,6 +516,7 @@ if (GetEmulatedPlatformID() == PLATFORM_ID_IOS)
 	GetAudioManager()->Preload("audio/click.wav");
 	InitDinkPaths(GetBaseAppPath(), "dink", "");
 	
+
 	GetBaseApp()->m_sig_pre_enterbackground.connect(1, boost::bind(&App::OnPreEnterBackground, this, _1));
 	
 	
