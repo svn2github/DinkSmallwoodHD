@@ -201,7 +201,7 @@ struct sequence
 
 const int32 C_DINK_SCREENSIZE_X = 640;
 const int32 C_DINK_SCREENSIZE_Y = 480;
-const int32 C_DINK_VERSION = 109;
+const int32 C_DINK_VERSION = 110;
 const int32 num_soundbanks = 20;
 const int32 max_idata = 1000; 
 const int32 max_sounds = 100;
@@ -593,6 +593,7 @@ struct pic_info
 	int16 xoffset;
 	int16 m_parentSeq;
 	byte m_bCustomSettingsApplied;
+	int16 m_parentFrame;
 };
 
 extern LPDIRECTDRAWSURFACE     g_pSpriteSurface[C_MAX_SPRITES];

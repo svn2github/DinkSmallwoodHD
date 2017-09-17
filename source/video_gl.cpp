@@ -188,21 +188,28 @@ int IDirectDrawSurface::Blt( rtRect32 *pDestRect, IDirectDrawSurface * pSrcSurf,
 			assert(pDestRect == NULL && "Well, we only support modifying the entire screen");
 			
 			//don't ask me why, but the original directx had these backwards. Palette is correct
+			if (pFX->dwFillColor == 0)
+			{
+				pFX->dwFillColor = 255;
+			}
+			else if (pFX->dwFillColor == 255)
+			{
+				pFX->dwFillColor = 0;
+			}
 
 			if (m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGB || m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGBA)
 			{
-				if (pFX->dwFillColor == 0)
-				{
-					pFX->dwFillColor = 255;
-				}
-				else if (pFX->dwFillColor == 255)
-				{
-					pFX->dwFillColor = 0;
-				}
+				m_pSurf->FillColor(g_palette.GetPalette()[pFX->dwFillColor]);
+			}
+			else
+			{
+				//sort of a hack for 8 bit index passing
+				glColorBytes palIndex(pFX->dwFillColor, 0, 0, 255);
+				m_pSurf->FillColor(palIndex);
+
 			}
 			
 
-			m_pSurf->FillColor(g_palette.GetPalette()[pFX->dwFillColor]);
 			return DD_OK;
 		}
 		if (pSrcSurf && pSrcSurf->m_pSurf && pSrcSurf->m_pSurf->GetSurfaceType() != SoftSurface::SURFACE_NONE)

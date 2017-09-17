@@ -99,3 +99,10 @@ www.rtsoft.com
 * (DinkC) fill_screen works better and colors 0 and 255 are no longer sometimes reversed
 * (bugfix) M can now be used to turn off the map, previously it only worked to turn it on
 * (bugfix) Status no longer incorrectly draws over full screen bitmaps (like the map in Mystery Island) and is properly reconstructed in full save states
+
+------ Change log for 1.7.3 ----------
+
+* (DinkC) DinkC version is now reported as 110 instead of 109
+* (Bugfix) Fixed issue with set_frame_frame, the DMOD Mayhem now works (is this DMOD for pyschopaths?!?! Not saying I didn't have fun though)
+* (Bugfix) Fixed another incorrect color issue with fill_screen
+* (Bugfix) Fixed horrible issue where the last line in a script might not get run.  T

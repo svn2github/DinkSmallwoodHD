@@ -5,6 +5,8 @@
 #include "LogMenu.h"
 #include "GameMenu.h"
 
+extern bool g_script_debug_mode;
+
 void DebugMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sent from
 {
 	Entity *pEntClicked = pVList->m_variant[1].GetEntity();
@@ -95,6 +97,22 @@ void DebugMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity se
 		}
 	}
 
+	if (pEntClicked->GetName() == "debug_mode")
+	{
+		
+		if (g_script_debug_mode)
+		{
+			g_script_debug_mode = false;
+			ShowQuickMessage("DinkC debug logging disabled");
+		}
+		else
+		{
+			g_script_debug_mode = true;
+			ShowQuickMessage("DinkC debug logging enabled");
+
+		}
+	}
+
 	if (pEntClicked->GetName() == "empty_cache")
 	{
 		DinkUnloadGraphicsCache();
@@ -140,6 +158,10 @@ if (GetApp()->GetCheatsEnabled())
 }
 	pButtonEntity = CreateTextButtonEntity(pBG, "log", x, y, "View log"); y += ySpacer;
 	pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&DebugMenuOnSelect);
+
+	pButtonEntity = CreateTextButtonEntity(pBG, "debug_mode", x, y, "Debug DinkC Toggle"); y += ySpacer;
+	pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&DebugMenuOnSelect);
+
 
 	pButtonEntity = CreateTextButtonEntity(pBG, "Back", x, y, "Back"); y += ySpacer;
 	pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&DebugMenuOnSelect);

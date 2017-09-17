@@ -16,7 +16,7 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly);
 
 #define C_DINK_SCREEN_TRANSITION_TIME_MS 400
 
-const float SAVE_FORMAT_VERSION = 2.0f;
+const float SAVE_FORMAT_VERSION = 2.1f;
 const int C_DINK_FADE_TIME_MS = 300;
 
 const float G_TRANSITION_SCALE_TRICK = 1.01f;
@@ -90,7 +90,7 @@ int32 g_nlist[10];
 char in_default[200];
 bool g_bInitiateScreenMove;
 bool g_bTransitionActive;
-bool debug_mode;
+bool g_script_debug_mode;
 uint16 decipher_savegame;
 uint32 g_soundTimer = 0;
 
@@ -502,6 +502,7 @@ void setup_anim (int seq, int sequence,int delay)
 		g_dglos.g_seq[seq].frame[o] = g_dglos.g_seq[sequence].s+o;
 		g_dglos.g_seq[seq].delay[o] = delay;
 		g_dglos.g_picInfo[g_dglos.g_seq[seq].frame[o]].m_parentSeq = seq; //so we can know who the parent is if we need to reload later
+		g_dglos.g_picInfo[g_dglos.g_seq[seq].frame[o]].m_parentFrame = o; //so we can know who the parent is if we need to reload later
 	}
 
 #ifdef _DEBUG
@@ -2076,19 +2077,47 @@ void ReadFromLoadSequenceString(char ev[15][100] )
 
 
 }
-
 bool ReloadSequence(int seqID, int frame, bool bScanOnly)
 {
 
 	//handle a possible case where we need to always load frame 1 before any other frame to get the correct offset for anims
-	if (frame > 1 && !bScanOnly && g_dglos.g_seq[seqID].m_bIsAnim)	
+	if (frame > 1 && !bScanOnly && g_dglos.g_seq[seqID].m_bIsAnim)
 	{
+			if (g_dglos.g_seq[seqID].frame[frame] == 0) //make sure it's not already loaded
 		ReloadSequence(seqID, 1, bScanOnly);
 	}
-	
-	
-	return load_sprites(g_dglos.g_seq[seqID].m_fileName,seqID,g_dglos.g_seq[seqID].m_speed,g_dglos.g_seq[seqID].m_xoffset,g_dglos.g_seq[seqID].m_yoffset, g_dglos.g_seq[seqID].m_hardbox,
-			g_dglos.g_seq[seqID].m_transType, g_dglos.g_seq[seqID].m_bLeftAlign, bScanOnly, frame); //Crap
+
+	bool bReturn = load_sprites(g_dglos.g_seq[seqID].m_fileName, seqID, g_dglos.g_seq[seqID].m_speed, g_dglos.g_seq[seqID].m_xoffset, g_dglos.g_seq[seqID].m_yoffset, g_dglos.g_seq[seqID].m_hardbox,
+		g_dglos.g_seq[seqID].m_transType, g_dglos.g_seq[seqID].m_bLeftAlign, bScanOnly, frame); 
+																								
+	if (g_dglos.g_seq[seqID].m_bFrameSetUsed)
+	{
+		//a set_frame_frame has been used here.  This means we may reference another sprite that isn't loaded yet, better check
+		for (int i = 0; i < C_MAX_SPRITE_FRAMES; i++)
+		{
+			if (g_dglos.g_seq[seqID].frame[i] == 0)
+			{
+				//done I guess
+				continue; //it's blank
+			}
+
+			if (!g_pSpriteSurface[g_dglos.g_seq[seqID].frame[i]])
+			{
+				//this needs to be loaded
+#ifdef _DEBUG
+//	if (seqID == 470 && i == 9)
+				{
+					//LogMsg("Need to load pic %d that was in seq %d frame %d.  The parent is seq %d", g_dglos.g_seq[seqID].frame[i], seqID, i, g_dglos.g_picInfo[g_dglos.g_seq[seqID].frame[i]].m_parentSeq);
+#endif
+				}
+
+				check_seq_status(g_dglos.g_picInfo[g_dglos.g_seq[seqID].frame[i]].m_parentSeq, g_dglos.g_picInfo[g_dglos.g_seq[seqID].frame[i]].m_parentFrame);
+			}
+		}
+	}
+																								
+
+	return bReturn;
 }
 
 bool figure_out(const char *line, int load_seq)
@@ -3038,7 +3067,7 @@ void kill_callbacks_owned_by_script(int script)
 	{
 		if (g_dglos.g_scriptCallback[i].owner == script)
 		{ 
-			if (debug_mode) LogMsg("Kill_all_callbacks just killed %d for script %d", i, script);
+			if (g_script_debug_mode) LogMsg("Kill_all_callbacks just killed %d for script %d", i, script);
 			//killed callback
 			g_dglos.g_scriptCallback[i].active = false;
 		}
@@ -3061,7 +3090,7 @@ void kill_script(int k)
 			}
 		}
 
-		if (debug_mode) LogMsg("Killed script %s. (num %d)", g_scriptInstance[k]->name, k);
+		if (g_script_debug_mode) LogMsg("Killed script %s. (num %d)", g_scriptInstance[k]->name, k);
 
 		free(g_scriptInstance[k]);
 		g_scriptInstance[k] = NULL;
@@ -3087,7 +3116,7 @@ void kill_all_scripts(void)
 			{
 			} else
 			{
-				if (debug_mode) LogMsg("Killed callback %d.  (was attached to script %d.)",k, g_dglos.g_scriptCallback[k].owner);      
+				if (g_script_debug_mode) LogMsg("Killed callback %d.  (was attached to script %d.)",k, g_dglos.g_scriptCallback[k].owner);      
 				g_dglos.g_scriptCallback[k].active = 0;
 			}
 		}
@@ -3860,7 +3889,7 @@ int add_callback(char name[20], int n1, int n2, int script)
 			g_dglos.g_scriptCallback[k].owner = script;
 			strcpy(g_dglos.g_scriptCallback[k].name, name);
 
-			if (debug_mode) LogMsg("Callback added to %d.", k);
+			if (g_script_debug_mode) LogMsg("Callback added to %d.", k);
 			return(k);
 		}
 
@@ -4450,7 +4479,7 @@ int var_figure(char h[200], int script)
 	n2 = atol(crap);
 
 	get_word(h, 2, crap);
-	if (debug_mode)
+	if (g_script_debug_mode)
 		LogMsg("Compared %d to %d",n1, n2);
 
 	if (compare(crap, (char*)"=="))
@@ -6353,7 +6382,7 @@ void add_item(char name[10], int mseq, int mframe, bool magic)
 		{
 			if (g_dglos.g_playerInfo.g_itemData[i].active == false)
 			{
-				if (debug_mode)
+				if (g_script_debug_mode)
 					LogMsg("Weapon/item %s added to inventory.",name);
 				g_dglos.g_playerInfo.g_itemData[i].seq = mseq;
 				g_dglos.g_playerInfo.g_itemData[i].frame = mframe;
@@ -6385,7 +6414,7 @@ void add_item(char name[10], int mseq, int mframe, bool magic)
 		{
 			if (g_dglos.g_playerInfo.g_MagicData[i].active == false)
 			{
-				if (debug_mode)
+				if (g_script_debug_mode)
 					LogMsg("Magic %s added to inventory.",name);
 				g_dglos.g_playerInfo.g_MagicData[i].seq = mseq;
 				g_dglos.g_playerInfo.g_MagicData[i].frame = mframe;
@@ -6826,7 +6855,7 @@ pass:
 		if (compare(ev[1], (char*)"return"))
 		{
 
-			if (debug_mode) LogMsg("Found return; statement");
+			if (g_script_debug_mode) LogMsg("Found return; statement");
 
 			h = &h[strlen(ev[1])];
 			strip_beginning_spaces(h);
@@ -6856,14 +6885,14 @@ pass:
 
 			if (g_dglos.g_returnint != 0)
 			{
-				if (debug_mode) LogMsg("If returned true");
+				if (g_script_debug_mode) LogMsg("If returned true");
 
 
 			} else
 			{
 				//don't do it!
 				g_scriptInstance[script]->skipnext = true;
-				if (debug_mode) LogMsg("If returned false, skipping next thing");
+				if (g_script_debug_mode) LogMsg("If returned false, skipping next thing");
 			}
 
 			//DO STUFF HERE! 
@@ -7478,7 +7507,7 @@ pass:
 				g_sprite[g_nlist[0]].move_num = g_nlist[2];
 				g_sprite[g_nlist[0]].move_nohard = g_nlist[3];
 				g_sprite[g_nlist[0]].move_script = 0; 
-				if (debug_mode) LogMsg("Moving: Sprite %d, dir %d, num %d", g_nlist[0],g_nlist[1], g_nlist[2]);
+				if (g_script_debug_mode) LogMsg("Moving: Sprite %d, dir %d, num %d", g_nlist[0],g_nlist[1], g_nlist[2]);
 
 
 			}
@@ -7949,7 +7978,7 @@ pass:
 				g_sprite[g_nlist[0]].move_nohard = g_nlist[3];
 				g_sprite[g_nlist[0]].move_script = script; 
 				strcpy(pLineIn, h);  
-				if (debug_mode) LogMsg("Move_stop: Sprite %d, dir %d, num %d", g_nlist[0],g_nlist[1], g_nlist[2]);
+				if (g_script_debug_mode) LogMsg("Move_stop: Sprite %d, dir %d, num %d", g_nlist[0],g_nlist[1], g_nlist[2]);
 				return(2);
 
 			}
@@ -8123,7 +8152,7 @@ pass:
 				rtRect32 myrect(g_nlist[2], g_nlist[3], g_nlist[4], g_nlist[5]);
 				g_dglos.g_returnint = inside_box(g_nlist[0], g_nlist[1], myrect);
 
-				if (debug_mode)
+				if (g_script_debug_mode)
 					LogMsg("Inbox is int is %d and %d.  Nlist got %d.", g_dglos.g_returnint, g_nlist[0], g_nlist[1]);
 
 
@@ -8285,7 +8314,7 @@ pass:
 					if (g_sprite[ii].sp_index == g_nlist[0])
 					{
 
-						if (debug_mode) LogMsg("Sp returned %d.", ii);
+						if (g_script_debug_mode) LogMsg("Sp returned %d.", ii);
 						g_dglos.g_returnint = ii;
 						return(0);
 					}
@@ -9529,7 +9558,7 @@ LogMsg("%d scripts used", g_dglos.g_returnint);
 
 		if (compare(ev[1], (char*)"return;"))
 		{
-			if (debug_mode) LogMsg("Found return; statement");
+			if (g_script_debug_mode) LogMsg("Found return; statement");
 
 			if (g_scriptInstance[script]->proc_return != 0)
 			{
@@ -10281,7 +10310,7 @@ void run_script (int script)
 	returnstring[0] = 0;
 	if (g_scriptInstance[script] != NULL)
 	{
-		if (debug_mode)
+		if (g_script_debug_mode)
 			LogMsg("Script %s is entered at offset %d.", g_scriptInstance[script]->name, g_scriptInstance[script]->current);
 	} else
 	{
@@ -10293,6 +10322,7 @@ void run_script (int script)
 		while(1)
 		{
 
+			/*
 			if (ScriptEOF(script)) 
 			{
 				if (g_scriptInstance[script]->proc_return != 0)
@@ -10302,6 +10332,7 @@ void run_script (int script)
 				}
 				return;
 			}
+			*/
 
 			strip_beginning_spaces(line);
 			if (compare(line, "\n")) break;
@@ -10334,7 +10365,7 @@ crappa:
 
 			if (result == 2) 
 			{
-				if (debug_mode) LogMsg("giving script the boot");
+				if (g_script_debug_mode) LogMsg("giving script the boot");
 				//quit script
 				return;
 			}
@@ -10363,7 +10394,7 @@ redo2:
 
 			if (result == 2) 
 			{
-				if (debug_mode) LogMsg("giving script the boot");
+				if (g_script_debug_mode) LogMsg("giving script the boot");
 				//quit script
 				return;
 			}
@@ -10410,7 +10441,7 @@ void process_callbacks(void)
 			if (g_dglos.g_scriptCallback[k].owner > 0) if (g_scriptInstance[g_dglos.g_scriptCallback[k].owner] == NULL)
 			{
 				//kill this process, it's owner sprite is 'effin dead.
-				if (debug_mode) LogMsg("Killed callback %s because script %d is dead.",
+				if (g_script_debug_mode) LogMsg("Killed callback %s because script %d is dead.",
 					k, g_dglos.g_scriptCallback[k].owner);
 				g_dglos.g_scriptCallback[k].active = false;
 
@@ -10439,12 +10470,12 @@ void process_callbacks(void)
 							//kill this callback
 							g_dglos.g_scriptCallback[k].active = false;
 							run_script(g_dglos.g_scriptCallback[k].owner);
-							if (debug_mode) LogMsg("Called script %d with callback %d.", g_dglos.g_scriptCallback[k].owner, k);
+							if (g_script_debug_mode) LogMsg("Called script %d with callback %d.", g_dglos.g_scriptCallback[k].owner, k);
 
 						} else
 						{
 
-							if (debug_mode) LogMsg("Called proc %s with callback %d.", g_dglos.g_scriptCallback[k].name, k);
+							if (g_script_debug_mode) LogMsg("Called proc %s with callback %d.", g_dglos.g_scriptCallback[k].name, k);
 
 							//callback defined a proc name
 							if (locate(g_dglos.g_scriptCallback[k].owner,g_dglos.g_scriptCallback[k].name))
@@ -12195,7 +12226,7 @@ int check_if_move_is_legal(int u)
         return(0);
     if (u == 1) if (in_this_base(g_sprite[u].seq, g_dglos.mDinkBasePush)) return(0);
 
-    if (u == 1) if (!no_cheat) if (debug_mode) return(0);
+    if (u == 1) if (!no_cheat) if (g_script_debug_mode) return(0);
     
 	
 	int hardness = 0;
@@ -12884,7 +12915,7 @@ void missile_brain( int h, bool repeat)
                 if (g_sprite[h].range != 0)
                     InflateRect(&box, g_sprite[h].range,g_sprite[h].range);
 
-                if (debug_mode) draw_box(box, 33);
+                if (g_script_debug_mode) draw_box(box, 33);
 
 				if (inside_box(g_sprite[h].x, g_sprite[h].y, box))
                 {
@@ -14031,7 +14062,7 @@ void run_through_tag_list(int h, int strength)
                 if (g_sprite[h].range != 0) box.right -= range_amount;
             }
 
-            if (debug_mode) draw_box(box, 33);
+            if (g_script_debug_mode) draw_box(box, 33);
 
             if (inside_box(g_sprite[h].x, g_sprite[h].y, box))
             {   
@@ -14157,7 +14188,7 @@ void run_through_touch_damage_list(int h)
             box.left -= 2;
             box.top -= 2;
             box.bottom += 2;
-            if (debug_mode)     
+            if (g_script_debug_mode)     
                 draw_box(box, 33);
 
             if (inside_box(g_sprite[h].x, g_sprite[h].y, box))
@@ -15281,12 +15312,19 @@ void ThinkSprite(int h, bool get_frame)
 
 		if (g_sprite[h].kill > 0)
 		{
+#ifdef _DEBUG
+			if (h == 10)
+			{
+			//	LogMsg("Yo!");
+			}
+#endif
 			if (g_sprite[h].kill_timer == 0) g_sprite[h].kill_timer = g_dglos.g_dinkTick;
 			if (g_sprite[h].kill_timer + g_sprite[h].kill < g_dglos.g_dinkTick)
 			{
 
 				g_sprite[h].active = false;
-				//          Msg("Killing sprite %d.", h);
+				if (g_script_debug_mode)
+					LogMsg("Killing sprite %d.", h);
 
 				get_last_sprite();
 				if (g_sprite[h].callback > 0) 
@@ -15669,14 +15707,14 @@ if (GetApp()->GetCheatsEnabled())
 		{
 			g_DebugKeyTimer = GetApp()->GetGameTick()+500;	
 																																		
-					if (debug_mode) 
+					if (g_script_debug_mode) 
 			{
-				debug_mode = false;
+				g_script_debug_mode = false;
 				LogMsg("Debug mode off");
 			}
 			else 
 			{
-				debug_mode = true;
+				g_script_debug_mode = true;
 				LogMsg("Debug mode on");
 			}
 
@@ -16115,9 +16153,9 @@ void SetDefaultVars(bool bFullClear)
 	g_dglos.g_stopEntireGame = 0;
 	g_bInitiateScreenMove = false;
 	g_bTransitionActive = false;
-	debug_mode = false;
+	g_script_debug_mode = false;
 #ifdef _DEBUG
-//debug_mode = true; //script debugging mode
+	//g_script_debug_mode = true; //script debugging mode. Alt-D toggles this also, plus there is a toggle on the debug menu
 #endif
 	g_dglos.flub_mode = -500;
 	g_dglos.last_sprite_created = 1;
