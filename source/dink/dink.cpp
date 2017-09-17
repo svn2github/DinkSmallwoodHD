@@ -2060,8 +2060,9 @@ bool ReloadSequence(int seqID, int frame, bool bScanOnly)
 //	if (seqID == 470 && i == 9)
 				{
 					//LogMsg("Need to load pic %d that was in seq %d frame %d.  The parent is seq %d", g_dglos.g_seq[seqID].frame[i], seqID, i, g_dglos.g_picInfo[g_dglos.g_seq[seqID].frame[i]].m_parentSeq);
-#endif
+
 				}
+#endif
 
 				check_seq_status(g_dglos.g_picInfo[g_dglos.g_seq[seqID].frame[i]].m_parentSeq, g_dglos.g_picInfo[g_dglos.g_seq[seqID].frame[i]].m_parentFrame);
 			}
