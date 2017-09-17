@@ -7,7 +7,7 @@ To toggle a psuedo full screen mode, click Full Screen Toggle in the options.  (
 
 NOTE: Quick saves might give a "Can't load old version" error if the data format has changed.  However, normal Dink saves (using save machines, etc) will always work.
 
-Keyboard controls:
+Controls:
 
 F1 - Quick save
 F10 - Quick load
@@ -17,6 +17,7 @@ Space - Talk
 Enter - Inventory
 Shift - Magic
 Escape - Bring up menu
+Drag on window borders - scale the play area (when windowed)
 
 NOTE: If you have a controller (like an xbox 360 pad) plugged in when you start the game, you can use that instead of keyboard, but you still need to use the
 mouse to navigate the initial menus to start the game
@@ -103,6 +104,9 @@ www.rtsoft.com
 ------ Change log for 1.7.3 ----------
 
 * (DinkC) DinkC version is now reported as 110 instead of 109
-* (Bugfix) Fixed issue with set_frame_frame, the DMOD Mayhem now works (is this DMOD for pyschopaths?!?! Not saying I didn't have fun though)
-* (Bugfix) Fixed another incorrect color issue with fill_screen
-* (Bugfix) Fixed horrible issue where the last line in a script might not get run.  T
+* (Bugfix) Fixed issue with set_frame_frame, the DMOD Mayhem now works
+* (Bugfix) Fixed another incorrect color issue with fill_screen (This fixed Initiation's title screen)
+* (Bugfix) Fixed horrible issue where the last line in a script might not get run.  This fixed the intro screen to Lost Forest Romp
+* (Bugfix) Rewrote some nasty code that I could no longer understand, THE LAST QUEST (part 2)'s cool room slide/warp effect now works right
+* Added "Debug DinkC Toggle" to cheat menu, it shows collision boxes and causes the log (log.txt or choose view log from debug menu)
+- Note:  Save state format has been changed again, so old save states won't load

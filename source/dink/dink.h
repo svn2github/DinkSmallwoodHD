@@ -181,6 +181,7 @@ const int32 C_MAX_SCRIPTS = 200;
 struct sequence
 { 
 	int16 frame[C_MAX_SPRITE_FRAMES];
+	int16 originalFrame[C_MAX_SPRITE_FRAMES];
 	int16 delay[C_MAX_SPRITE_FRAMES];
 	unsigned char special[C_MAX_SPRITE_FRAMES];
 
