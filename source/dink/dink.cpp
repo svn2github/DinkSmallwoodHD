@@ -1558,7 +1558,7 @@ bool LoadSpriteSingleFrame(string fNameBase, int seq, int oo, int picIndex, eTra
 	//assert(!g_dglos.g_picInfo[g_cur_sprite].pSurface);
 		SAFE_DELETE(g_pSpriteSurface[picIndex]);
 #ifdef _DEBUG
-		if (seq == 471)
+		if (seq == 60 && oo == 2)
 		{
 			LogMsg("Woah, ");
 		}
@@ -1909,7 +1909,7 @@ void ReadFromLoadSequenceString(char ev[15][100] )
 	strcpy(g_dglos.g_seq[seqID].m_fileName, ev[2]);
 
 #ifdef _DEBUG
-	if (seqID == 423)
+	if (seqID == 59)
 	{
 		LogMsg("He");
 	}
@@ -3063,6 +3063,22 @@ void kill_script(int k)
 		}
 
 		if (g_script_debug_mode) LogMsg("Killed script %s. (num %d)", g_scriptInstance[k]->name, k);
+
+		//tell associated sprite that it no longer has a script
+		assert(C_MAX_SPRITES_AT_ONCE < 1000 && "I think 1000 has a special meaning so you better not do that?  Or was that -1000.  I dunno");
+/*
+	//NOTE:  This would fix a bug where a script doesn't properly remove itself from an owner sprite but.. could cause behavior differences so not enabling it for now
+		if (g_scriptInstance[k]->sprite > 0 && g_scriptInstance[k]->sprite < C_MAX_SPRITES_AT_ONCE)
+		{
+			if (g_sprite[g_scriptInstance[k]->sprite].active && g_sprite[g_scriptInstance[k]->sprite].script == k)
+			{
+				//um.. guess we should tell the sprite it no longer has an associated script, right?!
+				g_sprite[g_scriptInstance[k]->sprite].script = 0;
+			}
+
+		}
+		*/
+		g_scriptInstance[k] = NULL;
 
 		free(g_scriptInstance[k]);
 		g_scriptInstance[k] = NULL;
@@ -9489,6 +9505,12 @@ LogMsg("%d scripts used", g_dglos.g_returnint);
 					if (g_sprite[g_nlist[0]].script == 0)
 					{
 						LogMsg("Compare sprite script says: Sprite %d has no script.",g_nlist[0]);
+						return(0);
+					}
+
+					if (!g_scriptInstance[g_sprite[g_nlist[0]].script])
+					{
+						LogMsg("Compare sprite script says: Sprite %d says it has script %d, but actually it's null, so no?", g_nlist[0], g_sprite[g_nlist[0]].script);
 						return(0);
 					}
 					if (compare(slist[1], g_scriptInstance[g_sprite[g_nlist[0]].script]->name))

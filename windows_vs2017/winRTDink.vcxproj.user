@@ -7,6 +7,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug GL|Win32'">
     <LocalDebuggerWorkingDirectory>$(ProjectDir)</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>-game dmods/mayhem</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>-game dmods/dinkcrft</LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>

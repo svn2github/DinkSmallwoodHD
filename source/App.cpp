@@ -180,8 +180,8 @@ App::App()
 	m_bDidPostInit = false;
 	m_bHasDMODSupport = true;
 	//for mobiles
-	m_version = 1.72f;
-	m_versionString = "V1.7.2";
+	m_version = 1.74f;
+	m_versionString = "V1.7.4";
 	m_build = 1;
 	m_bCheatsEnabled = false;
 

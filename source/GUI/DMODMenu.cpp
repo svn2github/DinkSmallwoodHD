@@ -372,6 +372,18 @@ void GetParsedDMODInfo(string dmodPath, string &nameOut, float versionOut, strin
 }
 
 
+bool EndsWith(std::string const &fullString, std::string const &ending)
+{
+	if (fullString.length() >= ending.length()) 
+	{
+		return (0 == fullString.compare(fullString.length() - ending.length(), ending.length(), ending));
+	}
+	else
+	{
+		return false;
+	}
+}
+
 void DMODMenuAddScrollContent(Entity *pParent)
 {
 	pParent = pParent->GetEntityByName("scroll_child");
@@ -427,8 +439,9 @@ void DMODMenuAddScrollContent(Entity *pParent)
 	{
 #ifdef WIN32
 		
-		if ( IsInString(files[i], "/audio") || IsInString(files[i],"/dink" )|| IsInString(files[i] ,"/game") || IsInString(files[i],"/interface")) continue;
-			if (IsInString(files[i] ,"/develop") ) continue;
+		
+		if (EndsWith(files[i], "/audio") || EndsWith(files[i],"/dink" )|| EndsWith(files[i] ,"/game") || EndsWith(files[i],"/interface")) continue;
+			if (EndsWith(files[i] ,"/develop") ) continue;
 #else
 		if (IsInString(files[i],"/Snapshot") || IsInString(files[i], "/Snapshots")) continue;
 #endif

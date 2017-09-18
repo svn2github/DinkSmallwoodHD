@@ -3674,7 +3674,9 @@
     <Text Include="..\script\win_installer\readme.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="..\android\AndroidManifest.xml" />
+    <Xml Include="..\android\AndroidManifest.xml">
+      <SubType>Designer</SubType>
+    </Xml>
     <Xml Include="..\android\build.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -3739,8 +3741,12 @@
     <None Include="..\html5\build_release.bat" />
     <None Include="..\html5\UploadToWebsite.bat" />
     <None Include="..\html5\UploadToWebsiteFinal.bat" />
-    <None Include="..\Info.plist" />
-    <None Include="..\OSX\Info.plist" />
+    <None Include="..\Info.plist">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="..\OSX\Info.plist">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="winRTDink.rc" />

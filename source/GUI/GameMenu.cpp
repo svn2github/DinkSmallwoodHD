@@ -537,8 +537,11 @@ void BuildShowingBMPControls(float fadeTimeMS)
 	pButtonEntity->GetFunction("OnOverEnd")->sig_function.connect(&GameOnStopSelect);
 	SetButtonClickSound(pButtonEntity, ""); //no sound
 
-	Entity *pLabel = CreateTextLabelEntity(pBG, "label", GetScreenSizeXf()/2, iPhoneMapY(285), "(tap to continue)");
-	SetAlignmentEntity(pLabel, ALIGNMENT_CENTER);
+	if (!IsDesktop())
+	{
+		Entity *pLabel = CreateTextLabelEntity(pBG, "label", GetScreenSizeXf() / 2, iPhoneMapY(285), "(tap to continue)");
+		SetAlignmentEntity(pLabel, ALIGNMENT_CENTER);
+	}
 }
 
 

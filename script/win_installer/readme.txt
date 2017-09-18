@@ -109,4 +109,11 @@ www.rtsoft.com
 * (Bugfix) Fixed horrible issue where the last line in a script might not get run.  This fixed the intro screen to Lost Forest Romp
 * (Bugfix) Rewrote some nasty code that I could no longer understand, THE LAST QUEST (part 2)'s cool room slide/warp effect now works right
 * Added "Debug DinkC Toggle" to cheat menu, it shows collision boxes and causes the log (log.txt or choose view log from debug menu)
+* If fullscreen is at a weird size it will now just force it to 1024X768.  If that fails, well, it won't be good
 - Note:  Save state format has been changed again, so old save states won't load
+
+------ Change log for 1.7.4 ----------
+
+* (Bugfix) Fixed a script crash.  This bug was also in the legacy dink
+* (Windows) "Tap to continue" is no longer shown when waiting for a keypress, but will still be shown on touch-devices
+* Fixed bug where any DMOD directory starting with "dink" was ignored from the internal DMOD listing screen.  Oops, that was a pretty bad one, sorry dinkcrft.
