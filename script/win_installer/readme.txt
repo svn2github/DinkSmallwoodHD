@@ -135,6 +135,7 @@ www.rtsoft.com
 * Space no longer selects dialog, you'll have to use ENTER or CONTROL like on 1.08
 * Mouse can now be used to select dialog options
 * Fixed mouse issue with Bugmania in the town where it wasn't sending button down messages
+* Made escape open the Dink HD menu even when wait_for_button is being used.  This may be a problem if any DMODs require ESCAPE to be a button that is used though
 
 
 

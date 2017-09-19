@@ -6250,7 +6250,7 @@ void BuildScreenBackground( bool bFullRebuild, bool bBuildImageFromScratch )
 	if (g_forceBuildBackgroundFromScratch)
 	{
 		bBuildImageFromScratch = true;
-		g_forceBuildBackgroundFromScratch = false;
+	
 	}
 
 	if (bFullRebuild)
@@ -6279,7 +6279,7 @@ void BuildScreenBackground( bool bFullRebuild, bool bBuildImageFromScratch )
 
 restart:
 	
-	if (g_dglos.g_gameMode > 2)
+	if (g_dglos.g_gameMode > 2 || g_dglos.m_bRenderBackgroundOnLoad || bBuildImageFromScratch)
 	{
 		//we want to render tiles to the BG too
 
@@ -6311,6 +6311,8 @@ restart:
 				&rcRect, DDBLTFAST_NOCOLORKEY | DDBLTFAST_WAIT);
 		}
 	}
+
+	g_forceBuildBackgroundFromScratch = false;
 
 	if (bFullRebuild)
 	{
@@ -7209,6 +7211,7 @@ pass:
 			if (g_dglos.g_gameMode == 1 || g_dglos.g_gameMode == 2)
 			{
 				g_dglos.m_bRenderBackgroundOnLoad = true;
+				g_forceBuildBackgroundFromScratch = true;
 			} else
 			{
 				g_dglos.m_bRenderBackgroundOnLoad = false;
@@ -7652,6 +7655,7 @@ pass:
 
 		if (compare(ev[1], (char*)"draw_background"))
 		{
+			g_forceBuildBackgroundFromScratch = true;
 			BuildScreenBackground(false, true);
 			strcpy(pLineIn, h);  
 			return(0);
@@ -7932,7 +7936,7 @@ pass:
 
 				fill_screen(g_nlist[0]);
 				SetBitmapCopy(""); //no bitmap, but it will trigger the no status bar rendering until "something happens"
-				g_dglos.m_bRenderBackgroundOnLoad = true;
+				//g_dglos.m_bRenderBackgroundOnLoad = true;
 
 			}
 
@@ -17232,7 +17236,7 @@ bool LoadState(string const &path, bool bLoadPathsOnly)
 		return false;
 	}
 
-//	if ( g_dglos.g_gameMode > 2  || g_dglos.m_bRenderBackgroundOnLoad)
+	if ( g_dglos.g_gameMode > 2  || g_dglos.m_bRenderBackgroundOnLoad)
 	{
 		BuildScreenBackground(false, true);
 	}
@@ -17240,6 +17244,11 @@ bool LoadState(string const &path, bool bLoadPathsOnly)
 	if (g_dglos.g_bShowingBitmap.active)
 	{
 		CopyBitmapToBackBuffer(g_dglos.g_lastBitmapShown);
+	}
+
+	if (g_dglos.copy_bmp_to_screen[0] != 0)
+	{
+		copy_bmp(g_dglos.copy_bmp_to_screen);
 	}
 	
 	return bOk; //success
@@ -17530,6 +17539,10 @@ void DinkOnForeground()
 		//reinit any lost surfaces that we need to
 		if ( g_dglos.g_gameMode > 2  || g_dglos.m_bRenderBackgroundOnLoad)
 		{
+			if (g_dglos.m_bRenderBackgroundOnLoad)
+			{
+				g_forceBuildBackgroundFromScratch = true;
+			}
 			BuildScreenBackground(false);
 		}
 

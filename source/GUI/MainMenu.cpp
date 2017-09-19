@@ -464,12 +464,16 @@ void CheckForNewVersion(Entity *pMenu)
 	
 	
 	//pComp->GetFunction("Init")->sig_function(&v);
-	GetMessageManager()->CallComponentFunction(pComp,1000, "Init", &v); //call it in a bit
+	GetMessageManager()->CallComponentFunction(pComp,100, "Init", &v); //call it in a bit
 
-	Entity *pEnt = VersionShowScoreMessage(pMenu, "`6");
+
+
+
+	Entity *pEnt = VersionShowScoreMessage(pMenu, "`wChecking for updates..");
 	EntityComponent *pTyper = pEnt->AddComponent(new TyperComponent);
-	pTyper->GetVar("text")->Set("Checking rtsoft.com for updates...");
-	pTyper->GetVar("speedMS")->Set(uint32(30));
+	pTyper->GetVar("text")->Set("...................");
+	pTyper->GetVar("speedMS")->Set(uint32(200));
+
 
 }
 

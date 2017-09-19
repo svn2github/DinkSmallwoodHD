@@ -56,7 +56,8 @@ void GameOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sent fr
 			g_dglo.m_dirInput[DINK_INPUT_BUTTON5] = true;
 			g_dglo.m_dirInputFinished[DINK_INPUT_BUTTON5] = true;
 			
-			return;
+			//if we ONLY want the game to handle this, we'd enable this return...
+			//return;
 		}
 
 		if (!pMenu->GetEntityByName("PauseMenu"))
