@@ -405,7 +405,7 @@ msg += \
 	vTextBoxPos = CL_Vec2f(iPhoneMapX(x),y);
 
 	msg = "`8`$Dink Smallwood HD`` was created by `wSeth A. Robinson`` (code) and `wJustin Martin`` (graphics).\n\n"\
-		"`8The original `$Dink Smallwood`` was created by `wSeth A. Robinson`` (engine/scripting/music), `wJustin Martin`` (graphics), `wGreg Smith`` (scripting/music), and `wShawn Teal``. It also featured music by `wJoel Bakker``."\
+		"`8The original `$Dink Smallwood`` was created by `wSeth A. Robinson`` (engine/scripting/music), `wJustin Martin`` (graphics), `wGreg Smith`` (scripting/music), and `wShawn Teal``. It also featured music by `wJoel Bakker`` and `wMitch Brink``."\
 		"\n\nSpecial thanks to `wDan Walma`` and the `wdinksmallwood.net`` community for their `$Dink`` improvements."\
 		"\n\n"\
 		"This product is less buggy thanks to:\n\n`w"\

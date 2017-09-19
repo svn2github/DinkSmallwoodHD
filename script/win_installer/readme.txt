@@ -128,3 +128,14 @@ www.rtsoft.com
 ------ Change log for 1.7.5 ----------
 
 * Properly handles an illegal frame # sent to sp_frame instead of crashing
+* (Bugfix) Fixed issue with not being able to set long delays in sprites (fixed dancing knight in Bugmania)
+* (Bugfix) Fixed DinkC "!=" command which was renamed "!" for some reason. This fixed the goto in Bugmania
+* Enabled support for >= and <= in DinkC, not sure why it was commented out before, they were active in 1.08
+* (Bugfix) Status bar will now be drawn even when mouse mode is active if needed (it now shows up in Bugmania)
+* Space no longer selects dialog, you'll have to use ENTER or CONTROL like on 1.08
+* Mouse can now be used to select dialog options
+* Fixed mouse issue with Bugmania in the town where it wasn't sending button down messages
+
+
+
+- Note:  Save state format has been changed again, so old save states won't load

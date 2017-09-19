@@ -84,6 +84,7 @@ void CursorComponent::OnInput( VariantList *pVList )
 			OnUpdatePos(pt);
 			g_dglo.m_dirInput[DINK_INPUT_BUTTON1] = true;
 			g_dglo.m_dirInputFinished[DINK_INPUT_BUTTON1] = true;
+			g_dinkMouseRightClick = true;
 
 			break;
 		case MESSAGE_TYPE_GUI_CLICK_END:
@@ -121,6 +122,8 @@ void CursorComponent::OnInput( VariantList *pVList )
 				OnUpdatePos(pt);
 				g_dglo.m_dirInput[DINK_INPUT_BUTTON1] = true;
 				g_dglo.m_dirInputFinished[DINK_INPUT_BUTTON1] = true;
+				g_dinkMouseRightClick = true;
+
 			}
 
 			//HandleClickEnd(pt);

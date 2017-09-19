@@ -461,12 +461,16 @@ void CheckForNewVersion(Entity *pMenu)
 	v.m_variant[2].Set("dink/versions.php");
 	pComp->GetFunction("OnError")->sig_function.connect(&OnVersionDownloadError);
 	pComp->GetFunction("OnFinish")->sig_function.connect(&OnVersionDownloadHTTPFinish);
-	pComp->GetFunction("Init")->sig_function(&v);
+	
+	
+	//pComp->GetFunction("Init")->sig_function(&v);
+	GetMessageManager()->CallComponentFunction(pComp,1000, "Init", &v); //call it in a bit
 
 	Entity *pEnt = VersionShowScoreMessage(pMenu, "`6");
 	EntityComponent *pTyper = pEnt->AddComponent(new TyperComponent);
 	pTyper->GetVar("text")->Set("Checking rtsoft.com for updates...");
-	pTyper->GetVar("speedMS")->Set(uint32(50));
+	pTyper->GetVar("speedMS")->Set(uint32(30));
+
 }
 
 Entity * MainMenuCreate( Entity *pParentEnt, bool bFadeIn )

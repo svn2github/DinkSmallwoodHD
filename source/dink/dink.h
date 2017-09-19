@@ -12,6 +12,8 @@
 #include "misc_util.h"
 #include "video_gl.h"
 #include "util/TextScanner.h"
+
+extern bool g_dinkMouseRightClick;
 bool InitDinkEngine();
 bool LoadGameChunk(int gameIDToLoad, float &progressOut); //0 for new game
 void updateFrame();
@@ -182,7 +184,7 @@ struct sequence
 { 
 	int16 frame[C_MAX_SPRITE_FRAMES];
 	int16 originalFrame[C_MAX_SPRITE_FRAMES];
-	int16 delay[C_MAX_SPRITE_FRAMES];
+	int32 delay[C_MAX_SPRITE_FRAMES];
 	unsigned char special[C_MAX_SPRITE_FRAMES];
 
 	byte active;
@@ -190,7 +192,7 @@ struct sequence
 	rtRect32 m_hardbox;
 	eTransparencyType m_transType;
 	byte m_bLeftAlign;
-	byte m_speed;
+	int32 m_speed;
 	char m_fileName[C_SPRITE_MAX_FILENAME_SIZE];
 	short x,y;
 	short s;

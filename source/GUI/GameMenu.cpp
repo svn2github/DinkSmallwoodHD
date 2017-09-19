@@ -761,7 +761,10 @@ void BuildDialogModeControls(float fadeTimeMS)
 		return;
 	}
 
+	 
 	pBG = pBG->AddEntity(new Entity("Controls"));
+
+	pBG->AddComponent(new CursorComponent); //for mouse control of dialog
 
 	if (!GetApp()->GetUsingTouchScreen()) return;
 

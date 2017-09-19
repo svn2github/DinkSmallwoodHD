@@ -16,11 +16,13 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly);
 
 #define C_DINK_SCREEN_TRANSITION_TIME_MS 400
 
-const float SAVE_FORMAT_VERSION = 2.3f;
+const float SAVE_FORMAT_VERSION = 2.4f;
 const int C_DINK_FADE_TIME_MS = 300;
 
 const float G_TRANSITION_SCALE_TRICK = 1.01f;
 bool g_forceBuildBackgroundFromScratch = false;
+
+bool g_dinkMouseRightClick = false;
 
 
 float g_dinkFadeAlpha = 0;
@@ -1903,7 +1905,7 @@ void ReadFromLoadSequenceString(char ev[15][100] )
 
 #ifdef _DEBUG
 
-	if (seqID == 35)
+	if (seqID == 150)
 	{
 		LogMsg("Found seq %d", seqID);
 	}
@@ -2689,10 +2691,11 @@ bool SwitchToRGBAIfNeeded(LPDIRECTDRAWSURFACE *pDXSurf, SoftSurface *pSoftSurf)
 	
 	return false;
 }
+
 void BlitGUIOverlay()
 {
 	
-	if (GetDinkGameMode() == DINK_GAME_MODE_MOUSE) return;
+	//if (GetDinkGameMode() == DINK_GAME_MODE_MOUSE) return;
 
 	if (GetDinkSubGameMode() == DINK_SUB_GAME_MODE_SHOWING_BMP) return;
 
@@ -3170,6 +3173,8 @@ bool read_next_line(int script, char *line)
 	{
 		//      Msg("..%d",k);
 		strchar(line, g_scriptBuffer[script][k]);
+		
+
 		g_scriptInstance[script]->current++;
 
 		if (  (g_scriptBuffer[script][k] == '\n') || (g_scriptBuffer[script][k] == '\r')  )
@@ -6675,15 +6680,14 @@ pass:
 			return(0);
 		}
 		
-		/*
 		if (strchr(temp, '<=') != NULL) 
 		{
 			h = &h[1];
 			strip_beginning_spaces(h);
 			process_line(script, h, false);
 			replace("==", "", temp);
-			sprintf(line, "%d <= %s", returnint, temp); 
-			returnint = var_figure(line, script);                   
+			sprintf(line, "%d <= %s", g_dglos.g_returnint, temp);
+			g_dglos.g_returnint = var_figure(line, script);
 			strcpy(h, "\n");
 			return(0);
 		}
@@ -6693,14 +6697,14 @@ pass:
 			strip_beginning_spaces(h);
 			process_line(script, h, false);
 			replace("==", "", temp);
-			sprintf(line, "%d >= %s", returnint, temp); 
-			returnint = var_figure(line, script);                   
+			sprintf(line, "%d >= %s", g_dglos.g_returnint, temp);
+			g_dglos.g_returnint = var_figure(line, script);
 			strcpy(h, "\n");
 			return(0);
 		}
-		*/
+		
 
-		if (strchr(temp, '!') != NULL) 
+		if (strchr(temp, '!=') != NULL) 
 		{
 			h = &h[1];
 			strip_beginning_spaces(h);
@@ -7648,7 +7652,7 @@ pass:
 
 		if (compare(ev[1], (char*)"draw_background"))
 		{
-			BuildScreenBackground(false);
+			BuildScreenBackground(false, true);
 			strcpy(pLineIn, h);  
 			return(0);
 		}
@@ -10430,7 +10434,7 @@ crappa:
 redo2:
 					if (!read_next_line(script, line))
 					{
-						//script is actualyl empty
+						//script is actually empty
 						break;
 					}
 					strip_beginning_spaces(line);
@@ -13135,11 +13139,12 @@ void mouse_brain(int h)
         }
     }
 
-    if ( (sjoy.button[1] == true))
+    if ( sjoy.button[1] == true || g_dinkMouseRightClick)
     {
         LogMsg("running through mouse list..");
         run_through_mouse_list(h, true);
         sjoy.button[1] = false;
+		g_dinkMouseRightClick = false;
     }
 
 }
@@ -14708,8 +14713,9 @@ fin:
      
 		if (GetBaseApp()->GetGameTickPause()) return;
 
-    if ( (sjoy.button[1]) || (sjoy.button[2]))
+    if ( sjoy.button[1] || g_dinkMouseRightClick) //(sjoy.button[2]))
     {
+		g_dinkMouseRightClick = false;
         g_dglos.g_talkInfo.active = false;
         *presult = g_dglos.g_talkInfo.line_return[g_dglos.g_talkInfo.cur];
         SoundPlayEffect(17, 22050,0,0,0);
@@ -14740,15 +14746,25 @@ CL_Vec2f NativeToDinkCoords(CL_Vec2f vPos)
 void DinkSetCursorPosition(CL_Vec2f vPos)
 {
 
+	static float vLastMouseY = vPos.y;
+	float difY = vPos.y - vLastMouseY;
+	vLastMouseY = vPos.y;
+
 	if (g_sprite[1].active) if (g_sprite[1].brain == 13)
 	{
 		g_sprite[1].x = vPos.x;
 		g_sprite[1].y = vPos.y;
 
-#ifdef _DEBUG
-		//LogMsg("Mouse X: %d, Y: %d", g_sprite[1].x, g_sprite[1].y);
-#endif
+
 	}
+
+	if (g_dglos.g_gameMode == 1) //dialog select?
+	{
+
+		//LogMsg("Mouse diff: %.2f", difY);
+		g_dglos.g_playerInfo.mouse += difY;
+	}
+
 }
 
 void UpdateCursorPosition(int dx, int dy)
@@ -16861,7 +16877,7 @@ bool LoadHeader(FILE *fp)
 {
 	float version;
 	LoadFromFile(version, fp);
-	if (version < SAVE_FORMAT_VERSION)
+	if (version < SAVE_FORMAT_VERSION) //save_state_version
 	{
 		LogMsg("Save state from newer version?!");
 		return false;
