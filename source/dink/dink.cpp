@@ -3836,7 +3836,8 @@ bool get_parms(char proc_name[20], int32 script, char *h, int32 p[10])
 			} else
 			{
 				LogMsg("Procedure %s does not take %d parms in %s, offset %d. (%s?)", proc_name, i+1, g_scriptInstance[script]->name, g_scriptInstance[script]->current, h);
-
+				//set it to zero to be "safe"?
+				//(p[i]
 				return(false);
 			}
 	}
@@ -4014,7 +4015,14 @@ bool check_pic_status(int picID)
 {
 	if (picID == 0) return true;
 
-	assert(g_dglos.g_picInfo[picID].m_parentSeq != 0);
+	
+#ifdef _DEBUG
+	if (g_dglos.g_picInfo[picID].m_parentSeq == 0)
+	{
+		LogMsg("Huh, this should have a parent..");
+	}
+
+#endif
 
 	if (g_pSpriteSurface[picID]) return true;
 
@@ -4038,7 +4046,17 @@ LogMsg("Seq %d missing?", seq);
 	{
 		//LogMsg("Woah!");
 	}
+
 #endif
+
+
+	if (frame < 0 || frame >= C_MAX_SPRITE_FRAMES)
+	{
+		//invalid!
+		assert(!"Illegal sprite frame. Track where it came from!");
+		return true; //avoid crash
+	}
+
 	if (frame != 0)
 	{
 		if (g_pSpriteSurface[g_dglos.g_seq[seq].frame[frame]]) return true;
@@ -5045,7 +5063,7 @@ void draw_sprite_game(LPDIRECTDRAWSURFACE lpdest,int h)
 	{
 		int pic = getpic(h);
 
-		assert(!"The hell?");
+		LogMsg("Debug:  Bad pic here");
 	}
 
 #endif
@@ -9017,7 +9035,15 @@ pass:
 			int32 p[20] = {1,1,0,0,0,0,0,0,0,0};  
 			if (get_parms(ev[1], script, h, p))
 			{
+
+				if (g_nlist[1] < 0 || g_nlist[1] >= C_MAX_SPRITE_FRAMES)
+				{
+					LogMsg("sp_frame trying to set something to frame %d?  Illegal, forcing to 1.", g_nlist[1]);
+					g_nlist[1] = 1;
+				}
 				g_dglos.g_returnint = change_sprite(g_nlist[0], g_nlist[1], &g_sprite[g_nlist[0]].frame);
+				
+				
 				return(0);
 			}
 			g_dglos.g_returnint =  -1;

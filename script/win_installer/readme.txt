@@ -125,3 +125,6 @@ www.rtsoft.com
 * Fixed some issues related to dynamic 8 bit to 32 bit surface changes (this can happen if you turn on the new shadows after starting to play or the game suddenly hits a 32 bit image)
 - Note:  Just to be safe, save state version has changed, so old save states won't load
 
+------ Change log for 1.7.5 ----------
+
+* Properly handles an illegal frame # sent to sp_frame instead of crashing
