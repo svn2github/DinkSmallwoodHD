@@ -13,7 +13,7 @@ extern LPDIRECTDRAWSURFACE lpDDSBackGround;
 bool InitializeVideoSystem()
 {
 	assert(!lpDDSBack);
-	lpDDSBack = InitOffscreenSurface(640, 480, IDirectDrawSurface::MODE_PRIMARY_GL);
+	lpDDSBack = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_PRIMARY_GL);
 	
 	g_palette.Init(8,8, SoftSurface::SURFACE_PALETTE_8BIT);
 	g_palette.SetPaletteFromBMP("dink/tiles/palette.bmp", SoftSurface::COLOR_KEY_NONE);
@@ -28,15 +28,14 @@ void KillVideoEngine()
 
 void dderror(int hErr){};
 
-IDirectDrawSurface * LoadBitmapIntoSurface(const char *pName, eTransparencyType trans, IDirectDrawSurface::eMode mode, byte *pMem)
+IDirectDrawSurface * LoadBitmapIntoSurface(const char *pName, eTransparencyType trans, IDirectDrawSurface::eMode mode, byte *pMem, bool bUseCheckerboardFix)
 {
 
 	IDirectDrawSurface * pSurf;
 	pSurf = new IDirectDrawSurface;
 	pSurf->m_mode = mode;
 	pSurf->m_pSurf = new SoftSurface;
-	
-	bool bUseCheckerboardFix = GetApp()->GetVar("checkerboard_fix")->GetUINT32() != 0;
+	//bUseCheckerboardFix = true;
 
 	if (pMem)
 	{

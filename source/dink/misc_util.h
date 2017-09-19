@@ -3,6 +3,10 @@
 
 #include "PlatformSetup.h"
 
+
+const int32 C_DINK_SCREENSIZE_X = 640;
+const int32 C_DINK_SCREENSIZE_Y = 480;
+
 void getdir(char final[]);
 
 void dink_decompress (unsigned char *in, char * destBuf);

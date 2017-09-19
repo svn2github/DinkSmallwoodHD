@@ -200,8 +200,6 @@ struct sequence
 	byte m_bIsAnim;
 };
 
-const int32 C_DINK_SCREENSIZE_X = 640;
-const int32 C_DINK_SCREENSIZE_Y = 480;
 const int32 C_DINK_VERSION = 110;
 const int32 num_soundbanks = 20;
 const int32 max_idata = 1000; 

@@ -356,6 +356,11 @@ void OptionsMenuAddScrollContent(Entity *pParent)
 		pEnt = CreateTextButtonEntity(pBG, "vid_big", startX+700, y, "1280X960");
 		pEnt->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&OptionsMenuOnSelect);
 		y += spacerY;
+		pEnt = CreateTextButtonEntity(pBG, "vid_hd", startX, y, "1920X1080");
+		pEnt->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&OptionsMenuOnSelect);
+		y += spacerY;
+
+		
 
 	}
 

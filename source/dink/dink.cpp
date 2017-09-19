@@ -16,11 +16,11 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly);
 
 #define C_DINK_SCREEN_TRANSITION_TIME_MS 400
 
-const float SAVE_FORMAT_VERSION = 2.2f;
+const float SAVE_FORMAT_VERSION = 2.3f;
 const int C_DINK_FADE_TIME_MS = 300;
 
 const float G_TRANSITION_SCALE_TRICK = 1.01f;
-bool g_forceRebuildBackground = false;
+bool g_forceBuildBackgroundFromScratch = false;
 
 
 float g_dinkFadeAlpha = 0;
@@ -1558,13 +1558,33 @@ bool LoadSpriteSingleFrame(string fNameBase, int seq, int oo, int picIndex, eTra
 	//assert(!g_dglos.g_picInfo[g_cur_sprite].pSurface);
 		SAFE_DELETE(g_pSpriteSurface[picIndex]);
 #ifdef _DEBUG
-		if (seq == 60 && oo == 2)
+		if (seq == 192 && oo == 5)
+		{
+			LogMsg("Woah, ");
+		}
+		if (seq == 192 && oo == 1)
 		{
 			LogMsg("Woah, ");
 		}
 
 #endif	
-		g_pSpriteSurface[picIndex] = LoadBitmapIntoSurface("", transType, IDirectDrawSurface::MODE_SHADOW_GL, pMem);
+
+
+		bool bUseCheckerboardFix = GetApp()->GetVar("checkerboard_fix")->GetUINT32() != 0;
+
+		//hack so dialog box doesn't look bad:
+		if (bUseCheckerboardFix)
+		{
+			if (oo >=2 && oo <= 4 && fNameBase =="main-")
+			{
+				//nah, because this is connected it makes this look weird
+				bUseCheckerboardFix = false;
+			}
+
+		}
+
+
+		g_pSpriteSurface[picIndex] = LoadBitmapIntoSurface("", transType, IDirectDrawSurface::MODE_SHADOW_GL, pMem, bUseCheckerboardFix);
 	}
 	else
 	{
@@ -1898,9 +1918,9 @@ void ReadFromLoadSequenceString(char ev[15][100] )
 	g_dglos.g_seq[seqID].m_bIsAnim = false;
 
 #ifdef _DEBUG
-	if (seqID == 180)
+	if (seqID == 192)
 	{
-		LogMsg("Booya");
+//		LogMsg("Booya");
 
 	}
 #endif
@@ -1908,12 +1928,7 @@ void ReadFromLoadSequenceString(char ev[15][100] )
 	assert(strlen(ev[2]) < C_SPRITE_MAX_FILENAME_SIZE);
 	strcpy(g_dglos.g_seq[seqID].m_fileName, ev[2]);
 
-#ifdef _DEBUG
-	if (seqID == 59)
-	{
-		LogMsg("He");
-	}
-#endif
+
 
 	if (compare(ev[4], "BLACK"))
 	{
@@ -1959,14 +1974,7 @@ void ReadFromLoadSequenceString(char ev[15][100] )
 */
 
 		g_dglos.g_seq[seqID].m_bIsAnim = true;
-		//yes, an animation!
-		g_dglos.g_seq[seqID].m_speed = atol(ev[4]);
-		g_dglos.g_seq[seqID].m_xoffset = atol(ev[5]);
-		g_dglos.g_seq[seqID].m_yoffset = atol(ev[6]);
-		g_dglos.g_seq[seqID].m_hardbox.left = atol(ev[7]);
-		g_dglos.g_seq[seqID].m_hardbox.top = atol(ev[8]);
-		g_dglos.g_seq[seqID].m_hardbox.right = atol(ev[9]);
-		g_dglos.g_seq[seqID].m_hardbox.bottom = atol(ev[10]);
+		
 
 		/*
 		if (g_dglos.g_seq[seqID].m_bIsAnim)
@@ -2024,8 +2032,17 @@ void ReadFromLoadSequenceString(char ev[15][100] )
 		//LogMsg("Hardbox: %s", PrintRect(hardbox).c_str());
 #endif
 	}
-
-
+	if (g_dglos.g_seq[seqID].m_bIsAnim)
+	{
+		//yes, an animation! Set default values for entire animation if we've got them
+		g_dglos.g_seq[seqID].m_speed = atol(ev[4]);
+		g_dglos.g_seq[seqID].m_xoffset = atol(ev[5]);
+		g_dglos.g_seq[seqID].m_yoffset = atol(ev[6]);
+		g_dglos.g_seq[seqID].m_hardbox.left = atol(ev[7]);
+		g_dglos.g_seq[seqID].m_hardbox.top = atol(ev[8]);
+		g_dglos.g_seq[seqID].m_hardbox.right = atol(ev[9]);
+		g_dglos.g_seq[seqID].m_hardbox.bottom = atol(ev[10]);
+	}
 
 
 }
@@ -5037,12 +5054,12 @@ void draw_sprite_game(LPDIRECTDRAWSURFACE lpdest,int h)
 #ifdef _DEBUG
 	if (g_sprite[h].pseq == 10 && g_sprite[h].pframe == 8)
 	{
-		LogMsg("Drawing the rock");
+		//LogMsg("Drawing the rock");
 	}
 
 	if (g_sprite[h].pseq == 890)
 	{
-		LogMsg("Drawing a wall");
+		//LogMsg("Drawing a wall");
 		
 	}
 #endif
@@ -5125,6 +5142,9 @@ void draw_sprite_game(LPDIRECTDRAWSURFACE lpdest,int h)
 					delete lpDDSBuffer;
 					lpDDSBuffer = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL, true);
 					lpDDSBuffer->m_pGLSurf->SetUsesAlpha(true);
+
+					//however, we need to force a rebuild of the background now
+					g_forceBuildBackgroundFromScratch = true;
 
 				}
 
@@ -6204,10 +6224,10 @@ void BuildScreenBackground( bool bFullRebuild, bool bBuildImageFromScratch )
 	int pa, cool;   
 //	*pvision = 0; //this was bad because save stats call this.  Moved to where new maps are loaded
 
-	if (g_forceRebuildBackground)
+	if (g_forceBuildBackgroundFromScratch)
 	{
-		bFullRebuild = true;
-		g_forceRebuildBackground = false;
+		bBuildImageFromScratch = true;
+		g_forceBuildBackgroundFromScratch = false;
 	}
 
 	if (bFullRebuild)
@@ -7705,7 +7725,10 @@ pass:
 					LogMsg("playmidi - cd play command detected.");            
 					PlayMidi((toString(regm-1000)+".mid").c_str());
 
-				} else
+				} 
+				
+				//ok, weird, but the actual dink plays both and this is needed - if the fake CD tune can't play, it will probably find it below
+				//else
 				{
 					PlayMidi(slist[0]);
 				}
@@ -9667,7 +9690,7 @@ LogMsg("%d scripts used", g_dglos.g_returnint);
 				
 				//remember this change
 				strncpy(g_dglos.g_playerInfo.tile[tileIndex].file, fName.c_str(), 50); //this 50 is hardcoded in the player data
-				g_forceRebuildBackground = true;
+				g_forceBuildBackgroundFromScratch = true;
 																					   //BuildScreenBackground(true); //trigger full rebuild, this could be optimized by setting a flag and only doing it once...
 			}
 
@@ -12545,60 +12568,41 @@ void BlitSecondTransitionScreen()
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
 	
-		float offsetX = g_dglo.m_centeringOffset.x*(1 - ((float)GetFakePrimaryScreenSizeX() / (float)C_DINK_SCREENSIZE_X));
-		float offsetY = g_dglo.m_centeringOffset.y*(1 - ((float)GetFakePrimaryScreenSizeY() / (float)C_DINK_SCREENSIZE_Y));
-		//for some reason, after doing the aspect ratio scale trick, I need to also move it over a bit for this second blit to line up
-		//glTranslatef(offsetX,
-
-		//Let me write a long explanation of why these numbers are used.  It's be... sorry, uhh.. phone call
+		float offsetX = g_dglo.m_centeringOffset.x*(1.0f - ((float)GetFakePrimaryScreenSizeX() / (float)C_DINK_SCREENSIZE_X));
+		float offsetY = g_dglo.m_centeringOffset.y*(1.0f - ((float)GetFakePrimaryScreenSizeY() / (float)C_DINK_SCREENSIZE_Y));
+		
 		glTranslatef(-offsetX, -offsetY, 0);
 	
 		rtRectf dstRect = g_dglo.m_nativeGameArea;
-		rtRectf dstOffset = rtRectf(0.5f,0.5f,-0.5f,-0.5f);
-	
-	/*
 
-	//old code for when we manually rotated the screen, these days we let iOS do it, it's not a horrible performance penalty anymore
+		static rtRectf dstOffset;
+		static rtRectf srcOffset;
 
-
-		if (GetPrimaryGLX() < GetPrimaryGLY() && GetEmulatedPlatformID() != PLATFORM_ID_WINDOWS)
+		if (GetApp()->GetVar("smoothing")->GetUINT32() != 0)
 		{
-		
-			swap(dstRect.left, dstRect.top);
-			swap(dstRect.right, dstRect.bottom);
-			rtRectf srcRect = ConvertFakeScreenRectToReal(dstRect);
-		
-			//CHECK the fakescreen stuff..
-			if (GetOrientation() == ORIENTATION_LANDSCAPE_LEFT)
-			{
-				glTranslatef((-g_dglo.m_transitionOffsetNative.x*g_dglo.m_transitionProgress), (g_dglo.m_nativeGameArea.GetHeight()-g_dglo.m_transitionOffsetNative.y*g_dglo.m_transitionProgress),0);
-				glRotatef(-90, 0, 0, 1);
-				srcRect.AdjustPosition(GetScreenSizeYf()-g_dglo.m_nativeGameArea.GetHeight(), 0);
-				g_transitionSurf.BlitEx(dstRect, srcRect);
-		
-			} else
-			{
-				glTranslatef(  (    ( g_dglo.m_nativeGameArea.left*2+g_dglo.m_nativeGameArea.GetWidth())-g_dglo.m_transitionOffsetNative.x*g_dglo.m_transitionProgress),
-				 (    (g_dglo.m_nativeGameArea.top)	-g_dglo.m_transitionOffsetNative.y*g_dglo.m_transitionProgress ),0);
-				glRotatef(90, 0, 0, 1);
-				g_transitionSurf.BlitEx(dstRect, srcRect);
-			}
-			
-		
-		} else
-		\*/
+			//fix black lines due to antialiasing
+			dstOffset = rtRectf(-1, -1, 1, 1);
+			srcOffset = rtRectf(1, 1, -1, -1);
+
+		}
+		else
 		{
+			//without normal antialiasing we don't need to do much, but this does fix tiny black artifacts during the screen transition
+			dstOffset = rtRectf(-0.05, -0.05f, 0.05f, 0.05);
+			srcOffset = rtRectf(0.4, 0.4, -0.4, -0.4);
+
+		}
+
+		
 			dstRect.AdjustPosition( ( -g_dglo.m_transitionOffsetNative.x*g_dglo.m_transitionProgress),
 				 (  -g_dglo.m_transitionOffsetNative.y*g_dglo.m_transitionProgress));
 			
-			//dstRect.AdjustPosition(-g_dglo.m_centeringOffset.x*g_dglo.m_transitionProgress, -g_dglo.m_centeringOffset.y*g_dglo.m_transitionProgress);
+			
 			rtRectf srcRect = ConvertFakeScreenRectToReal(g_dglo.m_nativeGameArea);
 		//	LogMsg("Dest rect: %s",PrintRect(dstRect));
-			g_transitionSurf.BlitEx(dstRect, srcRect);
-		}
-
-		//g_globalBatcher.Flush();
+			g_transitionSurf.BlitEx(dstRect+dstOffset, srcRect+ srcOffset);
 		
+			
 		if (!g_onePixelSurf.IsLoaded())
 		{
 			g_onePixelSurf.InitBlankSurface(1, 1);
@@ -12608,6 +12612,8 @@ void BlitSecondTransitionScreen()
 		if (g_dglo.GetActiveView() != DinkGlobals::VIEW_ZOOMED)
 		{
 			static uint32 blackBarsColor = MAKE_RGBA(0, 0, 0, 255);
+			//well, at this point we're done except there is garbage on the area outside the playfield if we're letterboxed so aspect ratio is right.  This could have all been
+			//avoided with a render to surface but I think this will be faster
 
 			g_onePixelSurf.BlitScaled(g_dglo.m_nativeGameArea.left, 0, CL_Vec2f(5000, 5000), ALIGNMENT_RIGHT_CENTER, blackBarsColor);
 			g_onePixelSurf.BlitScaled(g_dglo.m_nativeGameArea.right, 0, CL_Vec2f(5000, 5000), ALIGNMENT_LEFT_CENTER, blackBarsColor);
@@ -12616,13 +12622,9 @@ void BlitSecondTransitionScreen()
 			g_onePixelSurf.BlitScaled(0, g_dglo.m_nativeGameArea.bottom, CL_Vec2f(5000, 5000), ALIGNMENT_UPPER_CENTER, blackBarsColor);
 
 		}
-		//s.Blit(0, 0);
-		//g_globalBatcher.Flush();
-
+	
 		glPopMatrix( );
 
-		//well, at this point we're done except there is garbage on the area outside the playfield if we're letterboxed so aspect ratio is right.  This could have all been
-		//avoided with a render to surface but I think this will be faster
 	}
 
 
@@ -14718,7 +14720,7 @@ void DinkSetCursorPosition(CL_Vec2f vPos)
 		g_sprite[1].y = vPos.y;
 
 #ifdef _DEBUG
-		LogMsg("Mouse X: %d, Y: %d", g_sprite[1].x, g_sprite[1].y);
+		//LogMsg("Mouse X: %d, Y: %d", g_sprite[1].x, g_sprite[1].y);
 #endif
 	}
 }
@@ -15835,6 +15837,11 @@ LastWindowsTimer = GetTickCount();
 		}
 	}
 
+
+	if (g_forceBuildBackgroundFromScratch)
+	{
+		BuildScreenBackground(false, true);
+	}
 	state[1] = 0;  
 
 	//figure out frame rate
@@ -16428,15 +16435,7 @@ bool LoadGameChunk(int gameIDToLoad, float &progressOut)
 
 	case 1:
 	progressOut = 0.1f;
-	LogMsg("loading tilescreens...");
 	
-	/*
-	for (int h=1; h < C_TILE_SCREEN_COUNT; h++)
-	{
-		if (!LoadTileScreenIfNeeded(h)) return false;
-	}
-*/
-	LogMsg("Done with tilescreens...");
 	break;
 
 	case 2:
@@ -16462,7 +16461,7 @@ bool LoadGameChunk(int gameIDToLoad, float &progressOut)
 	
 	case 3:
 	progressOut = 0.7f;
-		LogMsg("done loading batch");
+
 	if (!load_hard()) return false;
 	break;
 
@@ -16847,10 +16846,13 @@ bool LoadHeader(FILE *fp)
 	LoadFromFile(g_dglo.m_dmodGameDir, fp);
 	LoadFromFile(g_dglo.m_gameDir, fp);
 
-	if (!FileExists(g_dglo.m_dmodGameDir + "dmod.diz"))
+	if (!g_dglo.m_dmodGameDir.empty())
 	{
-		LogMsg("DMOD directory invalid. Trying original directory %s instead", g_dglo.m_savePath.c_str());
-		g_dglo.m_dmodGameDir = g_dglo.m_savePath;
+		if (!FileExists(g_dglo.m_dmodGameDir + "dmod.diz"))
+		{
+			LogMsg("DMOD directory invalid. Trying original directory %s instead", g_dglo.m_savePath.c_str());
+			g_dglo.m_dmodGameDir = g_dglo.m_savePath;
+		}
 	}
 
 

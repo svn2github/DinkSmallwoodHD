@@ -117,3 +117,11 @@ www.rtsoft.com
 * (Bugfix) Fixed a script crash.  This bug was also in the legacy dink
 * (Windows) "Tap to continue" is no longer shown when waiting for a keypress, but will still be shown on touch-devices
 * Fixed bug where any DMOD directory starting with "dink" was ignored from the internal DMOD listing screen.  Oops, that was a pretty bad one, sorry dinkcrft.
+* (Bugfix) Fixed issue where default .ini animations wouldn't get applied correctly in some cases, this fixed a slight offset problem with Stone Of Balance
+* Fixed problem with glitchy black lines during screen transitions
+* (Bugfix) Fixed issue with playmidi and filenames that start with numbers over 1000, this fixed a problem with 1812over.mid not playing in Mayhem
+* Added 1920X1080 screen mode selector in the Options menu
+* No longer applying Dan's checkboard fix to tile screens (they don't need it I think..), and also added a hack so it will ignore main-02 through main-04.bpm (the dialog box) as it made it look weird
+* Fixed some issues related to dynamic 8 bit to 32 bit surface changes (this can happen if you turn on the new shadows after starting to play or the game suddenly hits a 32 bit image)
+- Note:  Just to be safe, save state version has changed, so old save states won't load
+
