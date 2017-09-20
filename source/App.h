@@ -100,6 +100,7 @@ private:
 	void SaveAllData();
 	void OnPreEnterBackground(VariantList *pVList);
 	void OniCadeDisconnected(GamepadProvider *pProvider);
+	bool DoesCommandLineParmExist(string parm);
 	float m_version;
 	string m_versionString;
 	int m_build;

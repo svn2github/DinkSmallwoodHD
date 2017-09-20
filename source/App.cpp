@@ -27,12 +27,13 @@
 extern int g_winVideoScreenX;
 extern int g_winVideoScreenY;
 extern bool g_bUseBorderlessFullscreenOnWindows;
+void AddText(const char *tex, const char *filename);
 
 #include "StackWalker/StackUtils.h"
 extern bool g_bIsFullScreen;
 #endif
 
-
+extern bool g_script_debug_mode;
 extern Surface g_transitionSurf;
 
 #ifdef RT_MOGA_ENABLED
@@ -118,6 +119,7 @@ AudioManagerSDL g_audioManager;
 
 	#include "Gamepad/GamepadProviderDirectX.h"
 	#include "Audio/AudioManagerFMODStudio.h"
+
 	 AudioManagerFMOD g_audioManager; //if we wanted FMOD sound in windows
 #endif
 
@@ -180,8 +182,8 @@ App::App()
 	m_bDidPostInit = false;
 	m_bHasDMODSupport = true;
 	//for mobiles
-	m_version = 1.75f;
-	m_versionString = "V1.7.5";
+	m_version = 1.76f;
+	m_versionString = "V1.7.6";
 	m_build = 1;
 	m_bCheatsEnabled = false;
 
@@ -235,12 +237,26 @@ void App::OniCadeDisconnected(GamepadProvider *pProvider)
 	}
 }
 
+bool App::DoesCommandLineParmExist(string parm)
+{
+	vector<string> parms = GetBaseApp()->GetCommandLineParms();
+	parm = ToLowerCaseString(parm);
+	
+	for (int i = 0; i < parms.size(); i++)
+	{
+		if (ToLowerCaseString(parms[i]) == parm) return true;
+	}
+	return false;
+}
+
 bool App::Init()
 {
 
 #ifdef WINAPI
 	InitUnhandledExceptionFilter();
 #endif
+
+
 
 	SetDefaultButtonStyle(Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH_RELEASE);
 	SetManualRotationMode(false);
@@ -249,7 +265,7 @@ bool App::Init()
 	int scaleToX = 480;
 	int scaleToY = 320;
 
-	if (IsTabletSize() || IsDesktop)
+	if (IsTabletSize() || IsDesktop())
 	{
 		scaleToX = 1024;
 		scaleToY = 768;
@@ -316,6 +332,29 @@ bool App::Init()
 	{
 		return false;
 	}
+
+
+	LogMsg("Initializing Dink HD %s", GetVersionString().c_str());
+
+	vector<string> parm = GetBaseApp()->GetCommandLineParms();
+
+	string parms;
+	for (int i = 0; i < parm.size(); i++)
+	{
+		if (i != 0) parms += " ";
+		parms += parm[i];
+	}
+
+	if (!parm.empty())
+	{
+		string text = string("Run with parms: " + string(parms) + "\r\n\r\n");
+
+#ifdef WINAPI
+		OutputDebugString(text.c_str());
+#endif
+		AddText(text.c_str(), (GetSavePath() + "log.txt").c_str());
+	}
+
 
 	m_adManager.Init();
 
@@ -391,6 +430,7 @@ bool App::Init()
 		RemoveFile("temp.dmod");
 	}
 
+	
 	switch (GetPlatformID())
 	{
 	case PLATFORM_ID_WINDOWS:
@@ -529,10 +569,19 @@ if (GetEmulatedPlatformID() == PLATFORM_ID_IOS)
 	int videox = GetApp()->GetVarWithDefault("video_x", uint32(640))->GetUINT32();
 	int videoy = GetApp()->GetVarWithDefault("video_y", uint32(480))->GetUINT32();
 	int fullscreen = GetApp()->GetVarWithDefault("fullscreen", uint32(1))->GetUINT32();
-	
 	bool borderlessfullscreen = GetApp()->GetVarWithDefault("fullscreen", uint32(0))->GetUINT32();
+		
+	if (DoesCommandLineParmExist("-window") || DoesCommandLineParmExist("-windowed"))
+	{
+		fullscreen = false;
+		GetApp()->GetVar("fullscreen")->Set(uint32(0));
+	}
 
-	
+	if (DoesCommandLineParmExist("-debug") )
+	{
+		g_script_debug_mode = true;
+	}
+
 	if (fullscreen && g_bUseBorderlessFullscreenOnWindows)
 	{
 		LogMsg("Setting fullscreen...");
@@ -910,6 +959,13 @@ bool App::OnPreInitVideo()
 		}
 
 		g_bIsFullScreen = temp.GetVarWithDefault("fullscreen", uint32(1))->GetUINT32();
+		
+		if (DoesCommandLineParmExist("-window") || DoesCommandLineParmExist("-windowed"))
+		{
+			g_bIsFullScreen = false;
+			GetApp()->GetVar("fullscreen")->Set(uint32(0));
+		}
+
 		g_bUseBorderlessFullscreenOnWindows = temp.GetVarWithDefault("borderless_fullscreen", uint32(0))->GetUINT32() != 0;
 
 		

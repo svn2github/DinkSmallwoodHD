@@ -25,7 +25,7 @@ mouse to navigate the initial menus to start the game
 Supported command line options:
 
 -game <dmod directory> (Example:  dink.exe -game c:\dmods\island ) (this also sets -dmodpath automatically to the dmods parent directory)
--dmodpath <dir containing DMOD dirs> (Example:  dink.exe -game c:\dmods )
+-dmodpath or --refdir <dir containing DMOD dirs> (Example:  dink.exe -game c:\dmods )
 
 
 ------------- BETA VERSION -----------------
@@ -136,7 +136,18 @@ www.rtsoft.com
 * Mouse can now be used to select dialog options
 * Fixed mouse issue with Bugmania in the town where it wasn't sending button down messages
 * Made escape open the Dink HD menu even when wait_for_button is being used.  This may be a problem if any DMODs require ESCAPE to be a button that is used though
-
-
-
 - Note:  Save state format has been changed again, so old save states won't load
+
+------ Change log for 1.7.6 ----------
+
+* Made Dink HD work with DFArc. Either you can put DFArc in the Dink HD dir and add "dmods" as the additional dmod directory so it can find
+mods installed by Dink HD too, or you can keep Dink HD completely separate, and enter the full path/exe to Dink HD's .exe in DFArc config and that works too.
+
+It's kind of weird that Dink HD puts its mods in a subdir called "dmods" as compared to the original Dink which useds its root dir.  I could change that but.. meh.
+
+* Added support for -window and -debug from the command line.  Dink HD remembers the last setting already, so -window would only have any effect
+if it was last used as fullscreen
+
+* Added Dan Walma's improved shadow patch
+
+

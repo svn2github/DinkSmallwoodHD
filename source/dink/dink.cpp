@@ -92,7 +92,7 @@ int32 g_nlist[10];
 char in_default[200];
 bool g_bInitiateScreenMove;
 bool g_bTransitionActive;
-bool g_script_debug_mode;
+bool g_script_debug_mode =false;
 uint16 decipher_savegame;
 uint32 g_soundTimer = 0;
 
@@ -16211,7 +16211,7 @@ void SetDefaultVars(bool bFullClear)
 	g_dglos.g_stopEntireGame = 0;
 	g_bInitiateScreenMove = false;
 	g_bTransitionActive = false;
-	g_script_debug_mode = false;
+
 #ifdef _DEBUG
 	//g_script_debug_mode = true; //script debugging mode. Alt-D toggles this also, plus there is a toggle on the debug menu
 #endif
@@ -16310,52 +16310,66 @@ string GetDMODRootPath(string *pDMODNameOutOrNull)
 #if defined(WIN32) || defined(PLATFORM_HTML5)
 	
 	string dmodpath = "dmods/";
+	string refdir = "";
 
 	vector<string> parms = GetBaseApp()->GetCommandLineParms();
 	
-	for (int i=0; i < parms.size(); i++)
+	for (int i = 0; i < parms.size(); i++)
 	{
-		if (parms[i] == "-dmodpath")
+		if (parms[i] == "--refdir" || parms[i] == "-dmodpath")
 		{
-			if (parms.size() > i+1)
+			if (parms.size() > i + 1)
 			{
-				dmodpath = "";
-				for (int n=i+1; n < parms.size(); n++)
-				{
-					dmodpath +=parms[n];
-					if (n < parms.size()-1)
-					{
-						dmodpath += " ";
-					}
-				}
-				StringReplace("\\", "/", dmodpath);
-				if (dmodpath[dmodpath.size()-1] != '/') dmodpath += '/'; //need a trailing slash
+				refdir = parms[i + 1]; i++;
 
-			} else
+				if (refdir[0] == '\"')
+				{
+					//special handling for quotes
+				
+					refdir = ""; //try again
+
+					for (; i < parms.size(); i++)
+					{
+						if (!refdir.empty())
+						{
+							refdir += " ";
+						}
+						refdir += parms[i];
+					}
+
+					//pull just the part we want out
+					refdir = SeparateStringSTL(refdir, 1, '\"');
+
+				}
+
+				StringReplace("\\", "/", refdir);
+				if (refdir[refdir.size() - 1] != '/') refdir += '/'; //need a trailing slash
+
+				//remove "
+				StringReplace("\"", "", refdir);
+			}
+			else
 			{
-				LogMsg("-dmodpath used wrong");
+				LogMsg("--refdir used wrong");
 			}
 		}
-
+	}
+		for (int i = 0; i < parms.size(); i++)
+		{
 		if (parms[i] == "-game")
 		{
 			if (parms.size() > i + 1)
 			{
+				dmodpath = parms[i + 1]; i++;
 
-				dmodpath = "";
-				for (int n = i + 1; n < parms.size(); n++)
+				if (!refdir.empty())
 				{
-					dmodpath += parms[n];
-					if (n < parms.size() - 1)
-					{
-						dmodpath += " ";
-					}
+					dmodpath = refdir + dmodpath;
 				}
 				StringReplace("\\", "/", dmodpath);
 				if (dmodpath[dmodpath.size() - 1] != '/') dmodpath += '/'; //need a trailing slash
 
-
-				int len = dmodpath.find_last_of("/", dmodpath.length()-2);
+				int len = dmodpath.find_last_of("/", dmodpath.length() - 2);
 				if (len == string::npos)
 				{
 					//no demod dir?  Weird but ok
@@ -16367,7 +16381,7 @@ string GetDMODRootPath(string *pDMODNameOutOrNull)
 				{
 					if (pDMODNameOutOrNull)
 						*pDMODNameOutOrNull = dmodpath.substr(len + 1, dmodpath.length());
-					dmodpath = dmodpath.substr(0, len+1);
+					dmodpath = dmodpath.substr(0, len + 1);
 				}
 			}
 			else
