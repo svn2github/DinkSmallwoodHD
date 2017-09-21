@@ -539,7 +539,6 @@ if (GetEmulatedPlatformID() == PLATFORM_ID_IOS)
 }
 
 #ifdef _DEBUG
-	GetApp()->SetCheatsEnabled(true);
 
 #endif
 #ifdef _WIN32
@@ -548,6 +547,8 @@ if (GetEmulatedPlatformID() == PLATFORM_ID_IOS)
 	//GetApp()->SetCheatsEnabled(true);
 #endif
 	
+GetApp()->SetCheatsEnabled(true);
+
 	bool bSound = m_varDB.GetVarWithDefault("sound", uint32(1))->GetUINT32() != 0;
 	GetAudioManager()->SetSoundEnabled(bSound);
 
