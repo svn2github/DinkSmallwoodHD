@@ -16,7 +16,7 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly);
 
 #define C_DINK_SCREEN_TRANSITION_TIME_MS 400
 
-const float SAVE_FORMAT_VERSION = 2.4f;
+const float SAVE_FORMAT_VERSION = 2.5f;
 const int C_DINK_FADE_TIME_MS = 300;
 
 const float G_TRANSITION_SCALE_TRICK = 1.01f;
@@ -1577,11 +1577,13 @@ bool LoadSpriteSingleFrame(string fNameBase, int seq, int oo, int picIndex, eTra
 		//hack so dialog box doesn't look bad:
 		if (bUseCheckerboardFix)
 		{
+			
 			if (oo >=2 && oo <= 4 && fNameBase =="main-")
 			{
-				//nah, because this is connected it makes this look weird
+				//nah, because this is connected it makes this look weird, even with the V2 checkerboard processing
 				bUseCheckerboardFix = false;
 			}
+			
 
 		}
 
@@ -1881,6 +1883,11 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 
 eTransparencyType GetTransparencyOverrideForSequence(eTransparencyType defaultTrans, int seqID)
 {
+	
+	//we don't support turning the color key on and off at blit time like Dink did, but this can help us get it right anyway.  Basically these are blits of numbers for the status
+	//bar that we force transparency off on
+
+	/*
 	switch (seqID)
 	{
 	case 442: //level#
@@ -1892,6 +1899,22 @@ eTransparencyType GetTransparencyOverrideForSequence(eTransparencyType defaultTr
 	case 438: //item icons
 
 		return TRANSPARENT_BLACK;
+	}
+	*/
+
+	switch (seqID)
+	{
+	case 181: //ns- numbers
+		return TRANSPARENT_NONE;
+	case 182: //nr- numbers
+		return TRANSPARENT_NONE;
+	case 183: //nb- numbers
+		return TRANSPARENT_NONE;
+	case 184: //nb- numbers
+		return TRANSPARENT_NONE;
+	case 185: //ny- numbers
+		return TRANSPARENT_NONE;
+
 	}
 
 	return defaultTrans;
@@ -1930,6 +1953,7 @@ void ReadFromLoadSequenceString(char ev[15][100] )
 	assert(strlen(ev[2]) < C_SPRITE_MAX_FILENAME_SIZE);
 	strcpy(g_dglos.g_seq[seqID].m_fileName, ev[2]);
 
+	g_dglos.g_seq[seqID].m_transType = TRANSPARENT_WHITE;
 
 
 	if (compare(ev[4], "BLACK"))
@@ -1939,7 +1963,7 @@ void ReadFromLoadSequenceString(char ev[15][100] )
 	} else if (compare(ev[4], "LEFTALIGN"))
 	{
 		g_dglos.g_seq[seqID].m_bLeftAlign = true;
-		g_dglos.g_seq[seqID].m_transType = GetTransparencyOverrideForSequence(TRANSPARENT_NONE, seqID);
+		g_dglos.g_seq[seqID].m_transType = GetTransparencyOverrideForSequence(g_dglos.g_seq[seqID].m_transType, seqID);
 	}else if (compare(ev[4], "NOTANIM") /*|| compare(ev[4], "NOTANIN")*/ ) //to work around a typo in MsDink's DMOD, but not to work around the notanin error in seq 424 in original dini.ini's.. yeah, complicated.  Why!?!?
 	{
 		
@@ -1947,93 +1971,13 @@ void ReadFromLoadSequenceString(char ev[15][100] )
 		g_dglos.g_seq[seqID].m_transType = GetTransparencyOverrideForSequence(TRANSPARENT_WHITE, seqID);
 	}  else
 	{
-		g_dglos.g_seq[seqID].m_transType = TRANSPARENT_WHITE;
-		//default, an anim with a lot of properties assigned
-
-		/*
-		if (ev[9][0] != 0 && ev[10][0] == 0
-			&&
-			//(seqID == 119
-			//|| seqID == 167
-			//|| seqID == 316
-			//|| seqID == 421
-			//|| seqID == 422
-			)
-			) //119, 167, 316, 421, 422
-		{
-			//The original dink.ini has some malformed lines, where anim speed is not specified, yet it's sort of
-			//required here.  Instead of fixing the .ini which would not fix various DMOD's, we'll do a work around
-
-			//LogMsg("MISSING SOMETHING: %s", line);
-			strcpy(ev[10], ev[9]);
-			strcpy(ev[9], ev[8]);
-			strcpy(ev[8], ev[7]);
-			strcpy(ev[7], ev[6]);
-			strcpy(ev[6], ev[5]);
-			strcpy(ev[5], ev[4]);
-			strcpy(ev[4], "30"); //set the speed
-		}
-*/
-
+		
 		g_dglos.g_seq[seqID].m_bIsAnim = true;
-		
-
-		/*
-		if (g_dglos.g_seq[seqID].m_bIsAnim)
-		{
-			//let's set some default offsets and hardboxes for this
-
-			if (ev[5][0] == 0)
-			{
-				//guess on the offset.  This should match the guess elsewhere but I'm too lazy to put it in a function
-				g_dglos.g_seq[seqID].m_xoffset = (g_dglos.g_picInfo[picIndex].box.bottom -
-					(g_dglos.g_picInfo[picIndex].box.bottom / 4)) - (g_dglos.g_picInfo[picIndex].box.bottom / 30);
-			}
-
-			if (ev[6][0] == 0)
-			{
-				//guess on the offset.  This should match the guess elsewhere but I'm too lazy to put it in a function
-				g_dglos.g_seq[seqID].m_yoffset = g_dglos.g_picInfo[picIndex].xoffset = (g_dglos.g_picInfo[picIndex].box.right -
-					(g_dglos.g_picInfo[picIndex].box.right / 2)) + (g_dglos.g_picInfo[picIndex].box.right / 6);
-			}
-
-
-			//ok, setup main offsets, lets build the hard block
-			/*
-			if (hardbox.right > 0)
-			{
-				//forced setting      
-				g_dglos.g_picInfo[picIndex].hardbox.left = hardbox.left;
-				g_dglos.g_picInfo[picIndex].hardbox.right = hardbox.right;
-			}
-			else
-			{
-				//guess setting   
-				work = g_dglos.g_picInfo[picIndex].box.right / 4;
-				g_dglos.g_picInfo[picIndex].hardbox.left -= work;
-				g_dglos.g_picInfo[picIndex].hardbox.right += work;
-			}
-
-			if (hardbox.bottom > 0)
-			{
-				g_dglos.g_picInfo[picIndex].hardbox.top = hardbox.top;
-				g_dglos.g_picInfo[picIndex].hardbox.bottom = hardbox.bottom;
-			}
-			else
-			{
-				work = g_dglos.g_picInfo[picIndex].box.bottom / 10;
-				g_dglos.g_picInfo[picIndex].hardbox.top -= work;
-				g_dglos.g_picInfo[picIndex].hardbox.bottom += work;
-			}
-		*/
-
-
-		
-
-#ifdef _DEBUG
-		//LogMsg("Hardbox: %s", PrintRect(hardbox).c_str());
-#endif
+		#ifdef _DEBUG
+				//LogMsg("Hardbox: %s", PrintRect(hardbox).c_str());
+		#endif
 	}
+
 	if (g_dglos.g_seq[seqID].m_bIsAnim)
 	{
 		//yes, an animation! Set default values for entire animation if we've got them
@@ -2045,9 +1989,8 @@ void ReadFromLoadSequenceString(char ev[15][100] )
 		g_dglos.g_seq[seqID].m_hardbox.right = atol(ev[9]);
 		g_dglos.g_seq[seqID].m_hardbox.bottom = atol(ev[10]);
 	}
-
-
 }
+
 bool ReloadSequence(int seqID, int frame, bool bScanOnly)
 {
 
@@ -2126,6 +2069,8 @@ bool figure_out(const char *line, int load_seq)
 
 #endif
 
+		
+
 		if (!g_dglos.g_seq[seqID].active)
 		{
 			ReadFromLoadSequenceString(ev);
@@ -2137,6 +2082,17 @@ bool figure_out(const char *line, int load_seq)
 
 		} else
 		{
+			if (compare(ev[1], "LOAD_SEQUENCE"))
+			{
+				//detect if this was already set somewhere first in the ini, on original Dink, this is a bug but doesn't matter because it doesn't load it, where with Dink HD LOAD_SEQUENCE_NOW's are
+				//loaded "on demand" so this can actually cause problems if we don't ignore the extra setting done
+			
+					//it's already been set, ignore this
+					//it's possible we should still set the offsets though, unsure
+			//		return bReturn;
+				
+			}
+
 			ReadFromLoadSequenceString(ev);
 			FreeSequence(seqID); //force a full reload, the anim probably changed
 			ReloadSequence(seqID);
@@ -2192,6 +2148,19 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly)
 			}
 
 #endif
+
+			if (compare(ev[1], "LOAD_SEQUENCE") && g_dglos.g_seq[seqID].active == true)
+			{
+				//detect if this was already set somewhere first in the ini, on original Dink, this is a bug but doesn't matter because it doesn't load it, where with Dink HD LOAD_SEQUENCE_NOW's are
+				//loaded "on demand" so this can actually cause problems if we don't ignore the extra setting done
+
+				//it's already been set, ignore this
+				//it's possible we should still set the offsets though, unsure
+				return bReturn;
+
+			}
+
+
 			ReadFromLoadSequenceString(ev);
 			
 			bReturn = load_sprites(g_dglos.g_seq[seqID].m_fileName,seqID,g_dglos.g_seq[seqID].m_speed,g_dglos.g_seq[seqID].m_xoffset,g_dglos.g_seq[seqID].m_yoffset, g_dglos.g_seq[seqID].m_hardbox
@@ -2368,6 +2337,8 @@ void draw_exp(bool bDraw)
 		for (int i = 1; i < (6 - strlen(nums)); i++)
 			strcat(final, "0");
 	strcat(final, nums);
+	
+	check_seq_status(181);
 	draw_num(181, final, 404, 459);
 }
 
@@ -2545,9 +2516,11 @@ void draw_icons()
 
 		if (!check_seq_status(seq, frame)) return;
 		
+		/*
 		DrawFilledRect(557, 413, 
 			g_pSpriteSurface[g_dglos.g_seq[seq].frame[frame]]->m_pSurf->GetWidth()
 			,g_pSpriteSurface[g_dglos.g_seq[seq].frame[frame]]->m_pSurf->GetHeight(), MAKE_RGBA(0,0,0,255));
+			*/
 
 
 		ddrval = lpDDSBack->BltFast( 557, 413, g_pSpriteSurface[g_dglos.g_seq[seq].frame[frame]],
@@ -2760,6 +2733,9 @@ void BlitGUIOverlay()
 	*/
 		
 	lpDDSBack->BltFast( 0, 400, g_pSpriteSurface[g_dglos.g_seq[180].frame[3]], &rcRect  , DDBLTFAST_NOCOLORKEY );
+	
+	
+	
 	rcRect.left = 0;
 	rcRect.top = 0;
 	rcRect.right = 20;
@@ -2768,7 +2744,7 @@ void BlitGUIOverlay()
 	lpDDSBack->BltFast( 0, 0, g_pSpriteSurface[g_dglos.g_seq[180].frame[1]], &rcRect  , DDBLTFAST_NOCOLORKEY  );
 	lpDDSBack->BltFast( 620, 0,g_pSpriteSurface[g_dglos.g_seq[180].frame[2]], &rcRect  , DDBLTFAST_NOCOLORKEY  );
 
-
+	
 	draw_exp(true);
 	draw_health();
 	draw_strength(true);
@@ -3272,9 +3248,8 @@ int load_script(const char *pScript, int sprite, bool set_sprite, bool bQuietErr
 
 	
 found:
-#ifdef _DEBUG
+if (g_script_debug_mode)
 	LogMsg("Loading script %s..", fileName.c_str());
-#endif
 	script = k;
 	g_scriptAccelerator[script].Kill();
 	g_scriptInstance[script] = (struct refinfo *) malloc( sizeof(struct refinfo));
@@ -5847,13 +5822,32 @@ void copy_bmp( char *pName)
 	
 	if (lpDDSBuffer && lpDDSBuffer->m_pSurf && lpDDSBuffer->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGBA || lpDDSBuffer->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGB)
 	{
-		LogMsg("Warning, losing high color back buffer");
+		//LogMsg("Warning, losing high color back buffer");
 		//assert(0);
 	}
 
 	SAFE_DELETE(lpDDSBuffer);
 	assert(!lpDDSBuffer);
 	lpDDSBuffer = LoadBitmapIntoSurface(fName.c_str(), TRANSPARENT_NONE);
+
+	
+		if (lpDDSBackGround->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_PALETTE_8BIT && (lpDDSBuffer->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGBA || lpDDSBuffer->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGB))
+		{
+			//LogMsg("Detected high color tilescreen bmps.  Converting backbuffers to 32 bit on the fly.");
+
+			//switch it
+			delete lpDDSBackGround;
+			lpDDSBackGround = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL, true);
+
+
+			DDBLTFX     ddbltfx;
+			ddbltfx.dwFillColor = g_dglos.last_fill_screen_palette_color;
+			lpDDSBackGround->Blt(NULL, NULL, NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbltfx);
+
+			//bRequireRebuildOut = true;
+
+		}
+
 
 	g_abort_this_flip = true;
 
@@ -6727,7 +6721,7 @@ pass:
 			process_line(script, h, false);
 
 			//8
-			LogMsg("Returned %d for the returnint", g_dglos.g_returnint);
+			//LogMsg("Returned %d for the returnint", g_dglos.g_returnint);
 			h = pLineIn; 
 			strcpy(pLineIn, line); 
 
@@ -10482,7 +10476,7 @@ void process_callbacks(void)
 			if (g_scriptInstance[i]->sprite > 0) if (g_scriptInstance[i]->sprite != 1000) if (g_sprite[g_scriptInstance[i]->sprite].active == false) 
 			{
 				//kill this script, owner is dead
-				//if (debug_mode)
+				if (g_script_debug_mode)
 					LogMsg("Killing script Set%s, owner sprite %d is dead.",g_scriptInstance[i]->name, g_scriptInstance[i]->sprite);
 				kill_script(i);
 			}
@@ -10836,6 +10830,53 @@ BOOL keypressed( void )
 }
 
 #endif
+
+#ifdef WINAPI
+extern bool g_bAppFinished;
+#endif
+void CheckForHotkeys()
+{
+
+
+#ifdef C_DINK_KEYBOARD_INPUT
+#ifdef WINAPI
+	if ((GetKeyboard('Q')) && (GetKeyboard(18)))
+	{
+		if (g_DebugKeyTimer < GetApp()->GetTick())
+		{
+			g_DebugKeyTimer = GetApp()->GetTick() + 500;
+
+			LogMsg("Pressed Alt-Q, shutting down");
+
+			g_bAppFinished = true;
+		}
+	}
+
+
+	if ((GetKeyboard(68)) && (GetKeyboard(18)))
+	{
+		if (g_DebugKeyTimer < GetApp()->GetTick())
+		{
+			g_DebugKeyTimer = GetApp()->GetTick() + 500;
+
+			if (g_script_debug_mode)
+			{
+				g_script_debug_mode = false;
+				ShowQuickMessage("Script debug/extra logging off");
+			}
+			else
+			{
+				g_script_debug_mode = true;
+				ShowQuickMessage("Script debug/extra logging on");
+			}
+
+		}
+	}
+
+#endif
+#endif
+}
+
 
 void check_joystick(void)
 {
@@ -13041,7 +13082,7 @@ void run_through_mouse_list(int h, bool special)
 
                 if ((g_sprite[i].touch_damage == -1) && (g_sprite[i].script != 0))
                 {
-                    LogMsg("running %d's script..",g_sprite[i].script);
+                    //LogMsg("running %d's script..",g_sprite[i].script);
                     if (locate(g_sprite[i].script, "CLICK")) run_script(g_sprite[i].script);
                 } 
                 else
@@ -13145,7 +13186,7 @@ void mouse_brain(int h)
 
     if ( sjoy.button[1] == true || g_dinkMouseRightClick)
     {
-        LogMsg("running through mouse list..");
+        //LogMsg("running through mouse list..");
         run_through_mouse_list(h, true);
         sjoy.button[1] = false;
 		g_dinkMouseRightClick = false;
@@ -15749,33 +15790,6 @@ void updateFrame()
 	}
 
 	check_joystick();
-
-#ifdef C_DINK_KEYBOARD_INPUT
-	
-if (GetApp()->GetCheatsEnabled())
-{
-	if ( (GetKeyboard(68)) && (GetKeyboard(18)) )
-	{   
-		if (g_DebugKeyTimer < GetApp()->GetGameTick())	
-		{
-			g_DebugKeyTimer = GetApp()->GetGameTick()+500;	
-																																		
-					if (g_script_debug_mode) 
-			{
-				g_script_debug_mode = false;
-				LogMsg("Debug mode off");
-			}
-			else 
-			{
-				g_script_debug_mode = true;
-				LogMsg("Debug mode on");
-			}
-
-		}
-	}
-}
-
-#endif
 	
 	if (g_dglos.g_gameMode == 1) 
 	{

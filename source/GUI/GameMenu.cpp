@@ -28,8 +28,12 @@ void ShowQuickMessage(string msg)
 {
 
 	Entity *pMenu = GetEntityRoot()->GetEntityByName("GameMenu");
-	assert(pMenu);
-	if (!pMenu) return;
+	//assert(pMenu);
+	if (!pMenu)
+	{
+	//	pMenu = GetEntityRoot();
+		return;
+	}
 	Entity *pEnt = CreateTextLabelEntity(pMenu, "GameMsg", GetScreenSizeXf()/2, iPhoneMapY(100), msg);
 
 	//SetupTextEntity(pEnt, FONT_LARGE);
@@ -368,9 +372,10 @@ void OnGameProcessHWKey(VariantList *pVList)
 {
 	if (pVList->Get(0).GetFloat() != MESSAGE_TYPE_GUI_CHAR) return;
 
-		char c = toupper(char(pVList->Get(2).GetUINT32()));
+		byte c = toupper(char(pVList->Get(2).GetUINT32()));
 	
-		if (c > 28 && c < 255)
+		
+		if (c > 26 && c < 255 )
 		{
 
 			switch (c)
@@ -386,6 +391,9 @@ void OnGameProcessHWKey(VariantList *pVList)
 			default:
 				if (DinkCanRunScriptNow())
 				{
+					if (c == 44) c = 188; //convert , to , on old dink mapping, used by some dmods
+					if (c == 46) c = 190; //convert . to . on old dink mapping, used by some dmods
+
 					DinkLoadPlayerScript(string("key-" + toString(int(c))));
 				}
 			}
@@ -1025,6 +1033,11 @@ void OnArcadeInput(VariantList *pVList)
 		DinkSetSpeedUpMode(bIsDown);
 		break;
 
+	case VIRTUAL_KEY_CUSTOM_QUIT: //tab
+			//LogMsg("Tab: %d", int(bIsDown));
+		LogMsg("Quitting");
+		break;
+
 	case VIRTUAL_KEY_F1:
 	
 		if (bIsDown)
@@ -1238,7 +1251,12 @@ void GameFinishLoading(Entity *pBG)
 
 //if (IsDesktop())
 {
-	GetBaseApp()->m_sig_input.connect(&OnGameProcessHWKey); 
+		static bool bOneTimeKeyboardAttach = false;
+		if (!bOneTimeKeyboardAttach)
+		{
+			GetBaseApp()->m_sig_input.connect(&OnGameProcessHWKey);
+			bOneTimeKeyboardAttach = true;
+		}
 }
 
 	/*

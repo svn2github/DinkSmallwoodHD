@@ -150,4 +150,16 @@ if it was last used as fullscreen
 
 * Added Dan Walma's improved shadow patch
 
+------ Change log for 1.7.7 ----------
+
+* Sprite blits that hang out of the game area are now rejected in some situations, to match functionality of Dink 1.08. (Bloop the fish on 1.08 looked right because it was getting ddraw errors when trying to draw the "blank" numbers because they were too big for the screen)
+* A LOAD_SEQUENCE done after a LOAD_SEQUENCE_NOW in dink.ini is now ignored to match V1.08 functionality.  This fixes the issue of a fish turning into an old man in Bloop the fish
+* Alt-Q now closes Dink, to match 1.08
+* Fixed issue with bubble magic not having a transparent background in Bloop the fish (was due to some changes to make fake magic/weapon icons work on mobiles.. I'll have to redo that later)
+* Fixed issue with slow nagivation in Broken Windows due to too much logging about scripts being run
+* (Bugfix) copy_bmp_to_screen issue where it might try to blit a 24 bit image onto 8 bit fixed (fixed incorrect images in Broken Windows)
+* (Bugfix) key-<key num>.c scripts are no longer sometimes loaded multiple times
+* Some tweaks to keyboard input so Broken Windows typing area works better, "," and "." are supported.  Escape is as well but it also brings up Dink HD's menu which isn't great, but at least it works
+* (Bugfix) Default transparency for LEFTALIGN things is now correctly white instead of sometimes not transparent
+- Note:  Just to be safe, save state version has changed, so old save states won't load
 

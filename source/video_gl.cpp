@@ -379,6 +379,21 @@ int IDirectDrawSurface::BltFast( int x, int y, IDirectDrawSurface *pSrcSurf, rtR
 		{
 			//blit from a GL surface instead
 			pSrcSurf->UpdateShadowSurface();
+
+			//skip if too big for surface
+			if (
+				(pSrcRect->GetHeight()+y > C_DINK_SCREENSIZE_Y) || 
+				(pSrcRect->GetWidth()+x > C_DINK_SCREENSIZE_X)
+				)
+			{
+#ifdef _DEBUG
+				//LogMsg("Skipping blit, original Dink 1.08 would have rejected it for not fitting");
+#endif
+				break;
+
+			}
+
+			
 			pSrcSurf->m_pGLSurf->BlitEx(rtRectf(x, y, x+pSrcRect->GetWidth(), y +pSrcRect->GetHeight())+ rtRectf(0,0, 0.5f, 0.5f), rtRectf(*pSrcRect));
 			break;
 		}

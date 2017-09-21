@@ -11,6 +11,11 @@
 
 #define RT_IS_BETA 1
 
+enum eExtendedVirtualKeys
+{
+	VIRTUAL_KEY_CUSTOM_QUIT = VIRTUAL_KEY_CUSTOM_START
+
+};
 #ifdef RT_SCRIPT_BUILD
 
  //this is being build from the command line, enable special flags here

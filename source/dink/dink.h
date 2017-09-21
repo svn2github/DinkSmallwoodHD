@@ -27,6 +27,7 @@ struct SpriteStruct;
 
 void ClearBitmapCopy();
 
+void CheckForHotkeys();
 enum eDinkInput
 {
 	DINK_INPUT_UP,
