@@ -1739,10 +1739,22 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 	StringReplace("\\", "/", tempStr);
 
 	static FFReader reader;
+#ifdef _DEBUG
 
+	if (seq == 56)
+	{
+		LogMsg("Yeah");
+	}
+#endif
 	reader.Init(g_dglo.m_gameDir, g_dglo.m_dmodGamePathWithDir, GetPathFromString(tempStr), g_dglo.m_bUsingDinkPak);
 
 	string fNameBase = GetFileNameFromString(tempStr);
+
+	if (seq == 181 && frame == 11)
+	{
+		//hack for exp divider to be trans
+		transType = TRANSPARENT_WHITE;
+	}
 
 #ifdef _DEBUG
 	if (frame == 0)
@@ -1766,6 +1778,7 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 		LoadSpriteSingleFrame(fNameBase, seq, frame, g_dglos.g_seq[seq].s+frame, transType, &reader, hardbox, xoffset, yoffset, false);
 		return true;
 	}
+
 
 	// redink1 added to fix bug where loading sequences over others wouldn't work quite right.
 	int save_cur = g_dglos.g_curPicIndex;
@@ -2244,24 +2257,18 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly)
 
 	if (compare(ev[1],"STARTING_DINK_Y"))
 	{
-	myseq = atol(ev[2]);
-	g_dglos.g_playerInfo.y = myseq;
+		myseq = atol(ev[2]);
+		g_dglos.g_playerInfo.y = myseq;
 	}
 
 	if (compare(ev[1],"SET_FRAME_FRAME"))
 	{
 
-	//assert(!"this is actually used?");
 	myseq = atol(ev[2]);
 	myframe = atol(ev[3]);
 	special = atol(ev[4]);
 	special2 = atol(ev[5]);
 
-	g_dglos.g_seq[myseq].m_bFrameSetUsed = true;
-	if (special == -1)
-	g_dglos.g_seq[myseq].frame[myframe] = special; else
-	g_dglos.g_seq[myseq].frame[myframe] = g_dglos.g_seq[special].frame[special2];
-	
 
 #ifdef _DEBUG
 	//LogMsg("Set frame.  %d %d %d",myseq, myframe, special);
@@ -2271,8 +2278,17 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly)
 		//LogMsg("Idle..");
 
 	}
+
+#endif
+
+	g_dglos.g_seq[myseq].m_bFrameSetUsed = true;
 	
-	#endif
+	if (special == -1)
+		g_dglos.g_seq[myseq].frame[myframe] = special; 
+	else
+		g_dglos.g_seq[myseq].frame[myframe] = g_dglos.g_seq[special].frame[special2];
+	
+
 	}
 
 	return bReturn;     
@@ -2875,9 +2891,9 @@ bool get_box (int spriteID, rtRect32 * pDstRect, rtRect32 * pSrcRect )
 	}
 
 #ifdef _DEBUG
-	if (g_sprite[spriteID].pseq == 66 && g_sprite[spriteID].pframe == 1)
+	if (g_sprite[spriteID].pseq == 75 )
 	{
-		//LogMsg("Yo");
+		LogMsg("Yo");
 	}
 #endif
 
@@ -2896,8 +2912,20 @@ bool get_box (int spriteID, rtRect32 * pDstRect, rtRect32 * pSrcRect )
 		&& originalSurfPic != 0)
 	{
 		//wait.. this isn't the original picture, a set_frame_frame has been used!  We want the offset from the original.
-		txoffset = g_dglos.g_picInfo[originalSurfPic].xoffset;
-		tyoffset = g_dglos.g_picInfo[originalSurfPic].yoffset;
+		
+		//is the parent seq of the original an anim?
+		if (g_dglos.g_seq[g_dglos.g_picInfo[originalSurfPic].m_parentSeq].m_bIsAnim && g_dglos.g_picInfo[originalSurfPic].xoffset == 0 && g_dglos.g_picInfo[originalSurfPic].yoffset == 0)
+		{
+			txoffset = g_dglos.g_seq[g_dglos.g_picInfo[originalSurfPic].m_parentSeq].m_xoffset;
+			tyoffset = g_dglos.g_seq[g_dglos.g_picInfo[originalSurfPic].m_parentSeq].m_yoffset;
+		}
+		else
+		{
+			txoffset = g_dglos.g_picInfo[originalSurfPic].xoffset;
+			tyoffset = g_dglos.g_picInfo[originalSurfPic].yoffset;
+
+		}
+
 	}
 	else
 	{
@@ -5050,14 +5078,14 @@ void draw_sprite_game(LPDIRECTDRAWSURFACE lpdest,int h)
 
  
 #ifdef _DEBUG
-	if (g_sprite[h].pseq == 10 && g_sprite[h].pframe == 8)
+	if (g_sprite[h].pseq == 75 && g_sprite[h].pframe == 8)
 	{
 		//LogMsg("Drawing the rock");
 	}
 
-	if (g_sprite[h].pseq == 890)
+	if (g_sprite[h].pseq == 75)
 	{
-		//LogMsg("Drawing a wall");
+		LogMsg("Drawing a wall");
 		
 	}
 #endif

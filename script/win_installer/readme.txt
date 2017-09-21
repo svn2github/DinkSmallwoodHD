@@ -161,5 +161,8 @@ if it was last used as fullscreen
 * (Bugfix) key-<key num>.c scripts are no longer sometimes loaded multiple times
 * Some tweaks to keyboard input so Broken Windows typing area works better, "," and "." are supported.  Escape is as well but it also brings up Dink HD's menu which isn't great, but at least it works
 * (Bugfix) Default transparency for LEFTALIGN things is now correctly white instead of sometimes not transparent
+* The / divider on the experience display ( ns-11.bmp ) is now always "white transparent". This WAS the original way (check the Dink jewel case screenshots) but somehow in 1.08 and beyond this stopped being transparent.  Fixing this fixed the white box in Bug Mania
+* (Bugfix) Fixed "way too jumpy megapotion" bug
+
 - Note:  Just to be safe, save state version has changed, so old save states won't load
 
