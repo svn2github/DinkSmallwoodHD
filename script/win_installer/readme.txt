@@ -166,3 +166,21 @@ if it was last used as fullscreen
 
 - Note:  Just to be safe, save state version has changed, so old save states won't load
 
+------ Change log for 1.7.8 ----------
+
+* Fixed issue where launching dmods from DFArc with a dmod path not in DFArc's dir or Dink HD's dmod dir would fail
+* Fixed compatibility so Freedink.exe and the dink.exe from 1.08 can be run from Dink HD's dir (previously, start.c had been hacked to skip stuff for the HD version,
+  it now checks version and if it's being run as a dmod or not and does it right)
+* If you run the HD "dink" dir as a mod it now works as expected (it plays the normal game, including the old start up screen)
+* Now including story/*.c instead of the .d files.  No reason to hide them, right? (note: if you install over HD without uninstalling, the old .d files will still be there.  But .c files are checked
+first so it should be ok anyway)
+* DMODs now default to the original .midi files rather than the .ogg CD music, as it changed the desired "feel" of some DMODs to switch to CD music.  Running with -game dink causes Dink itself to
+  not use CD music as well, so for people who don't like CD music at all there's an option to play the original game with midis only
+* (Bugfix) Dink HD will no longer try to grab missing sprites from the base dink dir, this fixes Dink's pushing anim in Zoltron
+* (Bugfix) dmod installer no longer chokes on zero byte files (I'm looking at you, 9gems)
+* (Bugfix) Fixed memory leak and possible crash related to script loading
+* (Bugfix) Fixed issue with the checkerboard shadow processing where the 8 bit RLE decoder failed because it was expecting an 8 bit target (most bmps don't use RLE, but Alliance does in places)
+* Went ahead and decided to accept 252,252,252 as alpha if it's index 255 on an 8bit sprite.  This fixed the white background issue with Alliance dmod as well as Dinkcraft
+* FEATURE: Can now download all DMODs from Dink Network directly from inside the game via Dan's php interface.  Can sort by rating, latest update date, or alphabetically
+
+- Note:  Just to be safe, save state version has changed, so old save states won't load

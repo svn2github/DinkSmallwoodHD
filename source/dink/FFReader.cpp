@@ -37,14 +37,29 @@ int FFReader::GetFFRecordIndexFromFileName(const string &fName)
 	return -1;
 }
 
-bool FFReader::DoesFileExist( const string &fName )
+bool FFReader::DoesFileExist( const string &fName, const string &fFirstFrame )
 {
 
 	//LogMsg("Checking for  %s", (m_basePath+fName).c_str());
+	
+	bool bUsingDMODDirOnly = false;
+
+
+	if (fFirstFrame != fName && !m_dmodGamePath.empty())
+	{
+		//what if load part of a sequence from the DMOD dir, but part from the DInk dir? That would be bad
+		if (FileExists(m_dmodGamePath + m_basePath + fFirstFrame))
+		{
+			bUsingDMODDirOnly = true;
+		}
+	}
 
 	if (m_fp)
 	{
-		if (GetFFRecordIndexFromFileName(fName) != -1) return true;
+		if (
+			(!m_bUsingBaseDinkFF || !bUsingDMODDirOnly) &&
+			(GetFFRecordIndexFromFileName(fName) != -1)
+			) return true;
 	}
 
 	if (!m_dmodGamePath.empty())
@@ -52,12 +67,13 @@ bool FFReader::DoesFileExist( const string &fName )
 		if (FileExists(m_dmodGamePath+m_basePath+fName)) return true;
 	}
 	
-	if (!FileExists(m_gamePath+m_basePath+fName))
+	if (!bUsingDMODDirOnly && FileExists(m_gamePath+m_basePath+fName))
 	{
-		//LogMsg("Can't find %s", (m_basePath+fName).c_str());
-		return false;
+		return true;
 	}
-	return true;
+	
+
+	return false;
 }
 
 void FFReader::Init( const string &gamePath, const string &dmodGamePath, const string &basePath, bool bUsingDinkPak )

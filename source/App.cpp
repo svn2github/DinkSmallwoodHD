@@ -182,8 +182,8 @@ App::App()
 	m_bDidPostInit = false;
 	m_bHasDMODSupport = true;
 	//for mobiles
-	m_version = 1.77f;
-	m_versionString = "V1.7.7";
+	m_version = 1.78f;
+	m_versionString = "V1.7.8";
 	m_build = 1;
 	m_bCheatsEnabled = false;
 
@@ -749,19 +749,20 @@ void App::Update()
 		AddKeyBinding(pComp, "Speedup", 9, 9); //handle tab
 		AddKeyBinding(pComp, "Quicksave", VIRTUAL_KEY_F1, VIRTUAL_KEY_F1);
 		AddKeyBinding(pComp, "Quickload", VIRTUAL_KEY_F8, VIRTUAL_KEY_F8);
-
-	
 }
 
+		if (GetVar("check_icade")->GetUINT32() == 0)
+		{
 
+			AddDroidKeyboardKeys();
+		}
 
-if (GetVar("check_icade")->GetUINT32() == 0)
-{
-
-	AddDroidKeyboardKeys();
-}
-
+#ifdef _DEBUG
+//		BrowseMenuCreate(pGUIEnt);
+	MainMenuCreate(pGUIEnt);
+#else
 		MainMenuCreate(pGUIEnt);
+#endif
 	}
 	else
 	{

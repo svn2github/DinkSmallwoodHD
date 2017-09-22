@@ -36,9 +36,12 @@ void PopUpMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity se
 	DisableAllButtonsEntity(pEntClicked->GetParent()->GetParent());
 	Entity *pDarken = GetEntityRoot()->GetEntityByName("pop_up_darken");
 	
-	FadeScreen(pDarken, 0, 0, 400, true);
-	KillEntity(pDarken, 400);
-	pDarken->SetName("");
+	if (pDarken)
+	{
+		FadeScreen(pDarken, 0, 0, 400, true);
+		KillEntity(pDarken, 400);
+		pDarken->SetName("");
+	}
 
 	//set the game pause state back to whatever it was originally
 	GetApp()->SetGameTickPause(pEntClicked->GetParent()->GetParent()->GetVar("gamePaused")->GetUINT32() != 0);

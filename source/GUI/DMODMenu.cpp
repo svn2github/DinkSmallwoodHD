@@ -246,7 +246,7 @@ void AddDMODBar(Entity *pParent, float &x, float &y, string title, string descri
 	pBG->GetVar("dmodtitle")->Set(title); //save for later
 	//title
 	Entity *pTitle = CreateTextLabelEntity(pBG, "title", iPhoneMapX2X( 130) ,iPhoneMapY2X( 10), title);
-	Entity *pDescription = CreateTextBoxEntity(pBG, "descrip", iPhoneMap2X(129, 33), iPhoneMap2X(277, 53), description, 0.7f); 
+	Entity *pDescription = CreateTextBoxEntity(pBG, "descrip", iPhoneMap2X(129, 33), iPhoneMap2X(277, 53), description, 0.7f);
 
 	Entity *pIcon = CreateButtonHotspot(pBG, "icon_hotspot", GetDMODBarIconOffset(), GetDMODBarIconSize(), Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH_IGNORE_DRAGGING);
 	SetTouchPaddingEntity(pIcon, CL_Rectf(0,iPhoneMapY2X(5),0,iPhoneMapY2X(5)));
@@ -307,10 +307,7 @@ if (bCanDelete)
 			SetButtonStyleEntity(pIcon,  Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH_IGNORE_DRAGGING);
 			SetTouchPaddingEntity(pIcon, CL_Rectf(0,0,0,0));
 			pIcon->GetFunction("OnButtonSelected")->sig_function.connect(&DMODMenuOnSelect);
-
-
 		}
-
 
 
 	//add animation effect
@@ -362,7 +359,7 @@ void GetParsedDMODInfo(string dmodPath, string &nameOut, float versionOut, strin
 
 	}
 
-	int maxChars = 205;
+	int maxChars = 180;
 
 	if (description.length() > maxChars)
 	{
@@ -426,7 +423,6 @@ void DMODMenuAddScrollContent(Entity *pParent)
 			}
 			
 			files.push_back(GetDMODStaticRootPath()+staticFiles[i]);
-		
 		}
 
 	}

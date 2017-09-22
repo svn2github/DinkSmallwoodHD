@@ -3375,6 +3375,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release GL WinDir|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release GL|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release GL|x64'">true</ExcludedFromBuild>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug GL|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\..\shared\win\WinUtils.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Common Debug|Win32'">

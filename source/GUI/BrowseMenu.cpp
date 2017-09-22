@@ -15,20 +15,46 @@
 #include "Entity/HTTPComponent.h"
 
 
+enum DMODSortEnum
+{
+	DMOD_SORT_RATING,
+	DMOD_SORT_DATE,
+	DMOD_SORT_ALPHABETICAL,
+	//add above here
+	DMOD_SORT_COUNT
+};
+
+int g_dmodSorting = DMOD_SORT_RATING;
+int g_dmods_per_screen = 5;
+int g_dmod_cur_page = 0;
+
 struct DMODEntry
 {
+	
+	bool operator < (const DMODEntry& str) const
+	{
+		return (m_rating < str.m_rating);
+	}
 	string m_name;
 	string m_url;
 	string m_author;
 	float m_size;
 	float m_rating;
 	string m_description;
-	uint32 m_date;
-	float m_version;
+	string m_date;
+	string m_version;
+	string m_thumb;
 };
 
-void BrowseMenuAddScrollContent(Entity *pParent, TextScanner &t);
+vector<DMODEntry> g_dmodData;
+
+void BrowseMenuAddScrollContent(Entity *pParent, TextScanner *t);
 Entity * ShowScoreMessage(Entity *pMenu, string msg);
+
+int SmartModulo(int a, int b)
+{
+	return (((a % b) + b) % b);
+}
 
 void BrowseMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sent from
 {
@@ -45,6 +71,35 @@ void BrowseMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity s
 		DMODMenuCreate(pEntClicked->GetParent()->GetParent(), true);
 		return;
 	}
+	
+	int totalDMODPages = g_dmodData.size() / g_dmods_per_screen;
+
+
+	if (pEntClicked->GetName() == "Next")
+	{
+		g_dmod_cur_page++;
+		g_dmod_cur_page = SmartModulo(g_dmod_cur_page, totalDMODPages+1);
+		BrowseMenuAddScrollContent(pMenu, NULL);
+		return;
+	}
+
+
+	if (pEntClicked->GetName() == "Prev")
+	{
+		g_dmod_cur_page--;
+		g_dmod_cur_page = SmartModulo(g_dmod_cur_page, totalDMODPages+1);
+		BrowseMenuAddScrollContent(pMenu, NULL);
+		return;
+	}
+
+	if (pEntClicked->GetName() == "Label")
+	{
+		g_dmodSorting = ( (g_dmodSorting + 1) % DMOD_SORT_COUNT);
+		g_dmod_cur_page = 0;
+		BrowseMenuAddScrollContent(pMenu, NULL);
+		return;
+	}
+
 
 	//they must have clicked on a DMOD if they got this far
 	if (pEntClicked->GetName() == "install")
@@ -65,15 +120,6 @@ void BrowseMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity s
 
 	}
 
-	/*
-	if (pEntClicked->GetName() == "rtsoft")
-	{
-	PopUpCreate(pEntClicked->GetParent()->GetParent()->GetParent(), "Leave the game and visit `wrtsoft.com``?", "http://www.rtsoft.com/iphone",
-	"cancel", "`wCancel", "url", "`wLaunch", true);
-	return;
-	}
-	*/	
-
 	//GetEntityRoot()->PrintTreeAsText(); //useful for debugging
 }
 
@@ -91,19 +137,65 @@ string VersionToString(float v)
 	return string(tmp);
 
 }
-void AddEntryBar(Entity *pParent, float &x, float &y, DMODEntry &s, int count)
+void AddEntryBar(Entity *pParent, float &x, float &y, DMODEntry &s, int index)
 {
-	Entity *pBG = CreateOverlayEntity(pParent, s.m_name, ReplaceWithLargeInFileName("interface/iphone/browse_dmod_bar.rttex"),x, y);
+	Entity *pBG = CreateOverlayEntity(pParent, s.m_name, ReplaceWithLargeInFileName("interface/iphone/browse_dmod_bar.rttex"), x, y);
 
 	y += pBG->GetVar("size2d")->GetVector2().y;
 
 	pBG->GetVar("dmodurl")->Set(s.m_url); //save for later
 	pBG->GetVar("dmodtitle")->Set(s.m_name); //save for later
 	//title
+
+	string displayName = s.m_name;
+	int maxNameChars = 30;
+	int maxDescripChars = 57;
+
+
+	switch (g_dmodSorting)
+	{
+
+	case DMOD_SORT_DATE:
+			break;
+
+	default:
+		maxNameChars = 37;
+		break;
+	}
+
+
+	if (displayName.length() > maxNameChars)
+	{
+		TruncateString(displayName, maxNameChars);
+		displayName += "...";
+	}
+
+	string displayDescription = s.m_description;
+	
+	if (displayDescription.length() > maxDescripChars)
+	{
+		TruncateString(displayDescription, maxDescripChars);
+		displayDescription += "...";
+	}
+
 	char stTemp[512];
-	sprintf(stTemp, "`6%s ``V%s`6%s - ``%.2f mb``", s.m_name.c_str(), VersionToString(s.m_version).c_str(), s.m_author.c_str(), s.m_size); 
+	 
+
+	switch (g_dmodSorting)
+	{
+
+	case DMOD_SORT_DATE:
+		sprintf(stTemp, "#%d %s `6%s`` R:`6%.1f``", index+1, s.m_date.c_str(), displayName.c_str(), s.m_rating);
+		break;
+
+	default:
+		sprintf(stTemp, "#%d `6%s`` R:`6%.1f``", index+1, displayName.c_str(), s.m_rating);
+		break;
+	}
+	
+	
 	Entity *pTitle = CreateTextLabelEntity(pBG, "title", iPhoneMapX2X( 16) ,iPhoneMapY2X( 13), stTemp);
-	Entity *pDescription = CreateTextBoxEntity(pBG, "descrip", iPhoneMap2X(16, 34), iPhoneMap2X(425, 54), "`6"+s.m_description); 
+	Entity *pDescription = CreateTextBoxEntity(pBG, "descrip", iPhoneMap2X(16, 34), iPhoneMap2X(425, 54), "`6"+ displayDescription);
 
 	//Entity *pIcon = CreateButtonHotspot(pBG, "icon_hotspot", GetDMODBarIconOffset(), GetDMODBarIconSize(), Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH_IGNORE_DRAGGING);
 	//SetTouchPaddingEntity(pIcon, CL_Rectf(0,iPhoneMapY2X(5),0,iPhoneMapY2X(5)));
@@ -122,11 +214,61 @@ void AddEntryBar(Entity *pParent, float &x, float &y, DMODEntry &s, int count)
 	}
 
 	//add animation effect
-	ZoomToPositionFromThisOffsetEntity(pBG, CL_Vec2f(GetScreenSizeXf(), 0), 500, INTERPOLATE_EASE_TO, 10);
+	//ZoomToPositionFromThisOffsetEntity(pBG, CL_Vec2f(GetScreenSizeXf(), 0), 500, INTERPOLATE_EASE_TO, 10);
 }
 
+void UpdateBrowseControlButtons(Entity *pParent)
+{
+	Entity *pEnt = NULL;
 
-void BrowseMenuAddScrollContent(Entity *pParent, TextScanner &t)
+	pParent->RemoveEntityByName("Prev");
+	pParent->RemoveEntityByName("Next");
+	pParent->RemoveEntityByName("Label");
+
+	int totalDMODPages = g_dmodData.size() / g_dmods_per_screen;
+
+	//if (g_dmod_cur_page > 0)
+	{
+		pEnt = CreateTextButtonEntity(pParent, "Prev", iPhoneMapX(25 + 50 * 1), iPhoneMapY(BACK_BUTTON_Y), "`6<<``Prev", false);
+		pEnt->GetFunction("OnButtonSelected")->sig_function.connect(&BrowseMenuOnSelect);
+		SetButtonRepeatDelayMS(pEnt, 50);
+	}
+
+	//if (g_dmod_cur_page < totalDMODPages)
+	{
+		pEnt = CreateTextButtonEntity(pParent, "Next", iPhoneMapX(25 + 50 * 2), iPhoneMapY(BACK_BUTTON_Y), "Next`6>>``", false);
+		pEnt->GetFunction("OnButtonSelected")->sig_function.connect(&BrowseMenuOnSelect);
+		SetButtonRepeatDelayMS(pEnt, 50);
+	}
+
+	
+	string sorting;
+	
+	switch (g_dmodSorting)
+	{
+
+	case DMOD_SORT_DATE:
+		sorting = "newest";
+		break;
+	case DMOD_SORT_ALPHABETICAL:
+		sorting = "alphabetical";
+		break;
+	case DMOD_SORT_RATING:
+		sorting = "ratings";
+		break;
+
+	default:
+		sorting = "error";
+		break;
+	}
+	string label = "Page `6" + toString(g_dmod_cur_page+1) + "``/`6" + toString(totalDMODPages+1) + "`` - Sorting by `6<``"+ sorting+"`6>``";
+
+	pEnt = CreateTextButtonEntity(pParent, "Label", iPhoneMapX(25 + 50 * 4), iPhoneMapY(BACK_BUTTON_Y), label, false);
+	pEnt->GetFunction("OnButtonSelected")->sig_function.connect(&BrowseMenuOnSelect);
+
+}
+
+void BrowseMenuAddScrollContent(Entity *pParent, TextScanner *t)
 {
 	pParent = pParent->GetEntityByName("scroll_child");
 
@@ -136,58 +278,98 @@ void BrowseMenuAddScrollContent(Entity *pParent, TextScanner &t)
 
 	//Entity *pEnt;
 
+
 	int dmodsAdded = 0;
 
-	string msg = t.GetMultipleLineStrings("msg", "|");
-	vector<string> p = StringTokenize(msg, "|");
-
-	if (p.size() == 2 && p[1].length() > 1)
+	if (g_dmodData.empty())
 	{
-		
-		StringReplace("<cr>", "\n", p[1]);
-		//add a message we just downloaded
-		CL_Vec2f vTextBoxPos(x+iPhoneMapX(5),y);
-		CL_Vec2f vTextBounds(iPhoneMapX(434), iPhoneMapY(200));
-		Entity *pEnt = CreateTextBoxEntity(pParent, "", vTextBoxPos, vTextBounds, p[1]);
-		y += pEnt->GetVar("size2d")->GetVector2().y;
-		y += iPhoneMapY(5);
+		string msg = t->GetMultipleLineStrings("msg", "|");
+		vector<string> p = StringTokenize(msg, "|");
 
-	}
-
-	string line;
-	while ( string(line = t.GetMultipleLineStrings("add", "|")).length() > 0)
-	{
-		//LogMsg(line.c_str());
-		vector<string> p = StringTokenize(line, "|");
-
-		if (p.size() < 7)
+		if (p.size() == 2 && p[1].length() > 1)
 		{
-			continue;
+
+			StringReplace("<cr>", "\n", p[1]);
+			//add a message we just downloaded
+			CL_Vec2f vTextBoxPos(x + iPhoneMapX(5), y);
+			CL_Vec2f vTextBounds(iPhoneMapX(434), iPhoneMapY(200));
+			Entity *pEnt = CreateTextBoxEntity(pParent, "", vTextBoxPos, vTextBounds, p[1]);
+			y += pEnt->GetVar("size2d")->GetVector2().y;
+			y += iPhoneMapY(5);
+
 		}
-		DMODEntry s;
-		s.m_name = p[1];
-		s.m_url = p[2];
-		s.m_author = p[3];
-		s.m_size = atof(p[4].c_str());
-		s.m_rating = atof(p[5].c_str());
-		s.m_description = p[6];
-		s.m_version = atof(p[7].c_str());
 
-//		s.m_date = atol(p[5].c_str());
-		
-		//m_onlineScores.push_back(s);
-		AddEntryBar(pParent, x, y,s, dmodsAdded);
-		dmodsAdded++;
-		y += iPhoneMapY(5);
+		string line;
 
+		//populate our internal DB
+
+		g_dmodData.clear();
+
+		for (int i = 0; i < t->GetLineCount(); i++)
+		{
+
+			//LogMsg(line.c_str());
+			vector<string> p = StringTokenize(t->GetLine(i), "|");
+			if (p.size() < 8) continue; //don't care
+
+			DMODEntry s;
+			s.m_name = p[0];
+			if (s.m_name == "Title") continue;
+			s.m_url = p[1];
+			s.m_author = p[2];
+			s.m_size = atof(p[3].c_str());
+			s.m_rating = atof(p[4].c_str());
+			s.m_description = p[5];
+			s.m_version = p[6];
+			s.m_date = p[7].c_str();
+			StringReplace("V", "", s.m_version);
+			StringReplace("v", "", s.m_version);
+
+			s.m_thumb = atof(p[8].c_str());
+
+
+			g_dmodData.push_back(s);
+			dmodsAdded++;
+
+
+		}
 	}
 
+	switch (g_dmodSorting)
+	{
 
-    
+	case DMOD_SORT_ALPHABETICAL:
+		sort(g_dmodData.begin(), g_dmodData.end(), [](const DMODEntry& lhs, const DMODEntry& rhs)
+		{
+			return lhs.m_name < rhs.m_name;
+		});
+		break;
+
+	case DMOD_SORT_DATE:
+
+		sort(g_dmodData.rbegin(), g_dmodData.rend(), [](const DMODEntry& lhs, const DMODEntry& rhs)
+		{
+			return lhs.m_date < rhs.m_date;
+		});
+		break;
+
+	default:
+		sort(g_dmodData.rbegin(), g_dmodData.rend());
+		break;
+	}
+	//actually add them to the list
+
+	for (int i = g_dmods_per_screen*(g_dmod_cur_page); i < (g_dmods_per_screen*g_dmod_cur_page)+g_dmods_per_screen && i < g_dmodData.size(); i++)
+	{
+		AddEntryBar(pParent, x, y, g_dmodData[i], i);
+		//y += iPhoneMapY(1);
+	}
+  
     VariantList vList(pParent->GetParent());
 	ResizeScrollBounds(&vList);
 	DisableHorizontalScrolling(pParent->GetParent());
 
+	UpdateBrowseControlButtons(pParent->GetParent()->GetParent());
 }
 
 
@@ -236,7 +418,7 @@ void OnDownloadHTTPFinish(VariantList *pVList)
 	//GetHighScoreManager()->SetupOnlineScores(t);
 	//GetApp()->GetVar("cur_score")->Set(uint32(0));  //reset score drawing
 	//ScoresAddStuffToScroll(NULL);
-	BrowseMenuAddScrollContent(pMenu, t);
+	BrowseMenuAddScrollContent(pMenu, &t);
 
 	//	AddHighScores(pMenu, -1);
 }
@@ -278,9 +460,9 @@ void DownloadDMODList(Entity *pMenu)
 	pComp->GetFunction("OnFinish")->sig_function.connect(&OnDownloadHTTPFinish);
 
 	
-	Entity *pEnt = ShowScoreMessage(pMenu, "`6");
+	Entity *pEnt = ShowScoreMessage(pMenu, "`6Downloading dmod data");
 	EntityComponent *pTyper = pEnt->AddComponent(new TyperComponent);
-	pTyper->GetVar("text")->Set("Downloading add-on list...");
+	pTyper->GetVar("text")->Set("..........");
 	pTyper->GetVar("speedMS")->Set(uint32(50));
 	//KillScores();
 
@@ -361,6 +543,7 @@ Entity * BrowseMenuCreate( Entity *pParentEnt )
 	pEnt->GetFunction("OnButtonSelected")->sig_function.connect(&BrowseMenuOnSelect);
 	SetupTextEntity(pEnt, fontID);
 	AddHotKeyToButton(pEnt, VIRTUAL_KEY_BACK);
+
 
 	SlideScreen(pBG, true, 500);
 	pBG->GetFunction("OnPostIntroTransition")->sig_function.connect(&BrowseOnPostIntroTransition);

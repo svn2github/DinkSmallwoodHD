@@ -33,7 +33,7 @@ public:
 	FFReader();
 	virtual ~FFReader();
 
-	bool DoesFileExist(const string &fName);
+	bool DoesFileExist(const string &fName, const string &fFirstFrame);
 	void Init( const string &gamePath, const string &dmodGamePath, const string &baseDir, bool bUsingDinkPak);
 	byte * LoadFileIntoMemory(string const &fName, int *pSizeout); //you need to delete [] what this gives you on your own
 	eErrorType GetLastError() {return m_error;}

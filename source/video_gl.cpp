@@ -355,6 +355,7 @@ int IDirectDrawSurface::BltFast( int x, int y, IDirectDrawSurface *pSrcSurf, rtR
 	case MODE_SHADOW_GL:
 	case MODE_NORMAL:
 		
+		
 		if (pSrcSurf->m_mode == MODE_PRIMARY_GL)
 		{
 			//we need to copy from what is already on the screen

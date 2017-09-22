@@ -16,7 +16,7 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly);
 
 #define C_DINK_SCREEN_TRANSITION_TIME_MS 400
 
-const float SAVE_FORMAT_VERSION = 2.5f;
+const float SAVE_FORMAT_VERSION = 2.6f;
 const int C_DINK_FADE_TIME_MS = 300;
 
 const float G_TRANSITION_SCALE_TRICK = 1.01f;
@@ -1564,7 +1564,7 @@ bool LoadSpriteSingleFrame(string fNameBase, int seq, int oo, int picIndex, eTra
 		{
 			LogMsg("Woah, ");
 		}
-		if (seq == 192 && oo == 1)
+		if (seq == 341 && oo == 1)
 		{
 			LogMsg("Woah, ");
 		}
@@ -1741,9 +1741,9 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 	static FFReader reader;
 #ifdef _DEBUG
 
-	if (seq == 56)
+	if (seq == 314 )
 	{
-		LogMsg("Yeah");
+		//LogMsg("Yeah");
 	}
 #endif
 	reader.Init(g_dglo.m_gameDir, g_dglo.m_dmodGamePathWithDir, GetPathFromString(tempStr), g_dglo.m_bUsingDinkPak);
@@ -1756,17 +1756,7 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 		transType = TRANSPARENT_WHITE;
 	}
 
-#ifdef _DEBUG
-	if (frame == 0)
-	{
-		if (!reader.DoesFileExist(fNameBase+"01.bmp"))
-		{
-			LogMsg("Can't find %s", (string(org)+"01.bmp").c_str());
-			return true; //might be a serious error, not sure
-		}
-	}
-#endif
-	
+
 #ifdef _DEBUG
 	//LogMsg("Loading %s", org);
 #endif
@@ -1817,7 +1807,7 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 			//	LogMsg("Loading seq %d frame %d", seq, oo);
 			}
 #endif
-			if (reader.DoesFileExist(fNameBase+string(hold)+toString(oo)+".bmp"))
+			if (reader.DoesFileExist(fNameBase+string(hold)+toString(oo)+".bmp", fNameBase + "01.bmp"))
 			{
 				g_dglos.g_curPicIndex++;
 				
@@ -1926,6 +1916,10 @@ eTransparencyType GetTransparencyOverrideForSequence(eTransparencyType defaultTr
 	case 184: //nb- numbers
 		return TRANSPARENT_NONE;
 	case 185: //ny- numbers
+		return TRANSPARENT_NONE;
+	case 190: //health bar
+		return TRANSPARENT_NONE;
+	case 451: //health bar
 		return TRANSPARENT_NONE;
 
 	}
@@ -3102,12 +3096,9 @@ void kill_script(int k)
 
 		}
 		*/
-		g_scriptInstance[k] = NULL;
-
-		free(g_scriptInstance[k]);
-		g_scriptInstance[k] = NULL;
-		free(g_scriptBuffer[k]);
-		g_scriptBuffer[k] = NULL;
+		SAFE_FREE(g_scriptInstance[k]);
+		SAFE_DELETE_ARRAY(g_scriptBuffer[k]);
+		
 		g_scriptAccelerator[k].Kill();
 	}
 }
@@ -4846,8 +4837,8 @@ bool PlayMidi(const char *sFileName)
 			
 		} else
 		{
-			//try the base dir too
-			if (FileExists(g_dglo.m_gamePathWithDir+tempName))
+			//try the base dir for oggs too, but not if it's a dmod
+			if (g_dglo.m_dmodGameDir.empty() && FileExists(g_dglo.m_gamePathWithDir+tempName))
 			{
 				//found it
 				fName =  tempName;
@@ -8250,6 +8241,16 @@ pass:
 			strcpy(pLineIn, h);  
 			return(0);
 		}
+
+		if (compare(ev[1], (char*)"is_base_game"))
+		{
+			h = &h[strlen(ev[1])];
+			g_dglos.g_returnint = 1;
+			if (!g_dglo.m_dmodGameDir.empty()) g_dglos.g_returnint = 0;
+			strcpy(pLineIn, h);
+			return(0);
+		}
+
 		if (compare(ev[1], (char*)"get_client_version"))
 		{
 			h = &h[strlen(ev[1])];
@@ -16406,7 +16407,15 @@ string GetDMODRootPath(string *pDMODNameOutOrNull)
 
 				if (!refdir.empty())
 				{
-					dmodpath = refdir + dmodpath;
+					if (dmodpath.find(":") != string::npos)
+					{
+						//the dmod dir we got already has a path. Ignore --refdir, it will just break things
+					}
+					else
+					{
+						//prepend the refdir path so it works with how dfarc does it
+						dmodpath = refdir + dmodpath;
+					}
 				}
 				StringReplace("\\", "/", dmodpath);
 				if (dmodpath[dmodpath.size() - 1] != '/') dmodpath += '/'; //need a trailing slash
