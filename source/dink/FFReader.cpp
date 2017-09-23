@@ -193,7 +193,7 @@ byte * FFReader::LoadFFIntoMemory(int index, int *pSizeOut)
 }
 
 
-byte * FFReader::LoadFileIntoMemory( string const &fName, int *pSizeOut )
+byte * FFReader::LoadFileIntoMemory( string const &fName, int *pSizeOut, const string &fFirstFrame)
 {
 	
 #ifdef _DEBUG
@@ -202,33 +202,48 @@ byte * FFReader::LoadFileIntoMemory( string const &fName, int *pSizeOut )
 	int len;
 	byte *pBuff = NULL;
 
+	bool bUsingDMODDirOnly = false;
+
+
+	if (fFirstFrame != fName && !m_dmodGamePath.empty())
+	{
+		//what if load part of a sequence from the DMOD dir, but part from the DInk dir? That would be bad
+		if (FileExists(m_dmodGamePath + m_basePath + fFirstFrame))
+		{
+			bUsingDMODDirOnly = true;
+		}
+	}
+
 	if (m_fp)
 	{
 		if (m_bUsingBaseDinkFF && !m_dmodGamePath.empty())
 		{
 			//you know what?  Let's do a last minute try in the dmod dir as well.
 
-			if (FileExists(m_dmodGamePath+m_dmodBasePath+fName))
+			if (FileExists(m_dmodGamePath + m_dmodBasePath + fName))
 			{
 				//pBuff = LoadFileIntoMemoryBasic(m_dmodGamePath+m_basePath+fName, &len, false, false);
-				pBuff = GetFileManager()->Get(m_dmodGamePath+m_dmodBasePath+fName, &len, false);
+				pBuff = GetFileManager()->Get(m_dmodGamePath + m_dmodBasePath + fName, &len, false);
 
 				if (!pBuff) SetError(ERROR_LOW_MEM);
 				return pBuff;
 			}
 		}
 
-
-		int index = GetFFRecordIndexFromFileName(fName);
-
-		if (index != -1)
+		if (!bUsingDMODDirOnly)
 		{
-			//we found it!
-			return LoadFFIntoMemory(index, pSizeOut);
+			int index = GetFFRecordIndexFromFileName(fName);
+
+			if (index != -1)
+			{
+				//we found it!
+				return LoadFFIntoMemory(index, pSizeOut);
+			}
 		}
-	} else
-	{
-		
+	}
+	
+
+
 		if (!m_dmodGamePath.empty())
 		{
 		
@@ -238,15 +253,18 @@ byte * FFReader::LoadFileIntoMemory( string const &fName, int *pSizeOut )
 				pBuff = GetFileManager()->Get(m_dmodGamePath+m_dmodBasePath+fName, &len,false);
 				if (!pBuff) SetError(ERROR_LOW_MEM);
 				return pBuff;
-
 			}
 		}
-		//pBuff = LoadFileIntoMemoryBasic(m_gamePath+m_basePath+fName, &len, false, false);
-		pBuff = GetFileManager()->Get(m_gamePath+m_basePath+fName,&len,  false);
-		if (len ==  UINT_MAX) SetError(ERROR_LOW_MEM);
-		return pBuff;
 
-	}
+		if (!bUsingDMODDirOnly)
+		{
+			//pBuff = LoadFileIntoMemoryBasic(m_gamePath+m_basePath+fName, &len, false, false);
+			pBuff = GetFileManager()->Get(m_gamePath + m_basePath + fName, &len, false);
+			if (len == UINT_MAX) SetError(ERROR_LOW_MEM);
+			return pBuff;
+		}
 
+	
 	return NULL;
 }
+

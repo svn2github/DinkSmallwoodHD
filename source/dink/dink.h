@@ -169,7 +169,7 @@ const int C_MAX_SCRIPTS = 400;
 #else
 const int32 C_MAX_SEQUENCES = 1300; //Max # of sprite animations
 const int32 C_MAX_SPRITES = 6000;
-const int32 C_MAX_SPRITES_AT_ONCE = 300;
+const int32 C_MAX_SPRITES_AT_ONCE = 100; //don't change, there are still hardcoded numbers elsewhere and some weird stuff with screen lock and "flub" stuff whatever that is
 const int32 C_MAX_SCRIPT_CALLBACKS = 100;
 const int32 max_vars = 250;
 

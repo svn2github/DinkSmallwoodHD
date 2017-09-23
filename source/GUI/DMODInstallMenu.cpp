@@ -11,6 +11,9 @@
 #include "Network/NetHTTP.h"
 #include "Entity/HTTPComponent.h"
 
+#ifdef WINAPI
+extern 	bool g_bAppCanRunInBackground;
+#endif
 
 void DMODInstallMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sent from
 {
@@ -43,6 +46,14 @@ void DMODInstallMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=ent
 		}
 		
 	}
+
+	if (pEntClicked->GetName() == "Abort")
+	{
+		//slide it off the screen and then kill the whole menu tree
+		SlideScreen(pEntClicked->GetParent(), false);
+		GetMessageManager()->CallEntityFunction(pEntClicked->GetParent(), 500, "OnDelete", NULL);
+		BrowseMenuCreate(pEntClicked->GetParent()->GetParent());
+	}
 	
 	//GetEntityRoot()->PrintTreeAsText(); //useful for Loading
 }
@@ -64,6 +75,10 @@ void DMODInstallUpdateStatus(Entity *pMenu, string msg)
 
 void DMODInstallShowMsg(Entity *pMenu, string myMsg, bool bSuccess = false)
 {
+#ifdef WINAPI
+	g_bAppCanRunInBackground = false;
+#endif
+
 	Entity *pMsg = pMenu->GetEntityByName("status");
 
 		Entity *pLabel = pMenu->GetEntityByName("title_label");
@@ -76,20 +91,48 @@ void DMODInstallShowMsg(Entity *pMenu, string myMsg, bool bSuccess = false)
 				pLabel->GetComponentByName("TextRender")->GetVar("text")->Set("Error!");
 			} else
 			{
-				pLabel->GetComponentByName("TextRender")->GetVar("text")->Set("Success!");
+				pLabel->GetComponentByName("TextRender")->GetVar("text")->Set("New quest added successfully.");
 			}
 		}
+	
 	if (pMsg)
 	{
-		pMsg->RemoveComponentByName("Typer"); // a thing that types stuff
 		pMsg->GetComponentByName("TextRender")->GetVar("text")->Set(myMsg);
+		if (!pMsg->RemoveComponentByName("Typer"))
+		{
+			LogMsg("Failed to remove typer;");
+		}; // a thing that types stuff
+
+
 	}
 
 	Entity *pSkip = pMenu->GetEntityByName("Back");
 
-	if (pSkip)
+	if (bSuccess)
 	{
-		pSkip->GetComponentByName("TextRender")->GetVar("text")->Set("`wContinue");
+		if (pSkip)
+		{
+			pSkip->GetComponentByName("TextRender")->GetVar("text")->Set("`wPlay it now");
+		}
+
+		//also add a button to keep browsing DMODs
+		float yStart = iPhoneMapY(230);
+		yStart = GetPos2DEntity(pSkip).y;
+		CL_Vec2f vPos(iPhoneMapX(300), yStart);
+
+		SetPos2DEntity(pSkip, vPos);
+
+		Entity *pEnt = CreateTextButtonEntity(pMenu, "Abort", iPhoneMapX(100), yStart, "Back", true);
+		SetAlignmentEntity(pEnt, ALIGNMENT_CENTER);
+		pEnt->GetFunction("OnButtonSelected")->sig_function.connect(&DMODInstallMenuOnSelect);
+	}
+	else
+	{
+		if (pSkip)
+		{
+			pSkip->GetComponentByName("TextRender")->GetVar("text")->Set("`wContinue");
+		}
+
 	}
 
 }
@@ -100,9 +143,17 @@ void DMODSetTitleLabel(Entity *pMenu, string myMsg)
 	Entity *pLabel = pMenu->GetEntityByName("title_label");
 	if (pLabel)
 	{
-		//pLabel->RemoveComponentByName("Typer"); // a thing that types stuff
+		pLabel->RemoveComponentByName("Typer"); // a thing that types stuff
 	
 		pLabel->GetComponentByName("TextRender")->GetVar("text")->Set(myMsg);
+
+		
+		//just kidding, add typer back
+
+		EntityComponent *pTyper = pLabel->AddComponent(new TyperComponent);
+		pTyper->GetVar("text")->Set(".......");
+		pTyper->GetVar("speedMS")->Set(uint32(500));
+
 		
 	}
 	
@@ -178,7 +229,7 @@ void OnDMODUnpackFinish(VariantList *pVList)
 	Entity *pMenu = pVList->m_variant[0].GetComponent()->GetParent();
 
 	DMODInstallSetProgressBar(1);
-	DMODInstallShowMsg(pMenu, pMenu->GetVar("originalFileName")->GetString()+" installed.  Tap continue.", true);
+	DMODInstallShowMsg(pMenu, pMenu->GetVar("originalFileName")->GetString()+" installed.", true);
 
 	RemoveFile(GetDMODRootPath()+"temp.dmod");
 	RemoveFile("temp.dmod");
@@ -265,6 +316,7 @@ void InitNetStuff(VariantList *pVList)
 
 Entity * DMODInstallMenuCreate(Entity *pParentEnt, string dmodURL, string installDirectory, string sourceFileName, bool bFromBrowseMenu, string dmodName)
 {
+
 	Entity *pBG = CreateOverlayEntity(pParentEnt, "DMODInstall", ReplaceWithDeviceNameInFileName("interface/iphone/bkgd_stone.rttex"), 0,0);
 	AddFocusIfNeeded(pBG, true);
 
@@ -308,6 +360,11 @@ Entity * DMODInstallMenuCreate(Entity *pParentEnt, string dmodURL, string instal
 
 	Entity *pStatus = CreateTextLabelEntity(pBG, "status", x, iPhoneMapY(180), "Initializing...");
 	SetAlignmentEntity(pStatus, ALIGNMENT_CENTER);
+
+#ifdef WINAPI
+	g_bAppCanRunInBackground = true;
+#endif
+
 
 	if (bFromBrowseMenu)
 	{

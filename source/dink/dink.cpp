@@ -16,7 +16,7 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly);
 
 #define C_DINK_SCREEN_TRANSITION_TIME_MS 400
 
-const float SAVE_FORMAT_VERSION = 2.6f;
+const float SAVE_FORMAT_VERSION = 2.7f;
 const int C_DINK_FADE_TIME_MS = 300;
 
 const float G_TRANSITION_SCALE_TRICK = 1.01f;
@@ -1533,7 +1533,7 @@ bool LoadSpriteSingleFrame(string fNameBase, int seq, int oo, int picIndex, eTra
 	fName += toString(oo) + ".bmp";
 
 
-	byte *pMem = pReader->LoadFileIntoMemory(fName, NULL);
+	byte *pMem = pReader->LoadFileIntoMemory(fName, NULL, fNameBase + "01.bmp");
 
 	if (g_dglos.g_seq[seq].m_spaceAllowed != 0)
 	{
@@ -1587,6 +1587,18 @@ bool LoadSpriteSingleFrame(string fNameBase, int seq, int oo, int picIndex, eTra
 
 		}
 
+#ifdef _DEBUG
+		if (seq == 181 && oo == 11)
+		{
+			LogMsg("hey");
+
+		}
+#endif
+		if (seq == 181 && oo == 11)
+		{
+			//hack for exp divider to be trans
+			transType = TRANSPARENT_WHITE;
+		}
 
 		g_pSpriteSurface[picIndex] = LoadBitmapIntoSurface("", transType, IDirectDrawSurface::MODE_SHADOW_GL, pMem, bUseCheckerboardFix);
 	}
@@ -1595,7 +1607,9 @@ bool LoadSpriteSingleFrame(string fNameBase, int seq, int oo, int picIndex, eTra
 
 		if (oo == 1)
 		{
+#ifdef _DEBUG
 			LogMsg("load_sprites:  Anim %s not found.", (fName).c_str());
+#endif
 			//assert(0);
 			return false;
 		}
@@ -2068,10 +2082,10 @@ bool figure_out(const char *line, int load_seq)
 		int seqID = atol(ev[3]);
 		
 #ifdef _DEBUG
-		if (seqID == 453)
+		if (seqID == 104)
 		{
 
-		//	LogMsg("Loading sand stuff");
+			LogMsg("Loading sand stuff");
 		}
 
 #endif
@@ -2645,6 +2659,7 @@ void draw_mlevel(int percent, bool bDraw)
 
 void draw_status_all(void)
 {
+	g_forceBuildBackgroundFromScratch = true;
 	ClearBitmapCopy();
 
 	g_dglos.g_guiStrength = *pstrength;
@@ -4283,9 +4298,9 @@ int var_equals(char name[20], char newname[20], char math, int script, char rest
 	}
 
 #ifdef _DEBUG
-	if (string(name) == "&startscreen")
+	if (string(name) == "&vision")
 	{
-	//	LogMsg("Var!");
+		LogMsg("Var!");
 	}
 #endif
 	int i = get_var(script, name);
@@ -4947,7 +4962,7 @@ int32 change_sprite(int32 h,  int32 val, int32 * change)
 	//Msg("Searching sprite %s with val %d.  Cur is %d", h, val, *change);
 	if (h >= C_MAX_SPRITES_AT_ONCE)
 	{
-		LogMsg("Error: Can't use sp_ commands on a sprite after it's connected to sprite 1000, can crash. Ignoring command.");
+ 		LogMsg("Error: Can't use sp_ commands on a sprite after it's connected to sprite 1000, can crash. Ignoring command.");
 		return 0;
 	}
 
@@ -5353,11 +5368,10 @@ void changedir( int dir1, int k,int base)
 
 }
 
-
 void update_play_changes( void )
 {
 
-	for (int j = 1; j < 100; j++)
+	for (int j = 1; j < C_MAX_SPRITES_AT_ONCE; j++)
 	{
 		if (g_dglos.g_smallMap.sprite[j].active)
 			if (g_dglos.g_playerInfo.spmap[*pmap].type[j] != 0)
@@ -5562,7 +5576,7 @@ void place_sprites_game(bool bBackgroundOnly )
 		highest_sprite = 20000; //more than it could ever be
 		rank[r1] = 0;
 
-		for (int h1 = 1; h1 < 100;  h1++)
+		for (int h1 = 1; h1 < C_MAX_SPRITES_AT_ONCE;  h1++)
 		{
 			if (bs[h1] == false)
 			{
@@ -5593,7 +5607,7 @@ void place_sprites_game(bool bBackgroundOnly )
 #ifdef _DEBUG
 		if (g_dglos.g_smallMap.sprite[j].seq == 66)
 		{
-			LogMsg("Garden");
+			//LogMsg("Garden");
 			//bScaledBackgroundSpritesRequired = true;
 			//continue;
 		}
@@ -5711,6 +5725,9 @@ void place_sprites_game(bool bBackgroundOnly )
 
 				if (strlen(g_dglos.g_smallMap.sprite[j].script) > 1)
 				{
+#ifdef _DEBUG
+					LogMsg("Sprite %d is requesting that script %s is loaded when the map is drawn, vision is %d", j, g_dglos.g_smallMap.sprite[j].script, *pvision);
+#endif
 					g_sprite[sprite].script = load_script(g_dglos.g_smallMap.sprite[j].script, sprite, true);
 				}
 
@@ -7664,8 +7681,6 @@ pass:
 		}
 
 
-
-
 		if (compare(ev[1], (char*)"draw_background"))
 		{
 			g_forceBuildBackgroundFromScratch = true;
@@ -7931,7 +7946,7 @@ pass:
 				*pvision = g_nlist[0];
 				g_scriptInstance[script]->sprite = 1000;
 				fill_whole_hard();
-				BuildScreenBackground();
+				BuildScreenBackground(true, true);
 			}
 
 			strcpy(pLineIn, h);  
@@ -10583,7 +10598,7 @@ void init_scripts(void)
 {
 	for (int k = 1; k < C_MAX_SCRIPTS; k++)
 	{
-		if (g_scriptInstance[k] != NULL && g_scriptInstance[k]->sprite != 0 && g_scriptInstance[k]->sprite < 300 && g_sprite[g_scriptInstance[k]->sprite].active )
+		if (g_scriptInstance[k] != NULL && g_scriptInstance[k]->sprite != 0 && g_scriptInstance[k]->sprite < C_MAX_SPRITES_AT_ONCE && g_sprite[g_scriptInstance[k]->sprite].active )
 		{
 			if (locate(k,"main"))
 			{
@@ -17303,7 +17318,8 @@ bool LoadState(string const &path, bool bLoadPathsOnly)
 
 	if ( g_dglos.g_gameMode > 2  || g_dglos.m_bRenderBackgroundOnLoad)
 	{
-		BuildScreenBackground(false, true);
+		if (g_sprite[1].brain != 13)
+			BuildScreenBackground(false, true);
 	}
 	
 	if (g_dglos.g_bShowingBitmap.active)
@@ -17604,11 +17620,16 @@ void DinkOnForeground()
 		//reinit any lost surfaces that we need to
 		if ( g_dglos.g_gameMode > 2  || g_dglos.m_bRenderBackgroundOnLoad)
 		{
-			if (g_dglos.m_bRenderBackgroundOnLoad)
+			if (g_dglos.m_bRenderBackgroundOnLoad && g_sprite[1].brain != 13)
 			{
 				g_forceBuildBackgroundFromScratch = true;
 			}
-			BuildScreenBackground(false);
+
+			if (g_sprite[1].brain != 13)
+			{
+				//brain 13 means mouse so we probably don't need this.  Could be wrong though..
+				BuildScreenBackground(false);
+			}
 		}
 
 		if (g_dglos.g_bShowingBitmap.active)

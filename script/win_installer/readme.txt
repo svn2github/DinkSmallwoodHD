@@ -180,7 +180,18 @@ first so it should be ok anyway)
 * (Bugfix) dmod installer no longer chokes on zero byte files (I'm looking at you, 9gems)
 * (Bugfix) Fixed memory leak and possible crash related to script loading
 * (Bugfix) Fixed issue with the checkerboard shadow processing where the 8 bit RLE decoder failed because it was expecting an 8 bit target (most bmps don't use RLE, but Alliance does in places)
+* (Bugfix) Fixed issue with loading certain 16 bit bmps incorrectly, fixed tilted text in Infinidink
 * Went ahead and decided to accept 252,252,252 as alpha if it's index 255 on an 8bit sprite.  This fixed the white background issue with Alliance dmod as well as Dinkcraft
 * FEATURE: Can now download all DMODs from Dink Network directly from inside the game via Dan's php interface.  Can sort by rating, latest update date, or alphabetically
+
+- Note:  Just to be safe, save state version has changed, so old save states won't load
+
+------ Change log for 1.7.9 ----------
+
+* Dink now continues to download and install dmods when in the background, but everywhere else pauses automatically
+* After installing a dmod, you can now choose to play it now or go back to the browse dmod list
+* DMOD data downloaded from dink network is now cached for that session (it's not going to change so quickly, so why stress DN.com if we don't have to)
+* (Bugfix) "installing <dmod>..." text message is no longer truncated in a weird way sometimes
+* (Bugfix) Fixed another issue where a base graphic could fill in with a missing .bmp in a sequence when it shouldn't
 
 - Note:  Just to be safe, save state version has changed, so old save states won't load

@@ -473,8 +473,18 @@ void BrowseOnPostIntroTransition(VariantList *pVList)
 
 	Entity *pBG = pVList->Get(0).GetEntity();
 	
-	DownloadDMODList(pBG);
+	//fresh download or use cached data?
 
+	if (g_dmodData.empty())
+	{
+		DownloadDMODList(pBG);
+	}
+	else
+	{
+		//use what we got
+		BrowseMenuAddScrollContent(pBG, NULL);
+	}
+	
 	//CreateQuickTipFirstTimeOnly(pBG, "interface/iphone/quicktip_dmod.rttex", false);
 }
 
