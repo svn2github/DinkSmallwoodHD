@@ -172,6 +172,8 @@ const char * GetAppName()
 
 App::App()
 {
+	m_logFileHandle = NULL;
+
 	http://www.rtsoft.com
 
 	m_bGhostMode = false;
@@ -182,8 +184,8 @@ App::App()
 	m_bDidPostInit = false;
 	m_bHasDMODSupport = true;
 	//for mobiles
-	m_version = 1.79f;
-	m_versionString = "V1.7.9";
+	m_version = 1.80f;
+	m_versionString = "V1.8.0";
 	m_build = 1;
 	m_bCheatsEnabled = false;
 
@@ -196,6 +198,11 @@ App::App()
 
 App::~App()
 {
+
+	assert(m_logFileHandle);
+	if (m_logFileHandle)
+		fclose(m_logFileHandle);
+
 
 	//L_ParticleSystem::deinit();
 }
@@ -352,7 +359,7 @@ bool App::Init()
 #ifdef WINAPI
 		OutputDebugString(text.c_str());
 #endif
-		AddText(text.c_str(), (GetSavePath() + "log.txt").c_str());
+		AddTextToLog(text.c_str(), (GetSavePath() + "log.txt").c_str());
 	}
 
 
@@ -1017,4 +1024,56 @@ void App::OnUnloadSurfaces()
 	DinkUnloadUnusedGraphicsByUsageTime(0);
 	
 	//g_transitionSurf.Kill();
+}
+
+void App::AddTextToLog(const char *tex, const char *filename)
+	{
+		if (strlen(tex) < 1) return;
+
+		if (m_logFileHandle == NULL)
+		{
+
+			//open 'er up
+			m_logFileHandle = fopen(filename, "wb");
+			if (!m_logFileHandle)
+			{
+				assert(!"huh?");
+			}
+			return;
+		}
+		
+		if (!m_logFileHandle) return;
+			fwrite(tex, strlen(tex), 1, m_logFileHandle);
+	
+	}
+
+//our custom LogMsg that isn't slow as shit
+void LogMsg(const char* traceStr, ...)
+{
+	va_list argsVA;
+	const int logSize = 1024 * 10;
+	char buffer[logSize];
+	memset((void*)buffer, 0, logSize);
+
+	va_start(argsVA, traceStr);
+	vsnprintf_s(buffer, logSize, logSize, traceStr, argsVA);
+	va_end(argsVA);
+
+
+	OutputDebugString(buffer);
+	OutputDebugString("\n");
+
+	if (IsBaseAppInitted())
+	{
+		GetBaseApp()->GetConsole()->AddLine(buffer);
+		strcat(buffer, "\r\n");
+		//OutputDebugString( (string("writing to ")+GetSavePath()+"log.txt\n").c_str());
+		
+		//this is the slow part.  Or was...
+
+
+		
+		GetApp()->AddTextToLog(buffer, (GetSavePath() + "log.txt").c_str());
+	}
+
 }

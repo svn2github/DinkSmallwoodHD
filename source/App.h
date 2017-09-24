@@ -84,6 +84,7 @@ public:
 	void OnMessage( Message &m );
 	void OnLoadSurfaces();
 	void OnUnloadSurfaces();
+	void AddTextToLog(const char *tex, const char *filename);
 	void AddDroidKeyboardKeys();
 	void RemoveAndroidKeyboardKeys();
 	void AddIcadeProvider();
@@ -115,6 +116,8 @@ private:
 	int m_desktopBuild;
 	bool m_bHasDMODSupport;
 	bool m_bCheatsEnabled;
+	FILE *   m_logFileHandle;
+
 
 };
 

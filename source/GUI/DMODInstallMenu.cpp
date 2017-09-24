@@ -144,16 +144,12 @@ void DMODSetTitleLabel(Entity *pMenu, string myMsg)
 	if (pLabel)
 	{
 		pLabel->RemoveComponentByName("Typer"); // a thing that types stuff
-	
 		pLabel->GetComponentByName("TextRender")->GetVar("text")->Set(myMsg);
-
 		
 		//just kidding, add typer back
-
 		EntityComponent *pTyper = pLabel->AddComponent(new TyperComponent);
 		pTyper->GetVar("text")->Set(".......");
 		pTyper->GetVar("speedMS")->Set(uint32(500));
-
 		
 	}
 	

@@ -193,5 +193,17 @@ first so it should be ok anyway)
 * DMOD data downloaded from dink network is now cached for that session (it's not going to change so quickly, so why stress DN.com if we don't have to)
 * (Bugfix) "installing <dmod>..." text message is no longer truncated in a weird way sometimes
 * (Bugfix) Fixed another issue where a base graphic could fill in with a missing .bmp in a sequence when it shouldn't
+* Huh, turns out .D files are always loaded before .C files.  I switched back to including .D files, otherwise if you didn't do a clean install my start.c changes don't show up
+* Fixed it so freedink.exe and the old dink can be run directly from the Dink HD directory without crashing.  I didn't actually test it before, they didn't like / instead of \ in my .ini previously.
+I also added the CD and splash.bmp that were missing
+* Quick tip that pops up when playing the normal game now talks about the F1/F8 instant state save/load feature instead of talking about pressing the "pause icon" which doesn't even exist on the Windows build
 
 - Note:  Just to be safe, save state version has changed, so old save states won't load
+
+------ Change log for 1.8.0 ----------
+
+* Applied 16 bit bmp loading fix to "fancy shadows" version too, forgot before
+* (Bugfix) Dink is no longer sometimes incorrectly shown on screen right as a dmod is started
+* (Windows, DinkC, Performance) Logging code rewritten, it's was horribly slow before.  If a DMOD spammed "debug" messages it would previously drastically slow down the entire dmod
+* (Bugfix) LOAD_SEQUENCE and LOAD_SEQUENCE_NOW fixes, fixes stuff in many dmods
+* Improved mouse handling on dialog menus, no longer accidently select the first option of the dink menu if you click slow after using HD's escape menu to get there

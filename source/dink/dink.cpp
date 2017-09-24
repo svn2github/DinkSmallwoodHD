@@ -16,7 +16,7 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly);
 
 #define C_DINK_SCREEN_TRANSITION_TIME_MS 400
 
-const float SAVE_FORMAT_VERSION = 2.7f;
+const float SAVE_FORMAT_VERSION = 2.8f;
 const int C_DINK_FADE_TIME_MS = 300;
 
 const float G_TRANSITION_SCALE_TRICK = 1.01f;
@@ -915,6 +915,7 @@ void load_map(const int num)
 	int holdme,lsize;
 
 	LogMsg("Loading map %d...",num);
+	g_dglos.m_bRenderBackgroundOnLoad = true;
 
 	StreamingInstance *pFile = GetFileManager()->GetStreaming(GetFileLocationString(g_dglos.current_map), NULL, false);
 
@@ -1627,6 +1628,8 @@ bool LoadSpriteSingleFrame(string fNameBase, int seq, int oo, int picIndex, eTra
 		g_dglos.g_picInfo[picIndex].box.left = 0;
 		g_dglos.g_picInfo[picIndex].box.right = surfSizeX;
 		g_dglos.g_picInfo[picIndex].box.bottom = surfSizeY;
+
+		
 	}
 
 
@@ -1803,7 +1806,7 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 		g_dglos.g_seq[seq].s = g_dglos.g_curPicIndex -1;
 	}
 	
-	if (bScanOnly)
+	if (bScanOnly || g_dglos.g_seq[seq].frame[1] == 0)
 	{
 		if (reload)
 		{
@@ -1839,7 +1842,8 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 				break;
 			}
 		}
-		return true;
+		if (bScanOnly)
+			return true;
 	}
 
 
@@ -2028,7 +2032,7 @@ bool ReloadSequence(int seqID, int frame, bool bScanOnly)
 	if (g_dglos.g_seq[seqID].m_bFrameSetUsed)
 	{
 		//a set_frame_frame has been used here.  This means we may reference another sprite that isn't loaded yet, better check
-		for (int i = 0; i < C_MAX_SPRITE_FRAMES; i++)
+		for (int i = 1; i < C_MAX_SPRITE_FRAMES; i++)
 		{
 			if (g_dglos.g_seq[seqID].frame[i] == 0)
 			{
@@ -2082,7 +2086,7 @@ bool figure_out(const char *line, int load_seq)
 		int seqID = atol(ev[3]);
 		
 #ifdef _DEBUG
-		if (seqID == 104)
+		if (seqID == 131)
 		{
 
 			LogMsg("Loading sand stuff");
@@ -2162,14 +2166,15 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly)
 			int seqID = atol(ev[3]);
 
 #ifdef _DEBUG
-			if (seqID == 453)
+			if (seqID == 131)
 			{
 
-			//	LogMsg("Loading sand stuff prefigure out");
+				LogMsg("Loading sand stuff prefigure out");
 			}
 
 #endif
 
+			/*
 			if (compare(ev[1], "LOAD_SEQUENCE") && g_dglos.g_seq[seqID].active == true)
 			{
 				//detect if this was already set somewhere first in the ini, on original Dink, this is a bug but doesn't matter because it doesn't load it, where with Dink HD LOAD_SEQUENCE_NOW's are
@@ -2180,6 +2185,8 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly)
 				return bReturn;
 
 			}
+			*/
+			//ignore above, we need it for dmods
 
 
 			ReadFromLoadSequenceString(ev);
@@ -2294,7 +2301,12 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly)
 	if (special == -1)
 		g_dglos.g_seq[myseq].frame[myframe] = special; 
 	else
+	{
 		g_dglos.g_seq[myseq].frame[myframe] = g_dglos.g_seq[special].frame[special2];
+
+		//also copy over the details...
+
+	}
 	
 
 	}
@@ -2900,9 +2912,16 @@ bool get_box (int spriteID, rtRect32 * pDstRect, rtRect32 * pSrcRect )
 	}
 
 #ifdef _DEBUG
-	if (g_sprite[spriteID].pseq == 75 )
+	if (g_sprite[spriteID].pseq == 204 )
 	{
 		LogMsg("Yo");
+	}
+#endif
+
+#ifdef _DEBUG
+	if (g_sprite[spriteID].pseq == 202)
+	{
+		LogMsg("Original");
 	}
 #endif
 
@@ -2922,11 +2941,22 @@ bool get_box (int spriteID, rtRect32 * pDstRect, rtRect32 * pSrcRect )
 	{
 		//wait.. this isn't the original picture, a set_frame_frame has been used!  We want the offset from the original.
 		
+		/*
 		//is the parent seq of the original an anim?
-		if (g_dglos.g_seq[g_dglos.g_picInfo[originalSurfPic].m_parentSeq].m_bIsAnim && g_dglos.g_picInfo[originalSurfPic].xoffset == 0 && g_dglos.g_picInfo[originalSurfPic].yoffset == 0)
+		if (g_dglos.g_seq[g_dglos.g_picInfo[originalSurfPic].m_parentSeq].m_bIsAnim )
 		{
-			txoffset = g_dglos.g_seq[g_dglos.g_picInfo[originalSurfPic].m_parentSeq].m_xoffset;
-			tyoffset = g_dglos.g_seq[g_dglos.g_picInfo[originalSurfPic].m_parentSeq].m_yoffset;
+		
+			//first, does the original pic have stuff set for it?
+			txoffset = g_dglos.g_picInfo[originalSurfPic].xoffset;
+			tyoffset = g_dglos.g_picInfo[originalSurfPic].yoffset;
+					
+			if (txoffset == 0 && tyoffset == 0)
+			{
+				//No?  Well, how about the whole anim in general
+				txoffset = g_dglos.g_seq[g_dglos.g_picInfo[originalSurfPic].m_parentSeq].m_xoffset;
+				tyoffset = g_dglos.g_seq[g_dglos.g_picInfo[originalSurfPic].m_parentSeq].m_yoffset;
+
+			}
 		}
 		else
 		{
@@ -2934,6 +2964,13 @@ bool get_box (int spriteID, rtRect32 * pDstRect, rtRect32 * pSrcRect )
 			tyoffset = g_dglos.g_picInfo[originalSurfPic].yoffset;
 
 		}
+		*/
+//		picID = originalSurfPic;
+	//	txoffset = g_dglos.g_picInfo[picID].xoffset;
+		//tyoffset = g_dglos.g_picInfo[picID].yoffset;
+
+		txoffset = g_dglos.g_picInfo[picID].xoffset;
+		tyoffset = g_dglos.g_picInfo[picID].yoffset;
 
 	}
 	else
@@ -4748,7 +4785,7 @@ morestuff:
 			//this was also in the original dink, amazing nobody saw it?
 			g_dglo.m_dirInputFinished[DINK_INPUT_BUTTON1] = false;
 			g_dglo.m_dirInput[DINK_INPUT_BUTTON1] = false;
-
+			g_dglos.g_playerInfo.mouse = 0;
 			g_dglo.m_dirInputFinished[DINK_INPUT_BUTTON2] = false;
 			g_dglo.m_dirInput[DINK_INPUT_BUTTON2] = false;
 			sjoy.button[1] = false;
@@ -5059,7 +5096,7 @@ void draw_sprite_game(LPDIRECTDRAWSURFACE lpdest,int h)
 	DDBLTFX     ddbltfx;
 	ddbltfx.dwSize = sizeof( ddbltfx);
 	ddbltfx.dwFillColor = 0;
-	
+
 	if (getpic(h) < 1) return;
 
 
@@ -5089,7 +5126,7 @@ void draw_sprite_game(LPDIRECTDRAWSURFACE lpdest,int h)
 		//LogMsg("Drawing the rock");
 	}
 
-	if (g_sprite[h].pseq == 75)
+	if (g_sprite[h].pseq == 133)
 	{
 		LogMsg("Drawing a wall");
 		
@@ -5104,61 +5141,16 @@ void draw_sprite_game(LPDIRECTDRAWSURFACE lpdest,int h)
 			return;
 			assert(!"Bad rect");
 		}
-		
-		//check_seq_status(h);
-
-		//redink1 error checking for out-of-bounds clipping
-		/*if (box_crap.left < 0)
-		box_crap.left = 0;
-		if (box_crap.top < box_real.top)
-		box_crap.top = box_crap.top;
-		if (box_crap.right > box_real.right)
-		box_crap.right = box_real.right;
-		if (box_crap.bottom > box_real.bottom)
-		box_crap.bottom = box_real.bottom;*/
 	
-			//  Msg("Box_crap: %d %d %d %d, Box_real: %d %d %d %d",box_crap.left,box_crap.top,
-			//      box_crap.right, box_crap.bottom,box_real.left,box_real.top,
-			//      box_real.right, box_real.bottom);
-
-		/*	
-		if (g_sprite[h].pseq != 0)
-			{
-				if (!check_seq_status(g_sprite[h].pseq)) return;
-				assert(!"Bad sprite");
-
-			}
-*/
-
-		/*
-		if (lpdest->m_pSurf && lpdest->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGBA)
-		{
-			if (g_dglos.g_picInfo[getpic(h)].pSurface->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGBA)
-			{
-
-				LogMsg("Doing rgba to rgba..");
-			}
-		}
-		*/
-
 		//check to see if we need a 32 bit buffer for this or not
 		if (lpdest->m_pSurf && lpdest->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_PALETTE_8BIT)
 		{
 			if (g_pSpriteSurface[getpic(h)]->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGBA)
 			{
-			
-				
 				//yep, convert what we've got to 32 bit.  We don't lose what we've done so far.
-				
-	
 				assert(lpdest == lpDDSBackGround);
-
 				//convert it to a high color surface on the fly, without losing the data on it
-				
 				LPDIRECTDRAWSURFACE pNewSurf = InitOffscreenSurface(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, IDirectDrawSurface::MODE_SHADOW_GL, true, lpdest->m_pSurf);
-				
-
-			
 				LogMsg("Detected high color bmps that need to drawn to the static landscape, converting backbuffers to 32 bit on the fly.");
 				delete lpDDSBackGround;
 
@@ -5179,9 +5171,7 @@ void draw_sprite_game(LPDIRECTDRAWSURFACE lpdest,int h)
 					g_forceBuildBackgroundFromScratch = true;
 
 				}
-
 			}
-
 		}
 
 	
@@ -5726,7 +5716,7 @@ void place_sprites_game(bool bBackgroundOnly )
 				if (strlen(g_dglos.g_smallMap.sprite[j].script) > 1)
 				{
 #ifdef _DEBUG
-					LogMsg("Sprite %d is requesting that script %s is loaded when the map is drawn, vision is %d", j, g_dglos.g_smallMap.sprite[j].script, *pvision);
+					//LogMsg("Sprite %d is requesting that script %s is loaded when the map is drawn, vision is %d", j, g_dglos.g_smallMap.sprite[j].script, *pvision);
 #endif
 					g_sprite[sprite].script = load_script(g_dglos.g_smallMap.sprite[j].script, sprite, true);
 				}
@@ -10603,7 +10593,7 @@ void init_scripts(void)
 			if (locate(k,"main"))
 			{
 #ifdef _DEBUG
-				LogMsg("Screendraw: running main of script %s..", g_scriptInstance[k]->name);
+				//LogMsg("Screendraw: running main of script %s..", g_scriptInstance[k]->name);
 #endif
 				run_script(k);
 			}
@@ -14847,10 +14837,12 @@ void DinkSetCursorPosition(CL_Vec2f vPos)
 
 	}
 
-	if (g_dglos.g_gameMode == 1) //dialog select?
+	if (g_dglos.g_talkInfo.active != 0 && fabs(difY) < 100) //dialog select? the 100 is an ugly hack to get rid of accumulated pixels due to .. something
 	{
 
-		//LogMsg("Mouse diff: %.2f", difY);
+#ifdef _DEBUG
+		LogMsg("Mouse diff: %.2f", difY);
+#endif
 		g_dglos.g_playerInfo.mouse += difY;
 	}
 
@@ -15781,6 +15773,7 @@ void DrawDinkText(int max_s, int32 *rank)
 
 void updateFrame()
 {
+
 	if (!lpDDSBack || g_dglo.m_curLoadState != FINISHED_LOADING) return;
 	bool bRenderDinkText = true;
 	g_dinkFadeAlpha = 0;
@@ -16197,8 +16190,12 @@ void load_batch(int linesToProcess, float &percentOut)
 			return;
 		}
 
-		g_sprite[1].x = 200;
-		g_sprite[1].y = 300;
+//		g_sprite[1].x = 200;
+	//	g_sprite[1].y = 300;
+
+
+	//	g_sprite[1].x = 0;
+	//	g_sprite[1].y = 450;
 	}
 
         for (int i=0; i < linesToProcess; i++)
@@ -17318,6 +17315,11 @@ bool LoadState(string const &path, bool bLoadPathsOnly)
 
 	if ( g_dglos.g_gameMode > 2  || g_dglos.m_bRenderBackgroundOnLoad)
 	{
+		if (g_dglos.m_bRenderBackgroundOnLoad && g_sprite[1].brain != 13)
+		{
+			g_forceBuildBackgroundFromScratch = true;
+		}
+
 		if (g_sprite[1].brain != 13)
 			BuildScreenBackground(false, true);
 	}
@@ -17618,7 +17620,7 @@ void DinkOnForeground()
 		}
 
 		//reinit any lost surfaces that we need to
-		if ( g_dglos.g_gameMode > 2  || g_dglos.m_bRenderBackgroundOnLoad)
+		if ( g_dglos.g_gameMode > 2  || g_dglos.m_bRenderBackgroundOnLoad )
 		{
 			if (g_dglos.m_bRenderBackgroundOnLoad && g_sprite[1].brain != 13)
 			{
