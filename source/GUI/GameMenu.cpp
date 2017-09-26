@@ -31,10 +31,10 @@ void ShowQuickMessage(string msg)
 	//assert(pMenu);
 	if (!pMenu)
 	{
-	//	pMenu = GetEntityRoot();
+		//	pMenu = GetEntityRoot();
 		return;
 	}
-	Entity *pEnt = CreateTextLabelEntity(pMenu, "GameMsg", GetScreenSizeXf()/2, iPhoneMapY(100), msg);
+	Entity *pEnt = CreateTextLabelEntity(pMenu, "GameMsg", GetScreenSizeXf() / 2, iPhoneMapY(100), msg);
 
 	//SetupTextEntity(pEnt, FONT_LARGE);
 	SetAlignmentEntity(pEnt, ALIGNMENT_CENTER);
@@ -44,11 +44,34 @@ void ShowQuickMessage(string msg)
 
 }
 
+
+void ShowQuickMessageBottom(string msg)
+{
+
+	Entity *pMenu = GetEntityRoot()->GetEntityByName("GameMenu");
+	if (!pMenu)
+	{
+		return;
+	}
+	Entity *pEnt = CreateTextLabelEntity(pMenu, "GameMsg", GetScreenSizeXf() / 2, iPhoneMapY(250), msg);
+	
+	
+	SetAlignmentEntity(pEnt, ALIGNMENT_CENTER);
+	pEnt->GetComponentByName("TextRender")->GetVar("shadowColor")->Set(MAKE_RGBA(0, 0, 0, 200));
+	FadeInEntity(pEnt);
+	FadeOutAndKillEntity(pEnt, true, 1000, 1000);
+
+}
+
 void GameOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sent from
 {
+
+	
 	Entity *pEntClicked = pVList->m_variant[1].GetEntity();
 
 	Entity *pMenu = GetEntityRoot()->GetEntityByName("GameMenu");
+
+	if (pMenu->GetEntityByName("PauseMenu")) return;
 
 	//LogMsg("Clicked %s entity at %s", pEntClicked->GetName().c_str(),pVList->m_variant[1].Print().c_str());
 
@@ -59,16 +82,42 @@ void GameOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sent fr
 			//sjoy.joybit[5] = TRUE
 			g_dglo.m_dirInput[DINK_INPUT_BUTTON5] = true;
 			g_dglo.m_dirInputFinished[DINK_INPUT_BUTTON5] = true;
-			
+
 			//if we ONLY want the game to handle this, we'd enable this return...
 			//return;
 		}
 
-		if (!pMenu->GetEntityByName("PauseMenu"))
+		if (GetApp()->UseClassicEscapeMenu())
 		{
-			pMenu->RemoveComponentByName("FocusInput");
-			PauseMenuCreate(pMenu);
+
+#ifdef WINAPI
+			if (GetKeyState(VK_SHIFT) & 0xfe)
+			{
+				if (!pMenu->GetEntityByName("PauseMenu"))
+				{
+					pMenu->RemoveComponentByName("FocusInput");
+					PauseMenuCreate(pMenu);
+				}
+				return;
+			}
+#endif
+
+			g_dglo.m_dirInput[DINK_INPUT_BUTTON5] = true;
+			g_dglo.m_dirInputFinished[DINK_INPUT_BUTTON5] = true;
+
+			ShowQuickMessageBottom("(Use Shift-Escape to bring up the Dink HD menu!)");
+			return;
 		}
+		else
+		{
+			if (!pMenu->GetEntityByName("PauseMenu"))
+			{
+				pMenu->RemoveComponentByName("FocusInput");
+				PauseMenuCreate(pMenu);
+			}
+		}
+
+		
 	}
 
 	if (pEntClicked->GetName() == "attack")

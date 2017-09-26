@@ -394,7 +394,7 @@ int IDirectDrawSurface::BltFast( int x, int y, IDirectDrawSurface *pSrcSurf, rtR
 
 			}
 
-			
+			//pSrcSurf->m_pGLSurf->SetBlendingMode(Surface::BLENDING_NORMAL);
 			pSrcSurf->m_pGLSurf->BlitEx(rtRectf(x, y, x+pSrcRect->GetWidth(), y +pSrcRect->GetHeight())+ rtRectf(0,0, 0.5f, 0.5f), rtRectf(*pSrcRect));
 			break;
 		}

@@ -13,6 +13,8 @@
 #include "BrowseMenu.h"
 #include "ReadTextMenu.h"
 
+
+
 void DMODMenuAddScrollContent(Entity *pParent);
 
 void DMODMenuOnRemoveDMOD(VariantList *pVList)
@@ -236,7 +238,7 @@ void AddDMODBar(Entity *pParent, float &x, float &y, string title, string descri
 	
 	if (IsLargeScreen())
 	{
-		y += pBG->GetVar("size2d")->GetVector2().y/2;
+		y += pBG->GetVar("size2d")->GetVector2().y*.4f;
 	} else
 	{
 		y += pBG->GetVar("size2d")->GetVector2().y;
@@ -311,10 +313,10 @@ if (bCanDelete)
 
 
 	//add animation effect
-	ZoomToPositionFromThisOffsetEntity(pBG, CL_Vec2f(GetScreenSizeXf(), 0), 500, INTERPOLATE_EASE_TO, 10);
+	//ZoomToPositionFromThisOffsetEntity(pBG, CL_Vec2f(GetScreenSizeXf(), 0), 500, INTERPOLATE_EASE_TO, 10);
 }
 
-void GetParsedDMODInfo(string dmodPath, string &nameOut, float versionOut, string &copyright, string &dmodwebsite, string &description)
+void GetParsedDMODInfo(string dmodPath, string &nameOut, float &versionOut, string &copyright, string &dmodwebsite, string &description)
 {
 	
 	TextScanner t(dmodPath+"/dmod.diz", false);
@@ -381,6 +383,26 @@ bool EndsWith(std::string const &fullString, std::string const &ending)
 	}
 }
 
+struct DMODDisplayEntry
+{
+	DMODDisplayEntry()
+	{
+		version = 0.0f;
+	}
+	string m_files;
+
+	string dmodName;
+	string dmodCopyright;
+	string dmodwebsite;
+	string description;
+	float version;
+
+
+
+
+};
+
+
 void DMODMenuAddScrollContent(Entity *pParent)
 {
 	pParent = pParent->GetEntityByName("scroll_child");
@@ -392,16 +414,19 @@ void DMODMenuAddScrollContent(Entity *pParent)
 	//Entity *pEnt;
 	
 	vector<string> temp = GetDirectoriesAtPath(GetDMODRootPath());
-	vector<string> files;
+	vector<DMODDisplayEntry> entries;
 
 	//actually, you know what?  Let's add the path to each one
 	for (int i=0; i < temp.size(); i++)
 	{
+
 		temp[i] = GetDMODRootPath()+temp[i];
 		if (FileExists(temp[i]+"/dink.dat"))
 		{
 			//looks valid
-			files.push_back(temp[i]);
+			DMODDisplayEntry entry;
+			entry.m_files = temp[i];
+			entries.push_back(entry);
 		}
 	}
 
@@ -412,42 +437,54 @@ void DMODMenuAddScrollContent(Entity *pParent)
 		for (int i=0; i < staticFiles.size(); i++)
 		{
 			//merge in if not a duplicate
-			for (int n=0; n < files.size(); n++)
+			for (int n=0; n < entries.size(); n++)
 			{
-				if (GetFileNameFromString(files[n]) == staticFiles[i])
+				if (GetFileNameFromString(entries[n].m_files) == staticFiles[i])
 				{
 					//duplicate
 					continue;
 				}
-
 			}
-			
-			files.push_back(GetDMODStaticRootPath()+staticFiles[i]);
+			DMODDisplayEntry entry;
+			entry.m_files = GetDMODStaticRootPath() + staticFiles[i];
+			entries.push_back(entry);
 		}
-
 	}
 
 
-
+	
 	int dmodsAdded = 0;
 
-	for (unsigned int i=0; i < files.size(); i++)
+	for (unsigned int i=0; i < entries.size(); i++)
 	{
 #ifdef WIN32
-		
-		
-		if (EndsWith(files[i], "/audio") || EndsWith(files[i],"/dink" )|| EndsWith(files[i] ,"/game") || EndsWith(files[i],"/interface")) continue;
-			if (EndsWith(files[i] ,"/develop") ) continue;
+		if (
+			EndsWith(entries[i].m_files, "/audio") || EndsWith(entries[i].m_files,"/dink" )|| EndsWith(entries[i].m_files,"/game") || EndsWith(entries[i].m_files,"/interface") 
+			|| EndsWith(entries[i].m_files, "/develop")
+			)continue;
 #else
 		if (IsInString(files[i],"/Snapshot") || IsInString(files[i], "/Snapshots")) continue;
 #endif
-		string dmodName, dmodCopyright, dmodwebsite, description;
-		float version = 0;
-
-		GetParsedDMODInfo(files[i], dmodName, version, dmodCopyright, dmodwebsite, description );
-		AddDMODBar(pParent, x, y, dmodName, description, "", 20.3f, files[i], dmodsAdded);
+		GetParsedDMODInfo(entries[i].m_files, entries[i].dmodName, entries[i].version, entries[i].dmodCopyright, entries[i].dmodwebsite, entries[i].description );
+		
+		StringReplace("\"", "", entries[i].dmodName);
 		dmodsAdded++;
 	}
+
+	//sort them by DMOD name rather than filename
+	sort(entries.begin(), entries.end(), [](const DMODDisplayEntry& lhs, const DMODDisplayEntry& rhs)
+	{
+		return lhs.dmodName < rhs.dmodName;
+	});
+
+
+	for (int i = 0; i < entries.size(); i++)
+	{
+  	   if (entries[i].dmodName.empty())continue;
+		
+	   AddDMODBar(pParent, x, y, entries[i].dmodName, entries[i].description, "", 20.3f, entries[i].m_files, i);
+	}
+
 
 	if (dmodsAdded == 0)
 	{
@@ -481,7 +518,6 @@ void OnDMODMenuDelete(Entity *pMenu)
 	}
 }
 
-
 void OnPostIntroTransition(VariantList *pVList)
 {
 	Entity *pBG = pVList->Get(0).GetEntity();
@@ -489,7 +525,6 @@ void OnPostIntroTransition(VariantList *pVList)
 
 if (GetEmulatedPlatformID() == PLATFORM_ID_WEBOS)
 {
-
 	CreateQuickTipFirstTimeOnly(pBG, "interface/generic/quicktip_dmod.rttex", true);
 } else
 if (GetEmulatedPlatformID() == PLATFORM_ID_BBX)
@@ -513,9 +548,7 @@ if (GetEmulatedPlatformID() == PLATFORM_ID_ANDROID)
 
 	//get notified when this is deleted so we can save the default settings
 	pBG->sig_onRemoved.connect(&OnDMODMenuDelete);
-
 }
-
 
 Entity * DMODMenuCreate( Entity *pParentEnt, bool bFadeIn /*= false*/ )
 {
@@ -564,8 +597,6 @@ Entity * DMODMenuCreate( Entity *pParentEnt, bool bFadeIn /*= false*/ )
 	Entity *pOverlay = CreateOverlayEntity(pBG, "", ReplaceWithDeviceNameInFileName("interface/iphone/bg_stone_overlay.rttex"), 0, GetScreenSizeYf()); 
 	SetAlignmentEntity(pOverlay, ALIGNMENT_DOWN_LEFT);
 
-	
-//	ZoomFromPositionEntity(pBG, CL_Vec2f(0, -GetScreenSizeYf()), 500);
 	//the continue button
 	Entity *pEnt;
 

@@ -19,7 +19,7 @@ bool g_bMainMenuFirstTime = true;
 bool g_bDidVersionCheck = false;
 
 Entity * VersionShowScoreMessage(Entity *pMenu, string msg);
-void GetParsedDMODInfo(string dmodPath, string &nameOut, float versionOut, string &copyright, string &dmodwebsite, string &description);
+void GetParsedDMODInfo(string dmodPath, string &nameOut, float &versionOut, string &copyright, string &dmodwebsite, string &description);
 
 void ReloadMainMenu(VariantList *pVList)
 {
@@ -61,7 +61,7 @@ Entity * VersionShowScoreMessage(Entity *pMenu, string msg)
 	}
 	else
 	{
-		pInfo = CreateTextLabelEntity(pMenu, "Info", iPhoneMapX(130), iPhoneMapY(220), msg);
+		pInfo = CreateTextLabelEntity(pMenu, "Info", iPhoneMapX(170), iPhoneMapY(220), msg);
 	}
 
 	return pInfo;

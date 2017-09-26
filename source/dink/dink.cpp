@@ -1579,11 +1579,13 @@ bool LoadSpriteSingleFrame(string fNameBase, int seq, int oo, int picIndex, eTra
 		if (bUseCheckerboardFix)
 		{
 			
+			/*
 			if (oo >=2 && oo <= 4 && fNameBase =="main-")
 			{
 				//nah, because this is connected it makes this look weird, even with the V2 checkerboard processing
 				bUseCheckerboardFix = false;
 			}
+			*/
 			
 
 		}
@@ -14577,11 +14579,11 @@ void process_talk()
     ddrval = lpDDSBack->BltFast( px, py, g_pSpriteSurface[g_dglos.g_seq[30].frame[2]],
         &g_dglos.g_picInfo[g_dglos.g_seq[30].frame[2]].box  , DDBLTFAST_SRCCOLORKEY  );
 
-
-    ddrval = lpDDSBack->BltFast( px+169, py+42, g_pSpriteSurface[g_dglos.g_seq[30].frame[3]],
+	
+    ddrval = lpDDSBack->BltFast( px+170, py+42, g_pSpriteSurface[g_dglos.g_seq[30].frame[3]],
         &g_dglos.g_picInfo[g_dglos.g_seq[30].frame[3]].box  , DDBLTFAST_SRCCOLORKEY  );
    
-    ddrval = lpDDSBack->BltFast( px+169+180, py+1, g_pSpriteSurface[g_dglos.g_seq[30].frame[4]],
+    ddrval = lpDDSBack->BltFast( px+170+181, py+1, g_pSpriteSurface[g_dglos.g_seq[30].frame[4]],
         &g_dglos.g_picInfo[g_dglos.g_seq[30].frame[4]].box  , DDBLTFAST_SRCCOLORKEY  );
 
 	}
@@ -14841,7 +14843,7 @@ void DinkSetCursorPosition(CL_Vec2f vPos)
 	{
 
 #ifdef _DEBUG
-		LogMsg("Mouse diff: %.2f", difY);
+		//LogMsg("Mouse diff: %.2f", difY);
 #endif
 		g_dglos.g_playerInfo.mouse += difY;
 	}

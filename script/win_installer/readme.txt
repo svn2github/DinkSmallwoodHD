@@ -16,7 +16,8 @@ Arrow keys - Movement
 Space - Talk
 Enter - Inventory
 Shift - Magic
-Escape - Bring up menu
+Escape - Bring up classic dink escape menu
+Shift-Escape - Bring up Dink HD escape menu
 Drag on window borders - scale the play area (when windowed)
 
 NOTE: If you have a controller (like an xbox 360 pad) plugged in when you start the game, you can use that instead of keyboard, but you still need to use the
@@ -207,3 +208,15 @@ I also added the CD and splash.bmp that were missing
 * (Windows, DinkC, Performance) Logging code rewritten, it's was horribly slow before.  If a DMOD spammed "debug" messages it would previously drastically slow down the entire dmod
 * (Bugfix) LOAD_SEQUENCE and LOAD_SEQUENCE_NOW fixes, fixes stuff in many dmods
 * Improved mouse handling on dialog menus, no longer accidently select the first option of the dink menu if you click slow after using HD's escape menu to get there
+
+- Note:  Just to be safe, save state version has changed, so old save states won't load
+
+------ Change log for 1.8.1 ----------
+
+* Escape now brings up the classic dink escape menu, the Dink HD menu was just too intrusive.  It will show a text message that you can hit Shift-Escape to bring up the HD menu as well
+* Made dialog box background look better by making it 32 bit with alpha, no more "cracks" at some resolutions.  Custom dialogs may still get line cracks at non 640X480 but whatever
+* Default resolution is now 1024X768 fullscreen instead of 640X480
+* dmod listing is packed tighter and now sorted alphabetically by dmod name, not directory name
+
+
+

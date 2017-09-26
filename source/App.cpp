@@ -184,8 +184,8 @@ App::App()
 	m_bDidPostInit = false;
 	m_bHasDMODSupport = true;
 	//for mobiles
-	m_version = 1.80f;
-	m_versionString = "V1.8.0";
+	m_version = 1.81f;
+	m_versionString = "V1.8.1";
 	m_build = 1;
 	m_bCheatsEnabled = false;
 
@@ -194,6 +194,7 @@ App::App()
 	m_desktopVersionString = m_versionString; 
 	m_desktopBuild = 1;
 	m_bForceAspectRatio = true;
+	
 }
 
 App::~App()
@@ -221,6 +222,16 @@ void App::AddIcadeProvider()
 bool App::GetForceAspectRatio()
 {
 	return m_bForceAspectRatio;
+}
+
+bool App::UseClassicEscapeMenu()
+{
+	if (GetEmulatedPlatformID() == PLATFORM_ID_WINDOWS)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void App::OniCadeDisconnected(GamepadProvider *pProvider)
@@ -264,6 +275,7 @@ bool App::Init()
 #endif
 
 
+	//GetBaseApp()->SetDisableSubPixelBlits(true);
 
 	SetDefaultButtonStyle(Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH_RELEASE);
 	SetManualRotationMode(false);
@@ -951,8 +963,8 @@ bool App::OnPreInitVideo()
 #ifdef RT_SCRIPT_BUILD
 		
 		SetEmulatedPlatformID(PLATFORM_ID_WINDOWS);
-		g_winVideoScreenX = 640;
-		g_winVideoScreenY = 480;
+		g_winVideoScreenX = 1024;
+		g_winVideoScreenY = 768;
 
 #endif
 
