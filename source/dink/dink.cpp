@@ -16,7 +16,7 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly);
 
 #define C_DINK_SCREEN_TRANSITION_TIME_MS 400
 
-const float SAVE_FORMAT_VERSION = 2.8f;
+const float SAVE_FORMAT_VERSION = 2.9f;
 const int C_DINK_FADE_TIME_MS = 300;
 
 const float G_TRANSITION_SCALE_TRICK = 1.01f;
@@ -31,8 +31,9 @@ DinkGlobalsStatic g_dglos; //static data, made to write/read from disk
 
 int32 g_spriteRank[C_MAX_SPRITES_AT_ONCE];
 
-int32 C_DINK_MEM_MAX_ALLOWED = (1024*1024*10);
-int32 C_DINK_TEX_MEM_MAX_ALLOWED = (1024*1024*30);
+
+int32 C_DINK_MEM_MAX_ALLOWED = (1024*1024*20);
+int32 C_DINK_TEX_MEM_MAX_ALLOWED = (1024*1024*60);
 
 //avoid texture thrashing with this
 int32 C_DINK_MEM_CACHE_MAX_ALLOWED_AFTER_A_DUMP = (1024*1024*8);
@@ -154,7 +155,14 @@ bool check_pic_status(int picID);
 bool get_box (int spriteID, rtRect32 * box_crap, rtRect32 * box_real );
 void fill_screen(int num);
 
-#define C_MAX_BACKGROUND_SPRITES_AT_ONCE 100 //too many and it will slow down
+#ifdef WINAPI
+#define C_MAX_BACKGROUND_SPRITES_AT_ONCE 300 //too many and it will slow down
+
+#else
+#define C_MAX_BACKGROUND_SPRITES_AT_ONCE 200 //too many and it will slow down
+
+#endif
+
 void BackgroundSpriteManager::Clear()
 {
 	m_sprites.clear();
@@ -3151,7 +3159,7 @@ void kill_script(int k)
 		}
 		*/
 		SAFE_FREE(g_scriptInstance[k]);
-		SAFE_DELETE_ARRAY(g_scriptBuffer[k]);
+		SAFE_FREE(g_scriptBuffer[k]);
 		
 		g_scriptAccelerator[k].Kill();
 	}
@@ -3362,7 +3370,7 @@ if (g_script_debug_mode)
 		g_scriptInstance[script]->end = (strlen(pMemBuffer) );
 		//LogMsg("length of %s is %d!", fileName.c_str(), g_scriptInstance[script]->end);                
 
-		g_scriptBuffer[script] = (char *) malloc( g_scriptInstance[script]->end );
+		g_scriptBuffer[script] = (char *) malloc( g_scriptInstance[script]->end+1 );
 
 		if (g_scriptBuffer[script] == NULL)
 		{
@@ -3373,7 +3381,7 @@ if (g_script_debug_mode)
 	//	LogMsg("Copying script");
 
 		memcpy(g_scriptBuffer[script], pMemBuffer, g_scriptInstance[script]->end);
-
+		g_scriptBuffer[script][g_scriptInstance[script]->end] = 0; //add a 
 		SAFE_DELETE_ARRAY(pMemBuffer);
 	
 
@@ -3500,7 +3508,7 @@ bool locate_goto(char proc[50], int script)
 		return true;
 
 	}
-	char line[200];
+	char line[512];
 
 
 	//  Msg("locate is looking for %s", proc);
@@ -3688,7 +3696,7 @@ bool recurse_var_replace(int i, int script, char* line, char* prevar)
 	return false;
 }
 
-void decipher_string(char line[200], int script)
+void decipher_string(char line[512], int script)
 {
 	char crap[255];
 	char buffer[255];
@@ -3888,7 +3896,15 @@ bool get_parms(char proc_name[20], int32 script, char *h, int32 p[10])
 
 			} else
 			{
-				LogMsg("Procedure %s does not take %d parms in %s, offset %d. (%s?)", proc_name, i+1, g_scriptInstance[script]->name, g_scriptInstance[script]->current, h);
+				if (strcmp("external", proc_name) != 0)
+				{
+					LogMsg("Procedure %s does not take %d parms in %s, offset %d. (%s?)", proc_name, i + 1, g_scriptInstance[script]->name, g_scriptInstance[script]->current, h);
+				}
+				else
+				{
+					//fake error, external commands always generate this error because of Dan's weird user-function overloading thing
+					return true;
+				}
 				//set it to zero to be "safe"?
 				//(p[i]
 				return(false);
@@ -4011,7 +4027,7 @@ int add_sprite(int x1, int y, int brain,int pseq, int pframe )
 		}
 
 	}
-
+	LogMsg("Out of sprites, can't create!");
 	return(0);
 }
 
@@ -4152,7 +4168,7 @@ void check_sprite_status_full(int spriteID)
 }
 
 
-int say_text(char text[200], int h, int script)
+int say_text(char text[512], int h, int script)
 {
 	int crap2;
 	//Msg("Creating new sprite with %s connect to %d.",text, h);
@@ -4187,7 +4203,7 @@ int say_text(char text[200], int h, int script)
 }
 
 
-int say_text_xy(char text[200], int mx, int my, int script)
+int say_text_xy(char text[512], int mx, int my, int script)
 {
 	int crap2;
 	//Msg("Creating new sprite with %s connect to %d.",text, h);
@@ -4523,9 +4539,9 @@ done:
 	//Msg("word %d of %s is %s.", word, line, crap);
 }
 
-int var_figure(char h[200], int script)
+int var_figure(char h[512], int script)
 {
-	char crap[200];
+	char crap[512];
 	int ret = 0;
 	int n1 = 0, n2 = 0;
 	//Msg("Figuring out %s...", h);
@@ -4693,7 +4709,7 @@ void kill_returning_stuff( int script)
 
 bool talk_get(int script)
 {
-	char line[200], check[200], checker[200];
+	char line[512], check[512], checker[512];
 	int cur = 1;
 	char *p;
 	int retnum = 0;
@@ -4960,7 +4976,7 @@ bool StopMidi()
 	return true;
 }
 
-void get_right(char line[200], char thing[100], char *ret)
+void get_right(char line[512], char thing[100], char *ret)
 {
 	char *dumb;
 	int pos = strcspn(line, thing );
@@ -5130,7 +5146,7 @@ void draw_sprite_game(LPDIRECTDRAWSURFACE lpdest,int h)
 
 	if (g_sprite[h].pseq == 133)
 	{
-		LogMsg("Drawing a wall");
+		//LogMsg("Drawing a wall");
 		
 	}
 #endif
@@ -5603,7 +5619,14 @@ void place_sprites_game(bool bBackgroundOnly )
 			//bScaledBackgroundSpritesRequired = true;
 			//continue;
 		}
+
+		if (g_dglos.g_smallMap.sprite[j].vision != 0)
+		{
+			LogMsg("Found sprite %d with vision %d",
+				j, g_dglos.g_smallMap.sprite[j].vision);
+		}
 #endif
+
 
 		if (g_dglos.g_smallMap.sprite[j].active == true) if ( ( g_dglos.g_smallMap.sprite[j].vision == 0) || (g_dglos.g_smallMap.sprite[j].vision == *pvision))
 		{
@@ -6602,12 +6625,12 @@ int process_line (int script, char *pLineIn, bool doelse)
 {
 	char * h, *p;
 	int i;
-	char line[200];
+	char line[512];
 	char ev[15][100];
-	char temp[255];
+	char temp[512];
 	char first[2];
 	int sprite = 0;
-
+	ev[0][0] = 0;
 	if (g_scriptInstance[script]->level < 1) g_scriptInstance[script]->level = 1;
 
 	for (int kk =1; kk < 15; kk++) ev[kk][0] = 0;
@@ -10271,7 +10294,7 @@ LogMsg("%d scripts used", g_dglos.g_returnint);
 		{
 			h = &h[strlen(ev[1])];
 			int32 p[20] = {2,2,1,1,1,1,1,1,1,1};
-			memset(slist, 0, 10 * 200);
+			for (int i = 0; i < 10; i++) slist[i][0] = 0;
 			get_parms(ev[1], script, h, p);
 			if (slist[0][0] && slist[1][0])
 			{
@@ -10386,7 +10409,10 @@ good:
 void run_script (int script)
 {
 	int result;
-	char line[200];
+	char line[512];
+
+	line[0] = 0;
+
 	if (g_dglos.bKeepReturnInt)
 	{
 		g_dglos.bKeepReturnInt = false;
@@ -10686,7 +10712,7 @@ void init_font_colors(void)
 void text_draw(int h)
 {
 
-    char crap[200];
+    char crap[512];
     char *cr;
     rtRect32 rcRect;
     int color = 15;
@@ -16630,9 +16656,9 @@ progressOut = 0.8f;
 	break;
 	
 	case 6:
-		StopMidi();
+		//StopMidi();
 
-		progressOut = 0.9f;	
+	progressOut = 0.9f;	
 	script = load_script("main", 0, true);
 	locate(script, "main");
 	run_script(script);

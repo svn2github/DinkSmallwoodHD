@@ -218,5 +218,13 @@ I also added the CD and splash.bmp that were missing
 * Default resolution is now 1024X768 fullscreen instead of 640X480
 * dmod listing is packed tighter and now sorted alphabetically by dmod name, not directory name
 
+------ Change log for 1.8.2 ----------
 
-
+* Changed release compiling a bit to enable C7 compatible debug info, may help with stack traces
+* Oops, turned max sprites back up to 300 from 100, don't ask me how I managed that one
+* (DinkC) A line of over 200 characters won't corrupt memory (new limit is 512) - this fixed a crash in Grasp of Darkness
+* (DinkC) external commands no longer generate bogus errors in the log.txt due to how 1.08 added weird overloading stuff
+* Now shows the dmod's splash.bmp during loading
+* Fixed issue where music might not play on the title screen
+* Raised "memory of dead background sprites" to 300 from 100 for Windows, up to 200 for mobile
+* Doubled memory Dink is allowed to use before uncaching graphics not used recently (could probably be disabled entirely for Windows but whatever)

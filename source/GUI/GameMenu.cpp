@@ -13,6 +13,7 @@
 #include "QuickTipMenu.h"
 #include "Entity/SelectButtonWithCustomInputComponent.h"
 #include "Entity/ArcadeInputComponent.h"
+#include "Renderer/SoftSurface.h"
 
 #ifdef _DEBUG
 #define AUTO_SAVE_MS (1000*8)
@@ -1442,14 +1443,58 @@ Entity * GameCreate(Entity *pParentEnt, int gameIDToLoad, string stateToLoad, st
 {
 	Entity *pBG = pParentEnt->AddEntity(new Entity("GameMenu"));
 	AddFocusIfNeeded(pBG);
+	Entity *pLoading = CreateOverlayEntity(pBG, "game_loading", ReplaceWithDeviceNameInFileName("interface/iphone/bkgd_stone.rttex"), 0, 0);
+	
 
-	Entity *pLoading = CreateOverlayEntity(pBG, "game_loading", ReplaceWithDeviceNameInFileName("interface/iphone/bkgd_stone.rttex"), 0,0);
+	//setup the splash too
+	string splashBmp;
+	if (!g_dglo.m_dmodGamePathWithDir.empty() && FileExists(g_dglo.m_dmodGamePathWithDir + "tiles\\splash.bmp"))
+	{
+		splashBmp = g_dglo.m_dmodGamePathWithDir + "tiles\\splash.bmp";
+	}
+	else
+	{
+		splashBmp = g_dglo.m_gamePathWithDir + "tiles\\splash.bmp";
+	}
+
+	SoftSurface s8bit;
+	if (!s8bit.LoadFile(splashBmp, SoftSurface::COLOR_KEY_NONE, false))
+	{
+	//give uop
+	}
+	else
+	{
+		//if it was 8bit, this will convert it to 32
+
+		SoftSurface s;
+		s.Init(s8bit.GetWidth(), s8bit.GetHeight(), SoftSurface::SURFACE_RGBA);
+		s.Blit(0, 0, &s8bit);
+		s.FlipY();
+
+		SurfaceAnim *pSurf;
+
+		pSurf = new SurfaceAnim;
+
+		pSurf->SetTextureType(Surface::TYPE_DEFAULT); //insure no mipmaps are created
+		pSurf->InitBlankSurface(s.GetWidth(), s.GetHeight());
+		pSurf->UpdateSurfaceRect(rtRect(0, 0, s.GetWidth(), s.GetHeight()), s.GetPixelData());
+
+		//add the icon
+		Entity *pEnt = CreateOverlayEntity(pLoading, "icon", "", GetScreenSizeXf()/2, GetScreenSizeYf()/2);
+		OverlayRenderComponent *pOverlay = (OverlayRenderComponent*)pEnt->GetComponentByName("OverlayRender");
+		pOverlay->SetSurface(pSurf, true);
+		SetAlignmentEntity(pEnt, ALIGNMENT_CENTER);
+		//EntitySetScaleBySize(pEnt, GetDMODBarIconSize());
+	}
+
+
+	//*********************
 	if (msgToShow.empty())
 	{
 		msgToShow = "Loading...";
 	}
 	
-	Entity *pLabel = CreateTextLabelEntity(pLoading, "load_label", GetScreenSizeXf()/2, GetScreenSizeYf()/2, msgToShow);
+	Entity *pLabel = CreateTextLabelEntity(pLoading, "load_label", GetScreenSizeXf()/2, GetScreenSizeYf()-30, msgToShow);
 	SetupTextEntity(pLabel, FONT_LARGE);
 	SetAlignmentEntity(pLabel, ALIGNMENT_CENTER);
 	pBG->GetFunction("GameLoadPiece")->sig_function.connect(&GameLoadPiece);
@@ -1459,7 +1504,7 @@ Entity * GameCreate(Entity *pParentEnt, int gameIDToLoad, string stateToLoad, st
 	
 	Entity *pProgressBar = pLoading->AddEntity(new Entity("bar"));
 	EntityComponent *pBar = pProgressBar->AddComponent(new ProgressBarComponent);
-	pProgressBar->GetVar("pos2d")->Set(CL_Vec2f(iPhoneMapX(80),iPhoneMapY(120)));
+	pProgressBar->GetVar("pos2d")->Set(CL_Vec2f(iPhoneMapX(80),iPhoneMapY(280)));
 	pProgressBar->GetVar("size2d")->Set(CL_Vec2f(iPhoneMapX(310),iPhoneMapY(15)));
 	pProgressBar->GetVar("color")->Set(MAKE_RGBA(200,200,0,60));
 	pBar->GetVar("interpolationTimeMS")->Set(uint32(1)); //update faster

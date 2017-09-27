@@ -261,7 +261,7 @@ void replace(const char *this1, char *that, char *line)
 {
 
 	char hold[500];
-	char thisup[200],lineup[500];
+	char thisup[512],lineup[512];
 	int u,i;
 	int checker;
 
