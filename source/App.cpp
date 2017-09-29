@@ -184,8 +184,8 @@ App::App()
 	m_bDidPostInit = false;
 	m_bHasDMODSupport = true;
 	//for mobiles
-	m_version = 1.83f;
-	m_versionString = "V1.8.3";
+	m_version = 1.84f;
+	m_versionString = "V1.8.4";
 	m_build = 1;
 	m_bCheatsEnabled = false;
 
@@ -259,7 +259,6 @@ bool App::DoesCommandLineParmExist(string parm)
 {
 	vector<string> parms = GetBaseApp()->GetCommandLineParms();
 	parm = ToLowerCaseString(parm);
-	
 	for (int i = 0; i < parms.size(); i++)
 	{
 		if (ToLowerCaseString(parms[i]) == parm) return true;
@@ -276,7 +275,6 @@ bool App::Init()
 
 
 	//GetBaseApp()->SetDisableSubPixelBlits(true);
-
 	SetDefaultButtonStyle(Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH_RELEASE);
 	SetManualRotationMode(false);
 
@@ -621,8 +619,6 @@ GetApp()->SetCheatsEnabled(true);
 	}
 	
 #endif
-
-
 	return true;
 }
 
@@ -879,21 +875,8 @@ void App::OnMemoryWarning()
 void App::UpdateVideoSettings()
 {
 	eVideoFPS v = (eVideoFPS)GetApp()->GetVarWithDefault("fpsLimit", Variant(uint32(VIDEO_FPS_LIMIT_OFF)))->GetUINT32();
-	OSMessage o;
-	o.m_type = OSMessage::MESSAGE_SET_FPS_LIMIT;
-
-	switch (v)
-	{
-	case VIDEO_FPS_LIMIT_ON:
-		o.m_x = 30;
-		break;
-
-	case VIDEO_FPS_LIMIT_OFF:
-		o.m_x = 2000;
-		break;
-	}
-
-	GetBaseApp()->AddOSMessage(o);
+	SetFPSLimit(60);
+	//SetFPSLimit(v);
 };
 
 void App::SaveAllData()

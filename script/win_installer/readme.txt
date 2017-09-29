@@ -240,3 +240,11 @@ it so going with that
 * Added hardening to check valid input on many script functions, will stop "sometimes" crashes based on bad scripting as well as log them
 * Crash logging should show correct function names. I mean it this time!
 
+------ Change log for 1.8.4 ----------
+
+* Some changes to Dink's speed calculations, it's now basically locked at "you better get 60 fps or the whole game will slow down" - the
+original system is REALLY bad and the timing of Dink vs monsters can vary wildly based on your framerate.  So I sort of had to "choose" a correct
+speed and go with that, I chose a pretty fast speed sort of arbitrarily because it "felt" ok.  There isn't really a "correct" speed so I do expect problems with some dmods due to them expecting
+a specific speed, but by choosing rather snappy speed hopefully mystery island and most of them will be finishable
+* Related to the above, holding tab no longer lets you cheat by moving relatively faster than monsters
+* Playing location aware sounds on a script not attached to a sprite will no longer cause crashes (should fix crash in malachi the jerk)

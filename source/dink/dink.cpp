@@ -1082,7 +1082,10 @@ bool attach(void)
 		if (compare((char*)"&cur_magic", g_dglos.g_playerInfo.var[i].name))  pcur_magic = &g_dglos.g_playerInfo.var[i].var;   
 		if (compare((char*)"&last_text", g_dglos.g_playerInfo.var[i].name))  plast_text = &g_dglos.g_playerInfo.var[i].var;   
 		if (compare((char*)"&magic_level", g_dglos.g_playerInfo.var[i].name))  pmagic_level = &g_dglos.g_playerInfo.var[i].var;   
-		if (compare((char*)"&update_status", g_dglos.g_playerInfo.var[i].name))  pupdate_status = &g_dglos.g_playerInfo.var[i].var;   
+		if (compare((char*)"&update_status", g_dglos.g_playerInfo.var[i].name))
+		{
+			pupdate_status = &g_dglos.g_playerInfo.var[i].var;
+		}
 		if (compare((char*)"&missile_target", g_dglos.g_playerInfo.var[i].name))  pmissile_target = &g_dglos.g_playerInfo.var[i].var;   
 		if (compare((char*)"&enemy_sprite", g_dglos.g_playerInfo.var[i].name))  penemy_sprite = &g_dglos.g_playerInfo.var[i].var;   
 		if (compare((char*)"&magic_cost", g_dglos.g_playerInfo.var[i].name))  pmagic_cost = &g_dglos.g_playerInfo.var[i].var;   
@@ -3544,7 +3547,7 @@ void decipher(char *crap, int script)
 	{
 		sprintf(crap, "%d",g_scriptInstance[script]->sprite);
 
-		LogMsg("cur sprite returning %s, ",crap);
+		//LogMsg("cur sprite returning %s, ",crap);
 		return;
 	}
 
@@ -5937,6 +5940,12 @@ bool playing( int sound)
 int get_pan(int h)
 {
 
+	if (h < 0 || h > C_MAX_SPRITES_AT_ONCE)
+	{
+		LogMsg("ignoring get_pan (probably initiated by sound play command) as it's connected to an invalid sprite #");
+		return 0;
+	}
+
 	int pan = 0;
 	int x1 = 320;
 
@@ -5959,6 +5968,11 @@ int get_pan(int h)
 
 int get_vol(int h)
 {
+	if (h < 0 || h > C_MAX_SPRITES_AT_ONCE)
+	{
+		LogMsg("ignoring get_vol (probably initiated by sound play command) as it's connected to an invalid sprite #");
+		return 0;
+	}
 
 	int pan = 0;
 	int pan2 = 0;
@@ -15917,20 +15931,7 @@ void updateFrame()
 	
 #endif
 
-	bool bSpeedUp = false;
 
-	if (DinkGetSpeedUpMode())
-	{
-		bSpeedUp = true;
-	}
-
-	if (bSpeedUp)
-	{
-		if (!GetApp()->GetGameTickPause())
-		{
-			GetApp()->SetGameTick(GetApp()->GetGameTick() + GetApp()->GetDeltaTick() * 5);
-		}
-	}
 	byte state[256];
 	rtRect32 rcRect;
 	bool bCaptureScreen = false;
@@ -15970,7 +15971,8 @@ void updateFrame()
 #ifdef _WIN32
 	static int LastWindowsTimer = 0;
 
-if (!bSpeedUp)
+//if (!bSpeedUp)
+if (0)
 {
 
 //Sleep(50);
@@ -16000,14 +16002,21 @@ LastWindowsTimer = GetTickCount();
 	 */
 #endif
 
+
+	//non-windows timer
+
+
 	g_dglos.lastTickCount = g_dglos.g_dinkTick;
 	g_dglos.g_dinkTick = GetBaseApp()->GetGameTick();
 	
+	/*
 	int fps_final = g_dglos.g_dinkTick - g_dglos.lastTickCount;
 
 	//redink1 changed to 12-12 from 10-15... maybe work better on faster computers?
 	if (fps_final < 12) fps_final = 12;
 	if (fps_final > 68) fps_final = 68;  
+
+	fps_final = 24; //force it
 
 	g_dglos.base_timing = fps_final / 3;
 	if (g_dglos.base_timing < 4) g_dglos.base_timing = 4;
@@ -16016,6 +16025,7 @@ LastWindowsTimer = GetTickCount();
 
 	//redink1 added these changes to set Dink's speed correctly, even on fast machines.
 	
+
 	if (g_dglos.dinkspeed <= 0)
 		junk3 = 0;
 	else if (g_dglos.dinkspeed == 1)
@@ -16030,6 +16040,51 @@ LastWindowsTimer = GetTickCount();
 	junk3 *= (g_dglos.base_timing / 4);
 
 	g_sprite[1].speed = junk3;
+	*/
+
+	//assume we're locked at 60 fps
+	
+	g_dglos.base_timing = 18;
+	float junk3 = 1;
+	/*
+	if (g_dglos.dinkspeed <= 0)
+		junk3 = 0;
+	else if (g_dglos.dinkspeed == 1)
+		junk3 = 12;
+	else if (g_dglos.dinkspeed == 2)
+		junk3 = 6;
+	else if (g_dglos.dinkspeed == 3)
+		junk3 = 3;
+		*/
+	if (g_dglos.dinkspeed <= 0)
+		junk3 = 0;
+	else if (g_dglos.dinkspeed == 1)
+		junk3 = 12;
+	else if (g_dglos.dinkspeed == 2)
+		junk3 = 6;
+	else if (g_dglos.dinkspeed == 3)
+		junk3 = 3;
+
+	//g_sprite[1].speed = (g_dglos.base_timing / 4);
+	//g_sprite[1].speed = 5;
+	bool bSpeedUp = false;
+	g_sprite[1].speed = (int)junk3*1.35f;
+	if (DinkGetSpeedUpMode())
+	{
+		bSpeedUp = true;
+	}
+
+	if (bSpeedUp)
+	{
+
+		/*
+		if (!GetApp()->GetGameTickPause())
+		{
+			GetApp()->SetGameTick(GetApp()->GetGameTick() + GetApp()->GetDeltaTick() * 5);
+		}
+		*/
+	}
+
 
 	if (g_dglos.g_bShowingBitmap.active)
 	{

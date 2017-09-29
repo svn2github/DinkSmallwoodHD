@@ -1040,6 +1040,20 @@ void OnGameMenuRender(VariantList *pVList)
 	
 	updateFrame();
 
+	if (DinkGetSpeedUpMode())
+	{
+		//3x speed
+		for (int i = 0; i < 2; i++)
+		{
+			GetApp()->SetGameTick(GetApp()->GetGameTick() + GetApp()->GetDeltaTick() * 3);
+			//GetApp()->GetGameTimer()->Update();
+
+			glClearColor(0, 0, 0, 1);
+			glClear(GL_COLOR_BUFFER_BIT);
+			updateFrame();
+		}
+
+	}
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 	//remove matrix
