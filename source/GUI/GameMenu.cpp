@@ -1035,9 +1035,6 @@ void OnGameMenuRender(VariantList *pVList)
 	//apply scale offset
 	ApplyAspectRatioGLMatrix();
 
-	
-
-	
 	updateFrame();
 
 	if (DinkGetSpeedUpMode())
@@ -1045,7 +1042,7 @@ void OnGameMenuRender(VariantList *pVList)
 		//3x speed
 		for (int i = 0; i < 2; i++)
 		{
-			GetApp()->SetGameTick(GetApp()->GetGameTick() + GetApp()->GetDeltaTick() * 3);
+			//GetApp()->SetGameTick(GetApp()->GetGameTick() + GetApp()->GetDeltaTick() * 3);
 			//GetApp()->GetGameTimer()->Update();
 
 			glClearColor(0, 0, 0, 1);
@@ -1054,6 +1051,9 @@ void OnGameMenuRender(VariantList *pVList)
 		}
 
 	}
+
+
+
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 	//remove matrix

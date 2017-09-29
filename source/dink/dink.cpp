@@ -11330,7 +11330,7 @@ int autoreverse_diag(int j)
     }
 
 #ifdef _DEBUG
-	LogMsg("Auto Reverse Diag was sent a dir %d sprite, base %d walk.",g_sprite[j].dir, g_sprite[j].base_walk);
+	//LogMsg("Auto Reverse Diag was sent a dir %d sprite, base %d walk.",g_sprite[j].dir, g_sprite[j].base_walk);
 #endif
     return(0);
 }
@@ -16007,7 +16007,8 @@ LastWindowsTimer = GetTickCount();
 
 
 	g_dglos.lastTickCount = g_dglos.g_dinkTick;
-	g_dglos.g_dinkTick = GetBaseApp()->GetGameTick();
+	//g_dglos.g_dinkTick = GetBaseApp()->GetGameTick();
+	g_dglos.g_dinkTick += (1000.0f / 60.0f); //FPS lock at 60 fps
 	
 	/*
 	int fps_final = g_dglos.g_dinkTick - g_dglos.lastTickCount;
@@ -16044,7 +16045,7 @@ LastWindowsTimer = GetTickCount();
 
 	//assume we're locked at 60 fps
 	
-	g_dglos.base_timing = 18;
+	g_dglos.base_timing = 7;
 	float junk3 = 1;
 	/*
 	if (g_dglos.dinkspeed <= 0)
@@ -16068,7 +16069,7 @@ LastWindowsTimer = GetTickCount();
 	//g_sprite[1].speed = (g_dglos.base_timing / 4);
 	//g_sprite[1].speed = 5;
 	bool bSpeedUp = false;
-	g_sprite[1].speed = (int)junk3*1.35f;
+	g_sprite[1].speed = (int)junk3*1.0f;
 	if (DinkGetSpeedUpMode())
 	{
 		bSpeedUp = true;
@@ -16100,9 +16101,13 @@ LastWindowsTimer = GetTickCount();
 
 	if (g_dglos.g_dinkTick > g_dglos.g_DinkUpdateTimerMS+100)
 	{
-		g_dglos.mbase_timing = (g_dglos.mbase_count / 100);
+	//	g_dglos.mbase_timing = (g_dglos.mbase_count / 100);
+		g_dglos.mbase_timing = 135; //hardcoded now to avoid fluctuations
 		g_dglos.g_DinkUpdateTimerMS = g_dglos.g_dinkTick;
 		if (g_dglos.g_bowStatus.active) g_dglos.g_bowStatus.hitme = true;
+		
+		
+		
 		if (*pupdate_status == 1) update_status_all();
 
 		update_sound();

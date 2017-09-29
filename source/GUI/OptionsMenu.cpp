@@ -482,7 +482,7 @@ void OptionsMenuAddScrollContent(Entity *pParent)
 	y += GetSize2DEntity(pEnt).y;
 	y += spacerY;
 
-
+	/*
 	//fps limit
 	pEnt = CreateTextLabelEntity(pBG, "", startX, y, "Lock to 30 FPS:");
 	SetupTextEntity(pEnt,fontID);
@@ -499,7 +499,8 @@ void OptionsMenuAddScrollContent(Entity *pParent)
 
 	uint32 videoFPS = GetApp()->GetVar("fpsLimit")->GetUINT32();
 	SetupLightBarSelect(pBG, "fps_limit_", videoFPS, MAKE_RGBA(190, 0, 35, 255));
-	
+	*/
+
 	if (GetPlatformID() != PLATFORM_ID_IOS)
 	{
 		y += spacerY;

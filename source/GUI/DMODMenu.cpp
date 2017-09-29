@@ -463,7 +463,7 @@ void DMODMenuAddScrollContent(Entity *pParent)
 			|| EndsWith(entries[i].m_files, "/develop")
 			)continue;
 #else
-		if (IsInString(files[i],"/Snapshot") || IsInString(files[i], "/Snapshots")) continue;
+		if (IsInString(entries[i].m_files,"/Snapshot") || IsInString(entries[i].m_files, "/Snapshots")) continue;
 #endif
 		GetParsedDMODInfo(entries[i].m_files, entries[i].dmodName, entries[i].version, entries[i].dmodCopyright, entries[i].dmodwebsite, entries[i].description );
 		

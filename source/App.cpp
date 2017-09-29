@@ -184,8 +184,8 @@ App::App()
 	m_bDidPostInit = false;
 	m_bHasDMODSupport = true;
 	//for mobiles
-	m_version = 1.84f;
-	m_versionString = "V1.8.4";
+	m_version = 1.85f;
+	m_versionString = "V1.8.5";
 	m_build = 1;
 	m_bCheatsEnabled = false;
 
@@ -876,6 +876,11 @@ void App::UpdateVideoSettings()
 {
 	eVideoFPS v = (eVideoFPS)GetApp()->GetVarWithDefault("fpsLimit", Variant(uint32(VIDEO_FPS_LIMIT_OFF)))->GetUINT32();
 	SetFPSLimit(60);
+	
+#ifdef _DEBUG
+	//SetFPSLimit(20);
+
+#endif
 	//SetFPSLimit(v);
 };
 
@@ -1042,6 +1047,7 @@ void App::AddTextToLog(const char *tex, const char *filename)
 	
 	}
 
+#ifdef WINAPI
 //our custom LogMsg that isn't slow as shit
 void LogMsg(const char* traceStr, ...)
 {
@@ -1072,3 +1078,5 @@ void LogMsg(const char* traceStr, ...)
 	}
 
 }
+
+#endif

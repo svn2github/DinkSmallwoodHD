@@ -248,3 +248,7 @@ speed and go with that, I chose a pretty fast speed sort of arbitrarily because 
 a specific speed, but by choosing rather snappy speed hopefully mystery island and most of them will be finishable
 * Related to the above, holding tab no longer lets you cheat by moving relatively faster than monsters
 * Playing location aware sounds on a script not attached to a sprite will no longer cause crashes (should fix crash in malachi the jerk)
+
+------ Change log for 1.8.5 ----------
+
+* Tweaked speed a bit, sort of aligned it so the cutscenes in Initiation play right
