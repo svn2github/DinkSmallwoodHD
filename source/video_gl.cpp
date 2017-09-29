@@ -37,6 +37,8 @@ IDirectDrawSurface * LoadBitmapIntoSurface(const char *pName, eTransparencyType 
 	pSurf->m_pSurf = new SoftSurface;
 	//bUseCheckerboardFix = true;
 
+	pSurf->m_pSurf->SetForceBlackAndWhiteOnBmpPalettes(true);
+	
 	if (pMem)
 	{
 #ifdef _DEBUG

@@ -3543,7 +3543,8 @@ void decipher(char *crap, int script)
 	if (compare(crap, (char*)"&current_sprite")) 
 	{
 		sprintf(crap, "%d",g_scriptInstance[script]->sprite);
-		//Msg("cur sprite returning %s, ",crap);
+
+		LogMsg("cur sprite returning %s, ",crap);
 		return;
 	}
 
@@ -5208,6 +5209,13 @@ void draw_sprite_game(LPDIRECTDRAWSURFACE lpdest,int h)
 
 void changedir( int dir1, int k,int base)
 {
+
+	if (k < 0 || k >= C_MAX_SPRITES_AT_ONCE)
+	{
+		LogMsg("Illegal change dir (to %d) command on sprite %d which is invalid", base + dir1, k);
+		return;
+	}
+
 	int hspeed;
 	int speed_hold = g_sprite[k].speed;
 	if (k > 1) if (g_sprite[k].brain != 9) if (g_sprite[k].brain != 10)
@@ -6907,9 +6915,18 @@ pass:
 			int32 p[20] = {1,0,0,0,0,0,0,0,0,0};  
 			if (get_parms(ev[1], script, h, p))
 			{
-				//Msg("UnFreeze called for %d.", nlist[0]);
-				if (g_sprite[g_nlist[0]].active) g_sprite[g_nlist[0]].freeze = 0; else
-					LogMsg("Couldn't unfreeze sprite %d in script %d, it doesn't exist.", g_nlist[0], script);
+				//LogMsg("UnFreeze called for %d.", g_nlist[0]);
+				
+				if (g_nlist[0] < 0 || g_nlist[0] >= C_MAX_SPRITES_AT_ONCE)
+				{
+					LogMsg("Crash averted: Couldn't unfreeze sprite %d in script %d, it doesn't exist.", g_nlist[0], script);
+
+				}
+				else
+				{
+					if (g_sprite[g_nlist[0]].active) g_sprite[g_nlist[0]].freeze = 0; else
+						LogMsg("Couldn't unfreeze sprite %d in script %d, it doesn't exist.", g_nlist[0], script);
+				}
 
 			}
 
@@ -6925,8 +6942,17 @@ pass:
 			if (get_parms(ev[1], script, h, p))
 			{
 
-				if (g_sprite[g_nlist[0]].active) g_sprite[g_nlist[0]].freeze = script; else
-					LogMsg("Couldn't freeze sprite %d in script %d, it doesn't exist.", g_nlist[0], script);
+
+				if (g_nlist[0] < 0 || g_nlist[0] >= C_MAX_SPRITES_AT_ONCE)
+				{
+					LogMsg("Crash averted: Couldn't unfreeze sprite %d in script %d, it doesn't exist.", g_nlist[0], script);
+
+				}
+				else
+				{
+					if (g_sprite[g_nlist[0]].active) g_sprite[g_nlist[0]].freeze = script; else
+						LogMsg("Couldn't freeze sprite %d in script %d, it doesn't exist.", g_nlist[0], script);
+				}
 
 			}
 
@@ -7586,13 +7612,20 @@ pass:
 			int32 p[20] = {1,1,1,1,0,0,0,0,0,0};  
 			if (get_parms(ev[1], script, h, p))
 			{
+				if (g_nlist[0] < 0 || g_nlist[0] >= C_MAX_SPRITES_AT_ONCE)
+				{
+					LogMsg("Illegal move command on sprite %d", g_nlist[0]);
+				}
+				else
+				{
+					g_sprite[g_nlist[0]].move_active = true;
+					g_sprite[g_nlist[0]].move_dir = g_nlist[1];
+					g_sprite[g_nlist[0]].move_num = g_nlist[2];
+					g_sprite[g_nlist[0]].move_nohard = g_nlist[3];
+					g_sprite[g_nlist[0]].move_script = 0;
+					if (g_script_debug_mode) LogMsg("Moving: Sprite %d, dir %d, num %d", g_nlist[0], g_nlist[1], g_nlist[2]);
 
-				g_sprite[g_nlist[0]].move_active = true;
-				g_sprite[g_nlist[0]].move_dir = g_nlist[1];
-				g_sprite[g_nlist[0]].move_num = g_nlist[2];
-				g_sprite[g_nlist[0]].move_nohard = g_nlist[3];
-				g_sprite[g_nlist[0]].move_script = 0; 
-				if (g_script_debug_mode) LogMsg("Moving: Sprite %d, dir %d, num %d", g_nlist[0],g_nlist[1], g_nlist[2]);
+				}
 
 
 			}
@@ -8058,15 +8091,24 @@ pass:
 			int32 p[20] = {1,1,1,1,0,0,0,0,0,0};  
 			if (get_parms(ev[1], script, h, p))
 			{
-				//Msg("Move stop running %d to %d..", nlist[0], nlist[0]);  
-				g_sprite[g_nlist[0]].move_active = true;
-				g_sprite[g_nlist[0]].move_dir = g_nlist[1];
-				g_sprite[g_nlist[0]].move_num = g_nlist[2];
-				g_sprite[g_nlist[0]].move_nohard = g_nlist[3];
-				g_sprite[g_nlist[0]].move_script = script; 
-				strcpy(pLineIn, h);  
-				if (g_script_debug_mode) LogMsg("Move_stop: Sprite %d, dir %d, num %d", g_nlist[0],g_nlist[1], g_nlist[2]);
-				return(2);
+
+				if (g_nlist[0] < 0 || g_nlist[0] >= C_MAX_SPRITES_AT_ONCE)
+				{
+					LogMsg("Invalid move_stop command on sprite %d", g_nlist[0]);
+
+				}
+				else
+				{
+					//Msg("Move stop running %d to %d..", nlist[0], nlist[0]);  
+					g_sprite[g_nlist[0]].move_active = true;
+					g_sprite[g_nlist[0]].move_dir = g_nlist[1];
+					g_sprite[g_nlist[0]].move_num = g_nlist[2];
+					g_sprite[g_nlist[0]].move_nohard = g_nlist[3];
+					g_sprite[g_nlist[0]].move_script = script;
+					strcpy(pLineIn, h);
+					if (g_script_debug_mode) LogMsg("Move_stop: Sprite %d, dir %d, num %d", g_nlist[0], g_nlist[1], g_nlist[2]);
+					return(2);
+				}
 
 			}
 
@@ -8202,24 +8244,32 @@ pass:
 			int32 p[20] = {1,1,0,0,0,0,0,0,0,0};  
 			if (get_parms(ev[1], script, h, p))
 			{
-				// Set the value
-				if ( g_nlist[1] == 0 )
-				{
-					g_sprite[g_nlist[0]].freeze = 0;
-				}
-				else if ( g_nlist[1] == 1 )
-				{
-					g_sprite[g_nlist[0]].freeze = script;
-				}
 
-				// Return the value
-				if ( g_sprite[g_nlist[0]].freeze > 0 )
+				if (g_nlist[0] < 0 || g_nlist[0] > C_MAX_SPRITES_AT_ONCE)
 				{
-					g_dglos.g_returnint = 1;
+					LogMsg("sp_freeze ignored, sprite %d is no good", g_nlist[0]);
 				}
 				else
 				{
-					g_dglos.g_returnint = 0;
+					// Set the value
+					if (g_nlist[1] == 0)
+					{
+						g_sprite[g_nlist[0]].freeze = 0;
+					}
+					else if (g_nlist[1] == 1)
+					{
+						g_sprite[g_nlist[0]].freeze = script;
+					}
+
+					// Return the value
+					if (g_sprite[g_nlist[0]].freeze > 0)
+					{
+						g_dglos.g_returnint = 1;
+					}
+					else
+					{
+						g_dglos.g_returnint = 0;
+					}
 				}
 			}
 
@@ -8435,7 +8485,10 @@ pass:
 			if (get_parms(ev[1], script, h, p))
 			{
 
-
+				if (g_nlist[0] < 0 || g_nlist[0] >= C_MAX_SPRITES_AT_ONCE)
+				{
+					return 0;
+				}
 				g_dglos.g_returnint =  g_sprite[g_nlist[0]].script;
 
 			}
@@ -8937,6 +8990,11 @@ pass:
 			int32 p[20] = {1,0,0,0,0,0,0,0,0,0};  
 			if (get_parms(ev[1], script, h, p))
 			{
+				if (g_nlist[0] < 0 || g_nlist[0] >= C_MAX_SPRITES_AT_ONCE)
+				{
+					g_dglos.g_returnint = 0;
+					return 0;
+				}
 				g_dglos.g_returnint = g_sprite[g_nlist[0]].sp_index;
 				return(0);
 			}
@@ -8950,12 +9008,21 @@ pass:
 			int32 p[20] = {1,1,0,0,0,0,0,0,0,0};  
 			if (get_parms(ev[1], script, h, p))
 			{
-				g_dglos.g_returnint = change_sprite(g_nlist[0], g_nlist[1], &g_sprite[g_nlist[0]].brain);
-				if (g_nlist[1] == 13)
-				{
-					//a mouse brain was set...
-					g_dglo.SetViewOverride(DinkGlobals::VIEW_FULL);
 
+				if (g_nlist[0] < 0 || g_nlist[0] >= C_MAX_SPRITES_AT_ONCE)
+				{
+					LogMsg("so_brain sent bad sprite %d", g_nlist[0]);
+				}
+				else
+				{
+
+					g_dglos.g_returnint = change_sprite(g_nlist[0], g_nlist[1], &g_sprite[g_nlist[0]].brain);
+					if (g_nlist[1] == 13)
+					{
+						//a mouse brain was set...
+						g_dglo.SetViewOverride(DinkGlobals::VIEW_FULL);
+
+					}
 				}
 				return(0);
 			}
@@ -9134,6 +9201,13 @@ pass:
 				//redink1 fix for freeze if hurt value is less than 0
 				if (g_nlist[1] < 0)
 					return(0);
+
+				if (g_nlist[0] <0 || g_nlist[0] >= C_MAX_SPRITES_AT_ONCE)
+				{
+					LogMsg("hurt command used on sprite %d, ignoring", g_nlist[0]);
+					return 0;
+				}
+
 				if (hurt_thing(g_nlist[0], g_nlist[1], 0) > 0)
 					random_blood(g_sprite[g_nlist[0]].x, g_sprite[g_nlist[0]].y-40, g_nlist[0]);
 				if (g_sprite[g_nlist[0]].nohit != 1)
@@ -9166,11 +9240,20 @@ pass:
 			int32 p[20] = {1,1,0,0,0,0,0,0,0,0};  
 			if (get_parms(ev[1], script, h, p))
 			{
-				g_dglos.g_returnint = change_sprite(g_nlist[0], g_nlist[1], &g_sprite[g_nlist[0]].hard);
-				if (g_sprite[g_nlist[0]].sp_index != 0) if (g_nlist[1] != -1)
+				if (g_nlist[0] < 0 || g_nlist[0] >= C_MAX_SPRITES_AT_ONCE)
 				{
+					LogMsg("Bad sprite %d sent to sp_hard", g_nlist[0]);
+					g_dglos.g_returnint = -1;
+					return 0;
+				}
+				else
+				{
+					g_dglos.g_returnint = change_sprite(g_nlist[0], g_nlist[1], &g_sprite[g_nlist[0]].hard);
+					if (g_sprite[g_nlist[0]].sp_index != 0) if (g_nlist[1] != -1)
+					{
 
-					g_dglos.g_smallMap.sprite[g_sprite[g_nlist[0]].sp_index].hard = g_dglos.g_returnint;
+						g_dglos.g_smallMap.sprite[g_sprite[g_nlist[0]].sp_index].hard = g_dglos.g_returnint;
+					}
 				}
 				return(0);
 			}
@@ -9212,7 +9295,14 @@ pass:
 			int32 p[20] = {1,0,0,0,0,0,0,0,0,0};  
 			if (get_parms(ev[1], script, h, p))
 			{
-				g_sprite[g_nlist[0]].wait = 0;
+				if (g_nlist[0] < 0 || g_nlist[0] >= C_MAX_SPRITES_AT_ONCE)
+				{
+					LogMsg("sp_kill_wait sent invalid %d sprite", g_nlist[0]);
+				}
+				else
+				{
+					g_sprite[g_nlist[0]].wait = 0;
+				}
 				return(0);
 			}
 			g_dglos.g_returnint =  -1;
@@ -9224,7 +9314,7 @@ pass:
 			int32 p[20] = {1,1,0,0,0,0,0,0,0,0};  
 			if (get_parms(ev[1], script, h, p))
 			{
-			if (g_nlist[0] < C_MAX_SPRITES_AT_ONCE) //SETH this fixes crash when killing milder
+			if (g_nlist[0] < C_MAX_SPRITES_AT_ONCE && g_nlist[0] >= 0) //SETH this fixes crash when killing milder
 			{
 				g_sprite[g_nlist[0]].kill = g_nlist[1];
 				return(0);
@@ -9604,9 +9694,9 @@ LogMsg("%d scripts used", g_dglos.g_returnint);
 			{
 				g_dglos.g_returnint = 0;
 
-				if (g_nlist[0] == 0)
+				if (g_nlist[0] < 1 || g_nlist[0] >= C_MAX_SPRITES_AT_ONCE)
 				{
-					LogMsg("Error: Can't compare sprite script for sprite 0!??!?!");
+					LogMsg("Error: Can't compare sprite script for sprite %d!??!?!", g_nlist[0]);
 					return(0);
 				}
 				if (g_sprite[g_nlist[0]].active)
@@ -14606,11 +14696,19 @@ void process_talk()
         &g_dglos.g_picInfo[g_dglos.g_seq[30].frame[2]].box  , DDBLTFAST_SRCCOLORKEY  );
 
 	
+
+	ddrval = lpDDSBack->BltFast(px + 169, py + 42, g_pSpriteSurface[g_dglos.g_seq[30].frame[3]],
+		&g_dglos.g_picInfo[g_dglos.g_seq[30].frame[3]].box, DDBLTFAST_SRCCOLORKEY);
+
+	ddrval = lpDDSBack->BltFast(px + 169 + 180, py + 1, g_pSpriteSurface[g_dglos.g_seq[30].frame[4]],
+		&g_dglos.g_picInfo[g_dglos.g_seq[30].frame[4]].box, DDBLTFAST_SRCCOLORKEY);
+	/*
     ddrval = lpDDSBack->BltFast( px+170, py+42, g_pSpriteSurface[g_dglos.g_seq[30].frame[3]],
         &g_dglos.g_picInfo[g_dglos.g_seq[30].frame[3]].box  , DDBLTFAST_SRCCOLORKEY  );
    
     ddrval = lpDDSBack->BltFast( px+170+181, py+1, g_pSpriteSurface[g_dglos.g_seq[30].frame[4]],
         &g_dglos.g_picInfo[g_dglos.g_seq[30].frame[4]].box  , DDBLTFAST_SRCCOLORKEY  );
+		*/
 
 	}
 

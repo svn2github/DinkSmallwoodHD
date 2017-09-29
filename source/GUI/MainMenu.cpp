@@ -75,7 +75,7 @@ void OnVersionDownloadHTTPFinish(VariantList *pVList)
 	TextScanner t((char*)pVList->m_variant[1].GetString().c_str());
 	string line;
 
-	LogMsg(t.GetAll().c_str());
+	//LogMsg(t.GetAll().c_str());
 
 	//	ShowScoreMessage(pMenu, t.GetParmString("msg",1));
 	//GetApp()->GetVar("score_msg")->Set(t.GetParmString("msg",1));

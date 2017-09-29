@@ -28,6 +28,7 @@ Supported command line options:
 -game <dmod directory> (Example:  dink.exe -game c:\dmods\island ) (this also sets -dmodpath automatically to the dmods parent directory)
 -dmodpath or --refdir <dir containing DMOD dirs> (Example:  dink.exe -game c:\dmods )
 
+Note:  If a .dmod file is put in the Dink HD directory (where the .exe is) it will be automatically installed and then deleted
 
 ------------- BETA VERSION -----------------
 
@@ -228,3 +229,14 @@ I also added the CD and splash.bmp that were missing
 * Fixed issue where music might not play on the title screen
 * Raised "memory of dead background sprites" to 300 from 100 for Windows, up to 200 for mobile
 * Doubled memory Dink is allowed to use before uncaching graphics not used recently (could probably be disabled entirely for Windows but whatever)
+
+------ Change log for 1.8.3 ----------
+
+* Added "If a .dmod file is put in the Dink HD directory (where the .exe is), it will be automatically installed and then deleted" to readme.txt
+* Dialog box rendering was off a few pixels due to me forgetting to remove some tests I did, fixed
+* Black at index 255 and white at index 0 is now forced during bmp loading.  Windows does it, photoshop doesn't, but older versions of Dink (directx) seemed to do
+it so going with that
+* Invalid sprite sent to freeze/unfreeze will no longer crash the game (bug was also in original 1.08)
+* Added hardening to check valid input on many script functions, will stop "sometimes" crashes based on bad scripting as well as log them
+* Crash logging should show correct function names. I mean it this time!
+
