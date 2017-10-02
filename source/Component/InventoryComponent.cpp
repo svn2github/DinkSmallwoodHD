@@ -36,6 +36,7 @@ void InventoryComponent::OnAdd(Entity *pEnt)
 void InventoryComponent::OnRemove()
 {
 	EntityComponent::OnRemove();
+
 }
 
 void InventoryComponent::OnUpdatePos(CL_Vec2f vPos)

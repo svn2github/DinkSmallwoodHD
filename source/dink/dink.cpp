@@ -16,7 +16,7 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly);
 
 #define C_DINK_SCREEN_TRANSITION_TIME_MS 400
 
-const float SAVE_FORMAT_VERSION = 2.9f;
+const float SAVE_FORMAT_VERSION = 3.0f;
 const int C_DINK_FADE_TIME_MS = 300;
 
 const float G_TRANSITION_SCALE_TRICK = 1.01f;
@@ -1245,7 +1245,7 @@ bool load_game(int num)
 			g_dglos.time_start = 0;
 		}
 		//g_dglos.time_start = GetBaseApp()->GetGameTick();
-
+		g_dglos.g_dinkTick = GetTick(TIMER_GAME);
 		g_sprite[1].base_idle = g_dglos.g_playerInfo.base_idle;
 		g_sprite[1].base_walk = g_dglos.g_playerInfo.base_walk;
 		g_sprite[1].base_hit = g_dglos.g_playerInfo.base_hit;
@@ -1525,6 +1525,7 @@ bool load_hard(void)
 
 void blit_background(void)
 {
+
 	rtRect32 rcRect( 0,0,C_DINK_SCREENSIZE_X,C_DINK_SCREENSIZE_Y);
 	lpDDSBack->BltFast( 0, 0, lpDDSBackGround,
 		&rcRect, DDBLTFAST_NOCOLORKEY);
@@ -4106,6 +4107,10 @@ bool check_seq_status(int seq, int frame)
 {
 	
 	if (seq == 0) return true;
+	if (seq < 0 || seq >= C_MAX_SEQUENCES)
+	{
+		assert(!"Illegal sequence!");
+	}
 	if (g_dglos.g_seq[seq].active == false) 
 	{
 #ifdef _DEBUG
@@ -5595,7 +5600,7 @@ void place_sprites_game(bool bBackgroundOnly )
 		highest_sprite = 20000; //more than it could ever be
 		rank[r1] = 0;
 
-		for (int h1 = 1; h1 < C_MAX_SPRITES_AT_ONCE;  h1++)
+		for (int h1 = 1; h1 < 100;  h1++)
 		{
 			if (bs[h1] == false)
 			{
@@ -6404,7 +6409,7 @@ restart:
 	if (!bFullRebuild) return; //don't mess with the game tick stuff or initscripts
 	//if script for overall screen, run it
 
-	g_dglos.g_dinkTick = GetBaseApp()->GetGameTick();
+	//g_dglos.g_dinkTick = GetBaseApp()->GetGameTick();
 	init_scripts();
 }
 
@@ -9881,7 +9886,9 @@ LogMsg("%d scripts used", g_dglos.g_returnint);
 				
 				//remember this change
 				strncpy(g_dglos.g_playerInfo.tile[tileIndex].file, fName.c_str(), 50); //this 50 is hardcoded in the player data
-				g_forceBuildBackgroundFromScratch = true;
+				
+				//don't force it right now?
+				//g_forceBuildBackgroundFromScratch = true;
 																					   //BuildScreenBackground(true); //trigger full rebuild, this could be optimized by setting a flag and only doing it once...
 			}
 
@@ -12831,9 +12838,7 @@ void BlitSecondTransitionScreen()
 			//without normal antialiasing we don't need to do much, but this does fix tiny black artifacts during the screen transition
 			dstOffset = rtRectf(-0.05, -0.05f, 0.05f, 0.05);
 			srcOffset = rtRectf(0.4, 0.4, -0.4, -0.4);
-
 		}
-
 		
 			dstRect.AdjustPosition( ( -g_dglo.m_transitionOffsetNative.x*g_dglo.m_transitionProgress),
 				 (  -g_dglo.m_transitionOffsetNative.y*g_dglo.m_transitionProgress));
@@ -16099,6 +16104,8 @@ LastWindowsTimer = GetTickCount();
 
 	g_dglos.mbase_count++;
 
+
+	
 	if (g_dglos.g_dinkTick > g_dglos.g_DinkUpdateTimerMS+100)
 	{
 	//	g_dglos.mbase_timing = (g_dglos.mbase_count / 100);
@@ -16203,24 +16210,15 @@ LastWindowsTimer = GetTickCount();
 
 	//Blit from Two, which holds the base scene.
 
-//	lpDDSBack->BltFast( 0, 0, lpDDSBackGround, &rcRect, DDBLTFAST_NOCOLORKEY);
+	//this doesn't really make much sense to me but it works so not screwing with it
+	if (g_dglo.m_curView == DinkGlobals::VIEW_ZOOMED)
 	{
-		
-//		rtRect32 rcRectGameArea(g_dglo.m_gameArea.left, g_dglo.m_gameArea.top, g_dglo.m_gameArea.right, g_dglo.m_gameArea.bottom);
-		
-		//rtRect32 rcRectGameArea(g_dglo.m_nativeGameArea.left, g_dglo.m_nativeGameArea.top, g_dglo.m_nativeGameArea.right, g_dglo.m_nativeGameArea.bottom);
-
-		//rtRect32 rcRectGameArea(g_dglo.m_orthoRenderRect.left, g_dglo.m_nativeGameArea.top, g_dglo.m_nativeGameArea.right, g_dglo.m_nativeGameArea.bottom);
-
-	//	lpDDSBack->BltFast(g_dglo.m_gameArea.left, g_dglo.m_gameArea.top, lpDDSBackGround,
-		//	&rcRectGameArea, DDBLTFAST_NOCOLORKEY);
-
-
-		lpDDSBack->BltFast(0, 0, lpDDSBackGround,
-			&g_dglo.m_orthoRenderRect, DDBLTFAST_NOCOLORKEY);
-
+		lpDDSBack->BltFast(g_dglo.m_gameArea.left, g_dglo.m_gameArea.top, lpDDSBackGround, &g_dglo.m_orthoRenderRect, DDBLTFAST_NOCOLORKEY);
 	}
-
+	else
+	{
+		lpDDSBack->BltFast(0,0, lpDDSBackGround, &g_dglo.m_orthoRenderRect, DDBLTFAST_NOCOLORKEY);
+	}
 
 	g_dglo.m_bgSpriteMan.Render(lpDDSBack); //blit sprites that have been shoved into the bg, too slow to actually add them, so we fake it until the screen is rebuilt
 
@@ -16518,6 +16516,7 @@ void SetDefaultVars(bool bFullClear)
 		g_dglos.g_curPicIndex = 1;
 		//GetBaseApp()->SetGameTick(0); //can cause problems .. don't do it here
 		g_dglos.time_start = GetBaseApp()->GetGameTick();
+		g_dglos.g_dinkTick = GetTick(TIMER_GAME);
 		g_dglos.g_playerInfo.minutes = 0;
 	}
 }
@@ -16877,15 +16876,8 @@ void DinkGlobals::SetView( eView view )
 	switch (view)
 	{
 	case VIEW_ZOOMED:
-		if (GetFakePrimaryScreenSizeX() != 0)
-		{
-//			g_dglo.m_nativeGameArea = rtRectf(0,0,GetPrimaryGLX(),GetPrimaryGLY());
-			g_dglo.m_nativeGameArea = rtRectf(0,0,GetScreenSizeX(),GetScreenSizeY());
-		} else
-		{
-			g_dglo.m_nativeGameArea = rtRectf(0,0,GetScreenSizeX(),GetScreenSizeY());
-		}
-		
+	
+		g_dglo.m_nativeGameArea = rtRectf(0,0,GetScreenSizeX(),GetScreenSizeY());
 		g_dglo.m_gameArea = rtRect32 (20, 0, 620, 400);
 		g_dglo.m_orthoRenderRect = rtRect32 (20, 0, 620, 400);
 		break;

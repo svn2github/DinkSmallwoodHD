@@ -184,8 +184,8 @@ App::App()
 	m_bDidPostInit = false;
 	m_bHasDMODSupport = true;
 	//for mobiles
-	m_version = 1.85f;
-	m_versionString = "V1.8.5";
+	m_version = 1.86f;
+	m_versionString = "V1.8.6";
 	m_build = 1;
 	m_bCheatsEnabled = false;
 
@@ -282,7 +282,7 @@ bool App::Init()
 	int scaleToX = 480;
 	int scaleToY = 320;
 
-	if (IsTabletSize() || IsDesktop())
+	//if (IsTabletSize() || IsDesktop())
 	{
 		scaleToX = 1024;
 		scaleToY = 768;
@@ -694,7 +694,7 @@ void App::AddDroidKeyboardKeys()
 	AddKeyBinding(pComp, "KeyboardAltMagic", 8, VIRTUAL_KEY_GAME_MAGIC);
 
 	AddKeyBinding(pComp, "KeyboardInventory", 'I', VIRTUAL_KEY_GAME_INVENTORY);
-	AddKeyBinding(pComp, "KeyboardAltTalk", 13, VIRTUAL_KEY_GAME_TALK);
+	//AddKeyBinding(pComp, "KeyboardAltTalk", 13, VIRTUAL_KEY_GAME_TALK); //not sure what this was for, special android key?  It caused ineventory to open AND dink to talk so was bad I think
 	AddKeyBinding(pComp, "KeyboardFire", VIRTUAL_KEY_DIR_CENTER, VIRTUAL_KEY_GAME_FIRE);
 	AddKeyBinding(pComp, "KeyboardFire2", 'X', VIRTUAL_KEY_GAME_FIRE);
 //	AddKeyBinding(pComp, "KeyboardAltFire", VIRTUAL_KEY_SHIFT, VIRTUAL_KEY_GAME_FIRE);

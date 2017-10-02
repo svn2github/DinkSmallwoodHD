@@ -209,9 +209,29 @@ void MainMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sen
 }
 
 
-string GetNextDMODToInstall()
+string GetNextDMODToInstall(bool &bIsCommandLineInstall, const bool bDeleteCommandLineParms)
 {
 	//if (!GetApp()->CanDownloadDMODS()) return ""; //ignore it
+
+	if (IsDesktop())
+	{
+		vector<string> parms = GetApp()->GetCommandLineParms();
+
+		for (int i = 0; i < parms.size(); i++)
+		{
+			StringReplace("\"", "", parms[i]);
+			if (IsInString(ToLowerCaseString(parms[i]), ".dmod"))
+			{
+				bIsCommandLineInstall = true;
+
+				//dmod sent via commandline, install it
+				if (bDeleteCommandLineParms)
+					GetApp()->GetReferenceToCommandLineParms()[i].clear(); //don't want to install the same dmod twice
+				return parms[i];
+			}
+		}
+	}
+
 
 	vector<string> files = GetFilesAtPath(GetSavePath());
 
@@ -240,10 +260,13 @@ void MainOnStartLoading(VariantList *pVList)
 	GetMessageManager()->CallEntityFunction(pBG, 500, "OnDelete", NULL);
 	pBG->SetName("MainMenuDelete");
 
-	string fName = GetNextDMODToInstall();
+	bool bIsCommandLineInstall = true;
+
+	string fName = GetNextDMODToInstall(bIsCommandLineInstall, true);
+	
 	if (!fName.empty())
 	{
-		DMODInstallMenuCreate(pBG->GetParent(), "", GetDMODRootPath(), GetSavePath()+fName);
+		DMODInstallMenuCreate(pBG->GetParent(), "", GetDMODRootPath(), GetSavePath()+fName, false, "", !bIsCommandLineInstall);
 	}  else
 	{
 		GameCreate(pBG->GetParent(), 0, fileName, "Continuing last game...");
@@ -606,9 +629,10 @@ Entity * MainMenuCreate( Entity *pParentEnt, bool bFadeIn )
 		}
 	}
 
+	bool bIsCommandLineInstall = false;
+
 	
-	
-	if ( ! GetNextDMODToInstall().empty())
+	if ( ! GetNextDMODToInstall(bIsCommandLineInstall, false).empty())
 	{
 		pBG->GetFunction("OnStartLoading")->sig_function.connect(&MainOnStartLoading);
         VariantList vList(pBG, string(""));

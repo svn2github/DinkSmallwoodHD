@@ -252,3 +252,13 @@ a specific speed, but by choosing rather snappy speed hopefully mystery island a
 ------ Change log for 1.8.5 ----------
 
 * Tweaked speed a bit, sort of aligned it so the cutscenes in Initiation play right
+
+------ Change log for 1.8.6 ----------
+
+* (Windows) Running "dink.exe c:\temp\ACoolDMOD.dmod" from the command line will now install it, then run it.  (original dmod file won't be deleted)  Just seemed weird that this didn't exist so added it
+* DMOD installer progress now switches to showing MB instead of K if the size is big
+* BUGFIX: Fixed map loading bug that could crash the game (I added this one recently trying to clean up code to use more consts rather than magic #s, but there is always the risk I stupidely break something!)
+* load_tile no longer instantly takes effect but requires a draw_screen or moving screens, this matches how 1.08 worked.  Loading a save state or resizing the window will cause it to happen early, but hey, close enough
+* BUGFIX: Fixed extra nasty bug where logic on certain things like charging your magic would pause the amount of time you used TAB to skip time
+
+- Note:  Just to be safe, save state version has changed, so old save states won't load

@@ -3,5 +3,5 @@
 
 #include "App.h"
 
-Entity * DMODInstallMenuCreate(Entity *pParentEnt, string dmodURL, string installDirectory, string sourceFileName = "", bool bFromBrowseMenu = false, string dmodName = "");
+Entity * DMODInstallMenuCreate(Entity *pParentEnt, string dmodURL, string installDirectory, string sourceFileName = "", bool bFromBrowseMenu = false, string dmodName = "", bool bDeleteOnFinish = true);
 #endif // DMODInstallMenu_h__

@@ -216,7 +216,14 @@ void OnDMODUnpackStatusUpdate(VariantList *pVList)
 	float progress = float( (curBytes%barSize)) /float(barSize);
 	
 	//LogMsg("prog: %.2f", progress);
-	DMODInstallUpdateStatus(NULL, "Writing "+toString(curBytes/1024)+"K");
+	int installSize = curBytes / 1024;
+	string sizeType = "K";
+	if (installSize > 10000)
+	{
+		installSize /= 1024;
+		sizeType = "MB";
+	}
+	DMODInstallUpdateStatus(NULL, "Writing "+toString(installSize)+ " "+sizeType);
 	DMODInstallSetProgressBar(progress);
 }
 
@@ -249,8 +256,9 @@ void OnDMODInstallHTTPFinish(VariantList *pVList)
 	DMODSetTitleLabel(pMenu, string("Installing ")+pMenu->GetVar("originalFileName")->GetString()+"...");
 	EntityComponent *pUnpack = pMenu->AddComponent(new UnpackArchiveComponent);
 	pUnpack->GetVar("sourceFileName")->Set(pMenu->GetVar("tempFileName")->GetString());
-	
-	pUnpack->GetVar("deleteSourceOnFinish")->Set(uint32(1));
+	bool bDeleteOnFinish = pMenu->GetVar("deleteOnFinish")->GetUINT32();
+
+	pUnpack->GetVar("deleteSourceOnFinish")->Set(uint32(bDeleteOnFinish));
 	
 	pUnpack->GetVar("destDirectory")->Set(pMenu->GetVar("installDirectory")->GetString());
 	DMODInstallSetProgressBar(0);
@@ -310,7 +318,7 @@ void InitNetStuff(VariantList *pVList)
 }
 
 
-Entity * DMODInstallMenuCreate(Entity *pParentEnt, string dmodURL, string installDirectory, string sourceFileName, bool bFromBrowseMenu, string dmodName)
+Entity * DMODInstallMenuCreate(Entity *pParentEnt, string dmodURL, string installDirectory, string sourceFileName, bool bFromBrowseMenu, string dmodName, bool bDeleteOnFinish)
 {
 
 	Entity *pBG = CreateOverlayEntity(pParentEnt, "DMODInstall", ReplaceWithDeviceNameInFileName("interface/iphone/bkgd_stone.rttex"), 0,0);
@@ -331,11 +339,12 @@ Entity * DMODInstallMenuCreate(Entity *pParentEnt, string dmodURL, string instal
 	pBG->GetVar("tempFileName")->Set(GetDMODRootPath()+"temp.dmod");
 	pBG->GetVar("originalFileName")->Set(GetFileNameFromString(dmodURL));
 	pBG->GetVar("fromBrowseMenu")->Set(uint32(bFromBrowseMenu));
-
+	pBG->GetVar("deleteOnFinish")->Set(uint32(bDeleteOnFinish));
 	if (IsLargeScreen())
 	{
 		//SetupTextEntity(pTitleLabel, FONT_LARGE);
 	}
+
 	//SetAlignmentEntity(pTitleLabel, ALIGNMENT_CENTER);
 
 	EntityComponent *pTyper = pTitleLabel->AddComponent(new TyperComponent);
@@ -370,6 +379,11 @@ Entity * DMODInstallMenuCreate(Entity *pParentEnt, string dmodURL, string instal
 		pBG->GetVar("exitto")->Set("browse");
 	
 	}
+	if (!bDeleteOnFinish)
+	{
+		pBG->GetVar("autoplay")->Set(uint32(1));
+	}
+
 
 	if (!sourceFileName.empty())
 	{

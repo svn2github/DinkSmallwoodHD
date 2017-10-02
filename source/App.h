@@ -92,6 +92,9 @@ public:
 	bool GetGhostMode() {return m_bGhostMode;}
 	void SetGhostMode(bool bNew) { m_bGhostMode = bNew; }
 	bool UseClassicEscapeMenu();
+	vector<string> * GetReferenceToCommandLineParms() { return &m_commandLineParms; }
+
+
 private:
 
 	AdManager m_adManager;
