@@ -184,8 +184,8 @@ App::App()
 	m_bDidPostInit = false;
 	m_bHasDMODSupport = true;
 	//for mobiles
-	m_version = 1.86f;
-	m_versionString = "V1.8.6";
+	m_version = 1.87f;
+	m_versionString = "V1.8.7";
 	m_build = 1;
 	m_bCheatsEnabled = false;
 
@@ -802,7 +802,7 @@ void App::OnScreenSizeChange()
 	{
 		SetupOrtho();
 		DinkOnForeground(); //rebuild lost surfaces
-		
+		g_dglo.m_bForceControlsRebuild = true;
 		if (GetDinkGameState() != DINK_GAME_STATE_PLAYING)
 		{
 			PrepareForGL();

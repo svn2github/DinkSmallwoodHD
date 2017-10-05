@@ -262,3 +262,11 @@ a specific speed, but by choosing rather snappy speed hopefully mystery island a
 * BUGFIX: Fixed extra nasty bug where logic on certain things like charging your magic would pause the amount of time you used TAB to skip time
 
 - Note:  Just to be safe, save state version has changed, so old save states won't load
+
+------ Change log for 1.8.7 ----------
+
+* Savestates should now properly restore the background in dmods that use mouse controls and tiles at the same time
+* Some tweaks with when mouse buttons are processed (only in mouse cursor modes or a dialog menu)
+* Misc work on touch controls to prepare for the mobile releases
+* Added some names to credits (if you notice I added anybody twice or would rather be credited a different way or not at all, let me know!)
+* Fixed bug that could sort of over-write random data if more than 100 sprites were active.. wow, bad

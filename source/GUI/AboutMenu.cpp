@@ -431,7 +431,20 @@ msg += \
 		"Brett Profitt\n"\
 		"Chris Black\n"\
 		"Erik Harrison\n"\
-		"James Hutt\n";
+		"James Hutt\n" \
+		"Robj\n"\
+		"liquid141\n"\
+		"Tal\n"\
+		"Quiztis\n"\
+		"rabidwolf9\n"\
+		"RangerLord\n"\
+		"LeProChaUn\n"\
+		"DinkDude95\n"\
+		"thenewguy\n"\
+	
+		
+		;
+	
 			
 		if (GetEmulatedPlatformID() == PLATFORM_ID_WINDOWS || GetEmulatedPlatformID() == PLATFORM_ID_IOS)
 		{

@@ -26,6 +26,8 @@ struct SpriteStruct;
 #define FINISHED_LOADING 100
 
 void ClearBitmapCopy();
+void ApplyAspectRatioGLMatrix();
+void RecomputeAspectRatio();
 
 void CheckForHotkeys();
 enum eDinkInput
@@ -104,6 +106,7 @@ public:
 		m_bLastFullKeyboardActive = false;
 		m_bSpeedUpMode = false;
 		m_bUsingDinkPak = false;
+		m_bForceControlsRebuild = false;
 		m_aspectRatioModX = 1.0f; //not the aspect ratio, the change to the aspect ratio so it's the correct aspect ratio.  I know, it makes no sense
 		m_aspectRatioModY = 1.0f;
 
@@ -145,6 +148,7 @@ public:
 	bool m_bFullKeyboardActive;
 	bool m_bLastFullKeyboardActive;
 	bool m_bSpeedUpMode;
+	bool m_bForceControlsRebuild;
 
 	BackgroundSpriteManager m_bgSpriteMan;
 	bool m_bUsingDinkPak;
@@ -152,6 +156,7 @@ public:
 	float m_aspectRatioModY;
 	CL_Vec3f m_centeringOffset;
 	CL_Mat4f m_dink_matrix;
+	CL_Mat4f m_dink_matrix_inverted;
 };
 //#define KYLES_CRAZY_VERSION
 
@@ -735,6 +740,8 @@ bool DinkIsWaitingForSkippableDialog();
 bool DinkSkipDialogLine(); //returns true if a line was actually skipped
 void DinkSetCursorPosition(CL_Vec2f vPos);
 CL_Vec2f NativeToDinkCoords(CL_Vec2f vPos);
+CL_Vec2f DinkToNativeCoords(CL_Vec2f vPos);
+bool DinkIsMouseActive();
 bool IsDrawingDinkStatusBar();
 bool DinkSetInventoryPosition(CL_Vec2f vPos); //returns true if an item was actually set
 bool DinkCanRunScriptNow();

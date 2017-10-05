@@ -9,6 +9,10 @@
 #include "Renderer/SoftSurface.h"
 #include "FileSystem/StreamingInstance.h"
 #include <time.h>
+
+const int C_DINK_MAX_ITEMS = 16;
+const int C_DINK_MAX_MAGICS = 8;
+
 void ThinkSprite(int h, bool get_frame);
 void ApplyAspectRatioGLMatrix();
 
@@ -1348,7 +1352,7 @@ void kill_cur_item( void )
 void kill_cur_item_script( char name[20])
 {
 	int select = 0;
-	for (int i = 1; i < 17; i++)
+	for (int i = 1; i < C_DINK_MAX_ITEMS + 1; i++)
 	{
 		if (g_dglos.g_playerInfo.g_itemData[i].active)
 			if (compare(g_dglos.g_playerInfo.g_itemData[i].name, name))
@@ -5395,7 +5399,7 @@ void changedir( int dir1, int k,int base)
 void update_play_changes( void )
 {
 
-	for (int j = 1; j < C_MAX_SPRITES_AT_ONCE; j++)
+	for (int j = 1; j < 100; j++)
 	{
 		if (g_dglos.g_smallMap.sprite[j].active)
 			if (g_dglos.g_playerInfo.spmap[*pmap].type[j] != 0)
@@ -6490,7 +6494,7 @@ void add_item(char name[10], int mseq, int mframe, bool magic)
 	{
 		//add reg item
 
-		for (int i = 1; i < 17; i ++)
+		for (int i = 1; i < C_DINK_MAX_ITEMS + 1; i ++)
 		{
 			if (g_dglos.g_playerInfo.g_itemData[i].active == false)
 			{
@@ -6498,7 +6502,7 @@ void add_item(char name[10], int mseq, int mframe, bool magic)
 					LogMsg("Weapon/item %s added to inventory.",name);
 				g_dglos.g_playerInfo.g_itemData[i].seq = mseq;
 				g_dglos.g_playerInfo.g_itemData[i].frame = mframe;
-				strcpy(g_dglos.g_playerInfo.g_itemData[i].name, name);
+				strncpy(g_dglos.g_playerInfo.g_itemData[i].name, name, 10);
 				g_dglos.g_playerInfo.g_itemData[i].active = true;
 				//if (debug_mode)
 				//	LogMsg("wep: Checking seq",name);
@@ -6530,7 +6534,7 @@ void add_item(char name[10], int mseq, int mframe, bool magic)
 					LogMsg("Magic %s added to inventory.",name);
 				g_dglos.g_playerInfo.g_MagicData[i].seq = mseq;
 				g_dglos.g_playerInfo.g_MagicData[i].frame = mframe;
-				strcpy(g_dglos.g_playerInfo.g_MagicData[i].name, name);
+				strncpy(g_dglos.g_playerInfo.g_MagicData[i].name, name, 10);
 
 				g_dglos.g_playerInfo.g_MagicData[i].active = true;
 				//check_seq_status(mseq, mframe);
@@ -7319,7 +7323,7 @@ pass:
 		if (compare(ev[1], (char*)"free_items"))
 		{
 			g_dglos.g_returnint = 0;
-			for (int i = 1; i < 17; i ++)
+			for (int i = 1; i < C_DINK_MAX_ITEMS + 1; i ++)
 			{
 				if (g_dglos.g_playerInfo.g_itemData[i].active == false)
 				{
@@ -9433,7 +9437,7 @@ pass:
 			if (get_parms(ev[1], script, h, p))
 			{
 				g_dglos.g_returnint = 0;
-				for (int i = 1; i < 17; i++)
+				for (int i = 1; i < C_DINK_MAX_ITEMS + 1; i++)
 				{
 					if (g_dglos.g_playerInfo.g_itemData[i].active)
 					{
@@ -10181,7 +10185,7 @@ LogMsg("%d scripts used", g_dglos.g_returnint);
 			if (get_parms(ev[1], script, h, p))
 			{
 				g_dglos.g_returnint = 0;
-				for (int i = 1; i < 17; i++)
+				for (int i = 1; i < C_DINK_MAX_ITEMS + 1; i++)
 				{
 					if (g_dglos.g_playerInfo.g_itemData[i].active)
 					{
@@ -14967,6 +14971,28 @@ CL_Vec2f NativeToDinkCoords(CL_Vec2f vPos)
 }
 
 
+CL_Vec2f DinkToNativeCoords(CL_Vec2f vPos)
+{
+	CL_Vec2f r = vPos;
+	float xmod = (float(g_dglo.m_orthoRenderRect.GetWidth()) / GetScreenSizeXf());
+	float ymod = (float(g_dglo.m_orthoRenderRect.GetHeight()) / GetScreenSizeYf());
+	r += g_dglo.m_centeringOffset;
+	r.x *= g_dglo.m_aspectRatioModX;
+	r.y *= g_dglo.m_aspectRatioModY;
+
+	r.x /= xmod;
+	r.y /= ymod;
+	return r;
+}
+
+bool DinkIsMouseActive()
+{
+	if (g_sprite[1].active) if (g_sprite[1].brain == 13)
+	{
+		return true;
+	}
+	return false;
+}
 void DinkSetCursorPosition(CL_Vec2f vPos)
 {
 
@@ -14976,10 +15002,11 @@ void DinkSetCursorPosition(CL_Vec2f vPos)
 
 	if (g_sprite[1].active) if (g_sprite[1].brain == 13)
 	{
+#ifdef _DEBUG
+		//LogMsg("Setting pos %s", toString(vPos).c_str());
+#endif
 		g_sprite[1].x = vPos.x;
 		g_sprite[1].y = vPos.y;
-
-
 	}
 
 	if (g_dglos.g_talkInfo.active != 0 && fabs(difY) < 100) //dialog select? the 100 is an ugly hack to get rid of accumulated pixels due to .. something
@@ -14988,7 +15015,10 @@ void DinkSetCursorPosition(CL_Vec2f vPos)
 #ifdef _DEBUG
 		//LogMsg("Mouse diff: %.2f", difY);
 #endif
-		g_dglos.g_playerInfo.mouse += difY;
+		if (!GetApp()->GetUsingTouchScreen())
+		{
+			g_dglos.g_playerInfo.mouse += difY;
+		}
 	}
 
 }
@@ -15114,8 +15144,7 @@ CL_Rect GetItemRectFromIndex(int num, bool magic)
 	return CL_Rect(mx, my, mx+65, my+55);
 }
 
-const int C_DINK_MAX_ITEMS = 16;
-const int C_DINK_MAX_MAGICS = 8;
+
 
 void SetCurInventoryPositionIndex(int itemIndex, bool bIsMagic)
 {
@@ -16429,7 +16458,7 @@ void SetDefaultVars(bool bFullClear)
 	g_dglo.m_lastGameMode = DINK_GAME_MODE_NONE;
 	g_dglo.m_lastSubGameMode = DINK_SUB_GAME_MODE_NONE;
 	g_dglo.m_bFullKeyboardActive = false;
-
+	g_dglo.m_bForceControlsRebuild = false;
 	g_dglo.m_bWaitingForSkippableConversation = false;
 	g_dglos.g_DinkUpdateTimerMS =0;
 
@@ -17690,8 +17719,8 @@ void ApplyAspectRatioGLMatrix()
 	glGetFloatv(GL_MODELVIEW_MATRIX, &mat[0]);
 	g_dglo.m_dink_matrix = mat;
 	//OPTIMIZE - All this can be cached... maybe done in RecomputeAspectRatio()
-
 	mat.inverse();
+	g_dglo.m_dink_matrix_inverted = mat;
 
 	CL_Vec3f vTotal =  mat.get_transformed_point(CL_Vec3f(C_DINK_SCREENSIZE_X, C_DINK_SCREENSIZE_Y, 0));
 	CL_Vec3f vDinkSize = mat.get_transformed_point(CL_Vec3f(C_DINK_SCREENSIZE_X*g_dglo.m_aspectRatioModX, C_DINK_SCREENSIZE_Y *g_dglo.m_aspectRatioModY, 0));
@@ -17805,7 +17834,7 @@ void DinkOnForeground()
 				g_forceBuildBackgroundFromScratch = true;
 			}
 
-			if (g_sprite[1].brain != 13)
+			if (g_sprite[1].brain != 13 || g_dglos.m_bRenderBackgroundOnLoad)
 			{
 				//brain 13 means mouse so we probably don't need this.  Could be wrong though..
 				BuildScreenBackground(false);

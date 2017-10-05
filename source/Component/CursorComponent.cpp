@@ -85,10 +85,12 @@ void CursorComponent::OnInput( VariantList *pVList )
 			
 			if (!m_bDisable)
 			{
-
-				g_dglo.m_dirInput[DINK_INPUT_BUTTON1] = true;
-				g_dglo.m_dirInputFinished[DINK_INPUT_BUTTON1] = true;
-				g_dinkMouseRightClick = true;
+				if (DinkIsMouseActive() || g_dglo.m_lastSubGameMode == DINK_SUB_GAME_MODE_DIALOG)
+				{
+					g_dglo.m_dirInput[DINK_INPUT_BUTTON1] = true;
+					g_dglo.m_dirInputFinished[DINK_INPUT_BUTTON1] = true;
+					g_dinkMouseRightClick = true;
+				}
 			}
 
 			break;
@@ -125,9 +127,12 @@ void CursorComponent::OnInput( VariantList *pVList )
 			if (!m_bDisable)
 			{
 				OnUpdatePos(pt);
-				g_dglo.m_dirInput[DINK_INPUT_BUTTON1] = true;
-				g_dglo.m_dirInputFinished[DINK_INPUT_BUTTON1] = true;
-				g_dinkMouseRightClick = true;
+				if (DinkIsMouseActive())
+				{
+					g_dglo.m_dirInput[DINK_INPUT_BUTTON1] = true;
+					g_dglo.m_dirInputFinished[DINK_INPUT_BUTTON1] = true;
+					g_dinkMouseRightClick = true;
+				}
 
 			}
 

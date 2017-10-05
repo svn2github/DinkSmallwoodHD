@@ -27,7 +27,6 @@ void UpdatePauseMenuPosition(Entity *pBG);
 
 void ShowQuickMessage(string msg)
 {
-
 	Entity *pMenu = GetEntityRoot()->GetEntityByName("GameMenu");
 	//assert(pMenu);
 	if (!pMenu)
@@ -66,8 +65,6 @@ void ShowQuickMessageBottom(string msg)
 
 void GameOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sent from
 {
-
-	
 	Entity *pEntClicked = pVList->m_variant[1].GetEntity();
 
 	Entity *pMenu = GetEntityRoot()->GetEntityByName("GameMenu");
@@ -196,6 +193,7 @@ void GameOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sent fr
 		g_dglo.ToggleView();
 		return;
 	}
+
 	if (pEntClicked->GetName() == "speedup")
 	{
 
@@ -316,9 +314,7 @@ void AddViewModeHotspot(Entity *pBG)
 	}
 	CL_Vec2f vPos = pButtonEntity->GetVar("pos2d")->GetVector2();
 	CL_Vec2f vSize = pButtonEntity->GetVar("size2d")->GetVector2();
-
-
-
+	
 	if (GetApp()->GetVar("showViewHint")->GetUINT32() == 1)
 	{
 		GetApp()->GetVar("showViewHint")->Set(uint32(0)); //so this won't be shown again
@@ -330,7 +326,6 @@ void AddViewModeHotspot(Entity *pBG)
 		CL_Vec2f vLabelPos = vSize/2; //remember, we're a child of the box above, so 0 means the left part of the box, not the screen
 		Entity *pLabel = CreateTextLabelEntity(pOverlay, "label",vLabelPos.x, vLabelPos.y, "Tap here to toggle view");
 		SetAlignmentEntity(pLabel, ALIGNMENT_CENTER);
-		
 		
 		//fade them in
 		FadeInEntity(pOverlay, true, 500, 1000);
@@ -386,7 +381,6 @@ void AddSpeedUpButton(Entity *pBG)
 	if (GetApp()->GetIconsOnLeft()) SetAlignmentEntity(pButtonEntity, ALIGNMENT_UPPER_LEFT);
 	SetButtonClickSound(pButtonEntity, ""); //no sound
 
-
 	SetAlphaEntity(pButtonEntity, GetApp()->GetVar("gui_transparency")->GetFloat());
 	//pButtonEntity->GetVar("alpha")->Set(trans);
 	pButtonEntity->GetShared()->GetFunction("OnOverStart")->sig_function.connect(&GameOnSelect);
@@ -413,10 +407,7 @@ void OnGameKillKeyboard(VariantList *pVList)
 {
 	g_dglo.m_bFullKeyboardActive = false;
 	//g_dglo.m_bLastFullKeyboardActive = false;
-
 }
-
-
 
 void OnGameProcessHWKey(VariantList *pVList)
 {
@@ -455,7 +446,6 @@ void OnGameProcessHWKey(VariantList *pVList)
 void OnGameProcessKey(VariantList *pVList)
 {
 
-	
 	if (DinkCanRunScriptNow())
 	{
 
@@ -572,8 +562,6 @@ void BuildInventoryControls(float fadeTimeMS)
 		SetTouchPaddingEntity(pButtonEntity, CL_Rectf(20,15,40,40));
 		SetButtonClickSound(pButtonEntity, ""); //no sound
 	}
-
-
 }
 
 void BuildShowingBMPControls(float fadeTimeMS)
@@ -603,7 +591,6 @@ void BuildShowingBMPControls(float fadeTimeMS)
 	}
 }
 
-
 void BuildControls(float fadeTimeMS)
 {
 	Entity *pBG = GetEntityRoot()->GetEntityByName("GameMenu");
@@ -622,49 +609,47 @@ void BuildControls(float fadeTimeMS)
 	float trans = 0.0f;
 	Entity *pButtonEntity;
 
-
 	if (GetApp()->GetUsingTouchScreen())
 	{
-	if (g_dglo.GetActiveView() != DinkGlobals::VIEW_ZOOMED && IsDrawingDinkStatusBar())
-	{
-		//not zoomed in
-
-		if (IsIPADSize)
+		if (g_dglo.GetActiveView() != DinkGlobals::VIEW_ZOOMED && IsDrawingDinkStatusBar())
 		{
-		 iconX = FlipXIfNeeded(864);
-		 iconStartY = 120;
-		 iconSpacerY = iPhoneMapY(72);
+			//not zoomed in
 
-		} else if (IsIphone4Size) 
-		{
-			iconX = FlipXIfNeeded(820);
-			iconStartY = 5;
-		}
+			if (IsIPADSize)
+			{
+			 iconX = FlipXIfNeeded(864);
+			 iconStartY = 120;
+			 iconSpacerY = iPhoneMapY(72);
 
-	} else
-	{
-		//adjust for fullscreen view
-		if (IsIPADSize)
-		{
-			iconX = FlipXIfNeeded(890);
-			iconStartY = 100;
-			iconSpacerY = iPhoneMapY(72);
+			} else if (IsIphone4Size) 
+			{
+				iconX = FlipXIfNeeded(820);
+				iconStartY = 5;
+			}
 
-		}  else if (IsIphone4Size) 
-		{
-			iconX = FlipXIfNeeded(820);
-			iconStartY = 5;
-			iconSpacerY = iPhoneMapY(76);
 		} else
 		{
-			//old iphone
-			iconSpacerY = iPhoneMapY(76);
-			iconX = FlipXIfNeeded(iPhoneMapX(416));
+			//adjust for fullscreen view
+			if (IsIPADSize)
+			{
+				iconX = FlipXIfNeeded(890);
+				iconStartY = 100;
+				iconSpacerY = iPhoneMapY(72);
+
+			}  else if (IsIphone4Size) 
+			{
+				iconX = FlipXIfNeeded(820);
+				iconStartY = 5;
+				iconSpacerY = iPhoneMapY(76);
+			} else
+			{
+				//old iphone
+				iconSpacerY = iPhoneMapY(76);
+				iconX = FlipXIfNeeded(iPhoneMapX(416));
+			}
 		}
-	}
 
-
-float iconY = iconStartY;
+	float iconY = iconStartY;
 
 	//make the area where if you touch it the screen zoom will change
 
@@ -673,6 +658,7 @@ float iconY = iconStartY;
 	//game icons
 	pButtonEntity =  CreateOverlayButtonEntity(pBG, "inventory", ReplaceWithLargeInFileName("interface/iphone/button_inventory.rttex"),  iconX, iconY);
 	
+
 	if (GetApp()->GetIconsOnLeft()) SetAlignmentEntity(pButtonEntity, ALIGNMENT_UPPER_RIGHT);
 	pButtonEntity->GetVar("alpha")->Set(trans);
 	iconY += iconSpacerY;
@@ -701,20 +687,35 @@ float iconY = iconStartY;
 
 	//pButtonEntity->GetComponentByName("Button2D")->GetVar("buttonStyle")->Set((uint32) Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH);
 	SetButtonClickSound(pButtonEntity, ""); //no sound
-
-	
+		
 	pButtonEntity->GetParent()->MoveEntityToBottomByAddress(pButtonEntity);
 	
 	if (g_dglo.GetActiveView() != DinkGlobals::VIEW_ZOOMED && IsDrawingDinkStatusBar())
 	{
-		pButtonEntity =  CreateButtonHotspot(pBG, "magic", CL_Vec2f(iPhoneMapX(113), iPhoneMapY(272)), CL_Vec2f(iPhoneMapX(55), iPhoneMapY(46)), Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH);
+		//make it so touching the actual game icons on the bottom of the screen do stuff
+#ifdef _DEBUG
+		//trans = 0.7f;
+#endif
+		
+		/*
+		RecomputeAspectRatio();
+		ApplyAspectRatioGLMatrix();
+		glMatrixMode(GL_MODELVIEW);
+		glPopMatrix();
+		*/
+		
+
+		CL_Vec2f vButtonSize = DinkToNativeCoords(CL_Vec2f(152+64, 412+54)) - DinkToNativeCoords(CL_Vec2f(152, 412));
+		pButtonEntity =  CreateButtonHotspot(pBG, "magic", DinkToNativeCoords(CL_Vec2f(152, 412)), vButtonSize, Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH);
+		SetAlignmentEntity(pButtonEntity, ALIGNMENT_UPPER_LEFT);
 		pButtonEntity->GetVar("alpha")->Set(trans);
+		
 		pButtonEntity->GetShared()->GetFunction("OnOverStart")->sig_function.connect(&GameOnSelect);
 		pButtonEntity->GetShared()->GetFunction("OnOverEnd")->sig_function.connect(&GameOnStopSelect);
 		SetButtonClickSound(pButtonEntity, ""); //no sound
 
 				//I made this touchspot too big on purpose, easier to hit it.
-		pButtonEntity =  CreateButtonHotspot(pBG, "attack", CL_Vec2f(iPhoneMapX(412), iPhoneMapY(272)), CL_Vec2f(iPhoneMapX(62), iPhoneMapY(46)), Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH);
+		pButtonEntity =  CreateButtonHotspot(pBG, "attack", DinkToNativeCoords(CL_Vec2f(556, 412)),vButtonSize, Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH);
 		iconY += iconSpacerY;
 		pButtonEntity->GetVar("alpha")->Set(trans);
 		pButtonEntity->GetShared()->GetFunction("OnOverStart")->sig_function.connect(&GameOnSelect);
@@ -823,7 +824,7 @@ void BuildDialogModeControls(float fadeTimeMS)
 	 
 	pBG = pBG->AddEntity(new Entity("Controls"));
 
-	pBG->AddComponent(new CursorComponent); //for mouse control of dialog
+    EntityComponent *pCursor = pBG->AddComponent(new CursorComponent); //for mouse control of dialog
 
 	if (!GetApp()->GetUsingTouchScreen()) return;
 
@@ -890,38 +891,47 @@ void BuildDialogModeControls(float fadeTimeMS)
 
 	if (!IsInFlingMode())
 	{
+		pButtonEntity =  CreateOverlayButtonEntity(pBG, "arrow_up", ReplaceWithLargeInFileName("interface/iphone/button_arrow_up.rttex"),  vUpArrowPos.x, vUpArrowPos.y);
+		pButtonEntity->GetVar("alpha")->Set(trans);
+		pButtonEntity->GetShared()->GetFunction("OnOverStart")->sig_function.connect(&GameOnSelect);
+		pButtonEntity->GetShared()->GetFunction("OnOverEnd")->sig_function.connect(&GameOnStopSelect);
+		SetButtonClickSound(pButtonEntity, ""); //no sound
+		Entity * pUp = pButtonEntity;
 
-	
-	pButtonEntity =  CreateOverlayButtonEntity(pBG, "arrow_up", ReplaceWithLargeInFileName("interface/iphone/button_arrow_up.rttex"),  vUpArrowPos.x, vUpArrowPos.y);
-	pButtonEntity->GetVar("alpha")->Set(trans);
-	pButtonEntity->GetShared()->GetFunction("OnOverStart")->sig_function.connect(&GameOnSelect);
-	pButtonEntity->GetShared()->GetFunction("OnOverEnd")->sig_function.connect(&GameOnStopSelect);
-	SetButtonClickSound(pButtonEntity, ""); //no sound
-	Entity * pUp = pButtonEntity;
+		if (GetApp()->GetIconsOnLeft()) SetAlignmentEntity(pButtonEntity, ALIGNMENT_UPPER_RIGHT);
 
-	if (GetApp()->GetIconsOnLeft()) SetAlignmentEntity(pButtonEntity, ALIGNMENT_UPPER_RIGHT);
-
-	pButtonEntity =  CreateOverlayButtonEntity(pBG, "arrow_down", ReplaceWithLargeInFileName("interface/iphone/button_arrow_down.rttex"),  vDownArrowPos.x, vDownArrowPos.y);
-	pButtonEntity->GetVar("alpha")->Set(trans);
-	pButtonEntity->GetShared()->GetFunction("OnOverStart")->sig_function.connect(&GameOnSelect);
-	if (GetApp()->GetIconsOnLeft()) SetAlignmentEntity(pButtonEntity, ALIGNMENT_UPPER_RIGHT);
-	pButtonEntity->GetShared()->GetFunction("OnOverEnd")->sig_function.connect(&GameOnStopSelect);
-	SetButtonClickSound(pButtonEntity, ""); //no sound
-	Entity * pDown = pButtonEntity;
+		pButtonEntity =  CreateOverlayButtonEntity(pBG, "arrow_down", ReplaceWithLargeInFileName("interface/iphone/button_arrow_down.rttex"),  vDownArrowPos.x, vDownArrowPos.y);
+		pButtonEntity->GetVar("alpha")->Set(trans);
+		pButtonEntity->GetShared()->GetFunction("OnOverStart")->sig_function.connect(&GameOnSelect);
+		if (GetApp()->GetIconsOnLeft()) SetAlignmentEntity(pButtonEntity, ALIGNMENT_UPPER_RIGHT);
+		pButtonEntity->GetShared()->GetFunction("OnOverEnd")->sig_function.connect(&GameOnStopSelect);
+		SetButtonClickSound(pButtonEntity, ""); //no sound
+		Entity * pDown = pButtonEntity;
 	}
 
 	pButtonEntity =  CreateOverlayButtonEntity(pBG, "select", ReplaceWithLargeInFileName("interface/iphone/button_arrow_back.rttex"),  vOkPos.x, vOkPos.y);
 	pButtonEntity->GetVar("alpha")->Set(trans);
 	pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&GameOnSelect);
 	if (GetApp()->GetIconsOnLeft()) SetAlignmentEntity(pButtonEntity, ALIGNMENT_UPPER_RIGHT);
+	
+	
 	//pButtonEntity->GetShared()->GetFunction("OnOverEnd")->sig_function.connect(&GameOnStopSelect);
 	//SetButtonStyleEntity(pButtonEntity, Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH_RELEASE);
 	SetButtonClickSound(pButtonEntity, ""); //no sound
 	//SetButtonRepeatDelayMS(pButtonEntity, 1);
 
 	Entity * pSelect = pButtonEntity;
-	
-	FadeEntity(pBG, true, 	GetApp()->GetVar("gui_transparency")->GetFloat(), fadeTimeMS, 0);
+
+	FadeEntity(pBG, true, GetApp()->GetVar("gui_transparency")->GetFloat(), fadeTimeMS, 0);
+
+
+	//disable it until it's visible
+	DisableComponentByName(pButtonEntity, "Button2D");
+	EnableComponentByName(pButtonEntity, "Button2D", 1000);
+
+	//override the fading on this one button because we want them to see it's not clickable yet
+	FadeEntity(pButtonEntity, false, 0, 0, 0, false);
+	FadeInEntity(pButtonEntity, false, 300, 900, GetApp()->GetVar("gui_transparency")->GetFloat());
 
 	if (g_dglo.GetActiveView() != DinkGlobals::VIEW_ZOOMED)
 	{
@@ -936,6 +946,8 @@ void BuildDialogModeControls(float fadeTimeMS)
 			SetButtonClickSound(pButtonEntity, ""); //no sound
 		}
 	} 
+
+	pBG->MoveComponentToBottomByAddress(pCursor);
 }
 
 void RecomputeAspectRatio();
@@ -949,6 +961,7 @@ void UpdateControlsGUIIfNeeded()
 		|| g_dglo.m_lastActiveView != g_dglo.GetActiveView()
 		|| g_dglo.m_lastIsUpdatingDinkStatusBar != IsDrawingDinkStatusBar()
 		|| g_dglo.m_bFullKeyboardActive != g_dglo.m_bLastFullKeyboardActive
+		|| g_dglo.m_bForceControlsRebuild
 	)
 	{
 		
@@ -957,7 +970,7 @@ void UpdateControlsGUIIfNeeded()
 			//don't care, leave the keyboard up
 			return;
 		}
-
+		g_dglo.m_bForceControlsRebuild = false;
 		//kill any existing controls
 		KillControls(300);
 
@@ -971,7 +984,7 @@ void UpdateControlsGUIIfNeeded()
 		GetEntityRoot()->GetComponentByName("ArcadeInput")->GetVar("trackball_mode")->Set(uint32(ArcadeInputComponent::TRACKBALL_MODE_WALKING));
 
 		Entity *pMainMenu = GetEntityRoot()->GetEntityByName("GameMenu");
-		RecomputeAspectRatio();
+		//RecomputeAspectRatio();
 
 		AddSpeedUpButton(pMainMenu);
 		UpdatePauseMenuPosition(pMainMenu);
@@ -1018,10 +1031,8 @@ void ApplyAspectRatioGLMatrix();
 
 void OnGameMenuRender(VariantList *pVList)
 {
-
 	//apply matrix
 	glMatrixMode(GL_MODELVIEW);
-	
 	
 	//well, we might as well always clear the BG, because some dmods like redink1 set transparency in the status bar which causes glitches if we don't
 
@@ -1051,15 +1062,12 @@ void OnGameMenuRender(VariantList *pVList)
 		}
 
 	}
-
-
-
+	
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 	//remove matrix
-
-
 }
+
 void OnAutoSave(VariantList *pVList)
 {
 	if (GetDinkGameState() == DINK_GAME_STATE_PLAYING && DinkGetHealthPercent() > 0.3f)
@@ -1079,7 +1087,6 @@ void OnAutoSave(VariantList *pVList)
 
 	//if we got here, we failed to save due to it being dangerous because of low health.  Let's try again in a few seconds...
 	GetMessageManager()->CallEntityFunction(pVList->Get(0).GetEntity(), 5000, "OnAutoSave", pVList);
-
 }
 
 void OnArcadeInput(VariantList *pVList)
@@ -1114,9 +1121,6 @@ void OnArcadeInput(VariantList *pVList)
 			{
 				if (GetDinkGameState() == DINK_GAME_STATE_PLAYING)
 				{
-
-
-
 					string fName = DinkGetSavePath() + "quicksave.dat";
 
 					if (FileExists(fName))
@@ -1135,6 +1139,7 @@ void OnArcadeInput(VariantList *pVList)
 			}
 		}
 		break;
+
 	case VIRTUAL_KEY_GAME_MAGIC:
 
 		if (bIsDown)
@@ -1150,10 +1155,8 @@ void OnArcadeInput(VariantList *pVList)
 		} else
 		{
 			g_dglo.m_dirInputFinished[DINK_INPUT_BUTTON3] = true;
-
 		}
 		break;
-
 		
 		//EXAMINE
 	case VIRTUAL_KEY_GAME_TALK:
@@ -1174,7 +1177,6 @@ void OnArcadeInput(VariantList *pVList)
 		} else
 		{
 			g_dglo.m_dirInputFinished[DINK_INPUT_BUTTON2] = true;
-
 		}
 		break;
 
@@ -1186,7 +1188,6 @@ void OnArcadeInput(VariantList *pVList)
 		} else
 		{
 			g_dglo.m_dirInputFinished[DINK_INPUT_BUTTON4] = true;
-
 		}
 		break;
 
@@ -1242,10 +1243,7 @@ void OnRawCharInput(VariantList *pVList)
 
 	int vKey = pVList->Get(0).GetUINT32();
 	bool bIsDown = pVList->Get(1).GetUINT32() != 0;
-
 	//LogMsg("GameMenuRaw: Key %d, down is %d", vKey, int(bIsDown));
-
-
 }
 
 void UpdatePauseMenuPosition(Entity *pBG)
@@ -1394,6 +1392,7 @@ void GameLoadPiece(VariantList *pVList)
 		pBG->GetVar("didInit")->Set(uint32(1));
 
 	}
+
 	if (progress == 1)
 	{
 		//we're done
@@ -1436,7 +1435,6 @@ void GameLoadPiece(VariantList *pVList)
             GetMessageManager()->CallEntityFunction(pBG, 1, "GameLoadPiece", &vList); 
 			return;
 		}
-				
 	} 
 	
 	if (!LoadGameChunk(gameIdToLoad, progress))
@@ -1458,7 +1456,6 @@ Entity * GameCreate(Entity *pParentEnt, int gameIDToLoad, string stateToLoad, st
 	Entity *pBG = pParentEnt->AddEntity(new Entity("GameMenu"));
 	AddFocusIfNeeded(pBG);
 	Entity *pLoading = CreateOverlayEntity(pBG, "game_loading", ReplaceWithDeviceNameInFileName("interface/iphone/bkgd_stone.rttex"), 0, 0);
-	
 
 	//setup the splash too
 	string splashBmp;
