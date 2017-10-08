@@ -402,6 +402,7 @@ struct DMODDisplayEntry
 
 };
 
+bool DmodSortByName(const DMODDisplayEntry& lhs, const DMODDisplayEntry& rhs) { return lhs.dmodName < rhs.dmodName; }
 
 void DMODMenuAddScrollContent(Entity *pParent)
 {
@@ -472,10 +473,7 @@ void DMODMenuAddScrollContent(Entity *pParent)
 	}
 
 	//sort them by DMOD name rather than filename
-	sort(entries.begin(), entries.end(), [](const DMODDisplayEntry& lhs, const DMODDisplayEntry& rhs)
-	{
-		return lhs.dmodName < rhs.dmodName;
-	});
+	sort(entries.begin(), entries.end(), DmodSortByName);
 
 
 	for (int i = 0; i < entries.size(); i++)

@@ -131,6 +131,14 @@ void GameOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sent fr
 			}
 		}
 
+		//clicked the attack button
+		if (g_dglo.m_lastSubGameMode == DINK_SUB_GAME_MODE_DIALOG)
+		{
+			//meh, skip it.  On dialog menus we have a button labeled "select" over the punch button we use instead
+			return;
+		}
+
+		
 		g_dglo.m_dirInput[DINK_INPUT_BUTTON1] = true;
 		return;
 	}
@@ -546,7 +554,10 @@ void BuildInventoryControls(float fadeTimeMS)
 		float trans = 0.0f;	
 		Entity *pButtonEntity;
 
-		pButtonEntity =  CreateButtonHotspot(pBG, "attack", iPhoneMap(113, 272), iPhoneMap(55, 46));
+		CL_Vec2f vButtonSize = DinkToNativeCoords(CL_Vec2f(152 + 64, 412 + 54)) - DinkToNativeCoords(CL_Vec2f(152, 412));
+
+		pButtonEntity = CreateButtonHotspot(pBG, "magic", DinkToNativeCoords(CL_Vec2f(152, 412)), vButtonSize);
+
 		pButtonEntity->GetVar("alpha")->Set(trans);
 		pButtonEntity->GetShared()->GetFunction("OnOverStart")->sig_function.connect(&GameOnSelect);
 		pButtonEntity->GetShared()->GetFunction("OnOverEnd")->sig_function.connect(&GameOnStopSelect);
@@ -554,8 +565,8 @@ void BuildInventoryControls(float fadeTimeMS)
 		SetButtonClickSound(pButtonEntity, ""); //no sound
 
 		//I made this touchspot too big on purpose, easier to hit it.
-		pButtonEntity =  CreateButtonHotspot(pBG, "attack", iPhoneMap(412, 272), iPhoneMap(62, 46));
-		
+		pButtonEntity = CreateButtonHotspot(pBG, "attack", DinkToNativeCoords(CL_Vec2f(556, 412)), vButtonSize);
+
 		pButtonEntity->GetVar("alpha")->Set(trans);
 		pButtonEntity->GetShared()->GetFunction("OnOverStart")->sig_function.connect(&GameOnSelect);
 		pButtonEntity->GetShared()->GetFunction("OnOverEnd")->sig_function.connect(&GameOnStopSelect);
@@ -693,17 +704,6 @@ void BuildControls(float fadeTimeMS)
 	if (g_dglo.GetActiveView() != DinkGlobals::VIEW_ZOOMED && IsDrawingDinkStatusBar())
 	{
 		//make it so touching the actual game icons on the bottom of the screen do stuff
-#ifdef _DEBUG
-		//trans = 0.7f;
-#endif
-		
-		/*
-		RecomputeAspectRatio();
-		ApplyAspectRatioGLMatrix();
-		glMatrixMode(GL_MODELVIEW);
-		glPopMatrix();
-		*/
-		
 
 		CL_Vec2f vButtonSize = DinkToNativeCoords(CL_Vec2f(152+64, 412+54)) - DinkToNativeCoords(CL_Vec2f(152, 412));
 		pButtonEntity =  CreateButtonHotspot(pBG, "magic", DinkToNativeCoords(CL_Vec2f(152, 412)), vButtonSize, Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH);
@@ -813,6 +813,8 @@ void BuildControls(float fadeTimeMS)
 
 void BuildDialogModeControls(float fadeTimeMS)
 {
+
+	
 	Entity *pBG = GetEntityRoot()->GetEntityByName("GameMenu");
 
 	if (!pBG)
@@ -938,12 +940,22 @@ void BuildDialogModeControls(float fadeTimeMS)
 		if (IsDrawingDinkStatusBar())
 		{
 			//let's let the punch icon also select, it just feels natural
-			pButtonEntity =  CreateButtonHotspot(pBG, "select", CL_Vec2f(iPhoneMapX(412), iPhoneMapY(272)), CL_Vec2f(iPhoneMapX(62), iPhoneMapY(46)));
-			
+			//pButtonEntity =  CreateButtonHotspot(pBG, "select", CL_Vec2f(iPhoneMapX(412), iPhoneMapY(272)), CL_Vec2f(iPhoneMapX(62), iPhoneMapY(46)));
+		
+			CL_Vec2f vButtonSize = DinkToNativeCoords(CL_Vec2f(152 + 64, 412 + 54)) - DinkToNativeCoords(CL_Vec2f(152, 412));
+
+			pButtonEntity = CreateButtonHotspot(pBG, "select", DinkToNativeCoords(CL_Vec2f(556, 412)), vButtonSize);
+
+
+
 			pButtonEntity->GetVar("alpha")->Set(trans);
-			pButtonEntity->GetShared()->GetFunction("OnOverStart")->sig_function.connect(&GameOnSelect);
-			pButtonEntity->GetShared()->GetFunction("OnOverEnd")->sig_function.connect(&GameOnStopSelect);
+			pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&GameOnSelect);
+		//	pButtonEntity->GetShared()->GetFunction("OnOverEnd")->sig_function.connect(&GameOnStopSelect);
 			SetButtonClickSound(pButtonEntity, ""); //no sound
+
+			DisableComponentByName(pButtonEntity, "Button2D");
+			EnableComponentByName(pButtonEntity, "Button2D", 1000);
+
 		}
 	} 
 

@@ -15,12 +15,12 @@ const int C_DINK_MAX_MAGICS = 8;
 
 void ThinkSprite(int h, bool get_frame);
 void ApplyAspectRatioGLMatrix();
-
+void ScanSeqFilesIfNeeded(int seq);
 bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly);
 
 #define C_DINK_SCREEN_TRANSITION_TIME_MS 400
 
-const float SAVE_FORMAT_VERSION = 3.0f;
+const float SAVE_FORMAT_VERSION = 3.1f;
 const int C_DINK_FADE_TIME_MS = 300;
 
 const float G_TRANSITION_SCALE_TRICK = 1.01f;
@@ -522,10 +522,10 @@ void setup_anim (int seq, int sequence,int delay)
 	}
 
 #ifdef _DEBUG
-	if (seq == 452)
+	if (seq == 855)
 	{
 
-	//LogMsg("yo, yo!");
+	LogMsg("yo, yo!");
 	
 	}
 #endif
@@ -883,6 +883,11 @@ LogMsg("Loading tilescreen %s", fName.c_str());
 
 }
 
+//this is completely different than how the original dink worked.  The original Dink used GetTickCount() which drastically changed
+//depending on when you last rebooted your computer.  The new way just uses the clock in the save game which is accurate, but the result
+//is if we continue a save created with another version of dink, it's likely sprites will never come back.
+
+
 void fix_dead_sprites( void )
 {
 
@@ -890,7 +895,14 @@ void fix_dead_sprites( void )
 	{
 		if (g_dglos.g_playerInfo.spmap[*pmap].type[i] == 6)
 		{
-
+			if (g_dglos.g_playerInfo.spmap[*pmap].last_time > GetApp()->GetGameTick())
+			{
+#ifdef _DEBUG
+				LogMsg("Woah, crazy time on dead map sprite (%d) detected", i);
+#endif
+				//g_dglos.g_playerInfo.spmap[*pmap].last_time = GetApp()->GetGameTick();
+				//I don't think this is needed, because it's reset elsewhere to the current time if visited
+			}
 			if  ((g_dglos.g_dinkTick > (g_dglos.g_playerInfo.spmap[*pmap].last_time +  300000)) ||
 				(g_dglos.g_dinkTick  +400000 < g_dglos.g_playerInfo.spmap[*pmap].last_time +  300000) )
 			{
@@ -1551,12 +1563,14 @@ bool LoadSpriteSingleFrame(string fNameBase, int seq, int oo, int picIndex, eTra
 
 
 	byte *pMem = pReader->LoadFileIntoMemory(fName, NULL, fNameBase + "01.bmp");
-
+	
 	if (g_dglos.g_seq[seq].m_spaceAllowed != 0)
 	{
 		if (pMem && oo > g_dglos.g_seq[seq].m_spaceAllowed)
 		{
-			//LogMsg("Truncating anim to fit in existing seq %d", seq);
+#ifdef _DEBUG
+			LogMsg("Truncating anim to fit in existing seq %d", seq);
+#endif
 			SAFE_DELETE_ARRAY(pMem);
 		}
 	}
@@ -1607,9 +1621,9 @@ bool LoadSpriteSingleFrame(string fNameBase, int seq, int oo, int picIndex, eTra
 		}
 
 #ifdef _DEBUG
-		if (seq == 181 && oo == 11)
+		if (seq == 868 && oo == 17)
 		{
-			LogMsg("hey");
+			//LogMsg("hey");
 
 		}
 #endif
@@ -1776,9 +1790,9 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 	static FFReader reader;
 #ifdef _DEBUG
 
-	if (seq == 314 )
+	if (seq == 868 )
 	{
-		//LogMsg("Yeah");
+		LogMsg("Yeah");
 	}
 #endif
 	reader.Init(g_dglo.m_gameDir, g_dglo.m_dmodGamePathWithDir, GetPathFromString(tempStr), g_dglo.m_bUsingDinkPak);
@@ -1804,7 +1818,7 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 		return true;
 	}
 
-
+	g_dglos.g_seq[seq].m_bDidFileScan = true;
 	// redink1 added to fix bug where loading sequences over others wouldn't work quite right.
 	int save_cur = g_dglos.g_curPicIndex;
 	bool reload = false;
@@ -1818,6 +1832,8 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 	//LogMsg("Reloading: Temp g_curPicIndex is %d", g_curPicIndex);
 #endif
 		reload = true;
+		//g_dglos.g_seq[seq].last = 0;
+		//g_dglos.g_seq[seq].m_spaceAllowed = 0; //forget the limits
 	} else
 	{
 		//LogMsg("Not reloading..");
@@ -1832,7 +1848,7 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 			return true;
 		}
 	
-		for (int oo = 1; oo <= C_MAX_SPRITE_FRAMES; oo++)
+		for (int oo = 1; oo <= C_MAX_SPRITE_FRAMES+1; oo++) //the +1 is so we can detect when we go over our limit
 		{
 			if (oo < 10) strcpy(hold, "0"); else strcpy(hold,"");
 
@@ -1842,7 +1858,7 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 			//	LogMsg("Loading seq %d frame %d", seq, oo);
 			}
 #endif
-			if (reader.DoesFileExist(fNameBase+string(hold)+toString(oo)+".bmp", fNameBase + "01.bmp"))
+			if (oo <= C_MAX_SPRITE_FRAMES && reader.DoesFileExist(fNameBase+string(hold)+toString(oo)+".bmp", fNameBase + "01.bmp"))
 			{
 				g_dglos.g_curPicIndex++;
 				
@@ -1853,6 +1869,10 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 					LogMsg("load_sprites:  Anim %s not found.",tempStr.c_str());
 					//assert(0);
 				}
+				if (oo == C_MAX_SPRITE_FRAMES+1)
+				{
+					LogMsg("Warning: Sequence %d tries to use over %d frames which is the max we can load!", seq, oo);
+				}
 				g_dglos.g_seq[seq].m_spaceAllowed = (oo - 1);
 				g_dglos.g_seq[seq].last = (oo - 1);
 				
@@ -1860,6 +1880,8 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 				break;
 			}
 		}
+
+
 		if (bScanOnly)
 			return true;
 	}
@@ -1870,7 +1892,7 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 	if (seq == 424)
 	{
 
-	LogMsg("hey");
+	//LogMsg("hey");
 	
 	}
 #endif
@@ -2040,6 +2062,12 @@ bool ReloadSequence(int seqID, int frame, bool bScanOnly)
 	//handle a possible case where we need to always load frame 1 before any other frame to get the correct offset for anims
 	if (frame > 1 && !bScanOnly && g_dglos.g_seq[seqID].m_bIsAnim)
 	{
+#ifdef _DEBUG
+		if (seqID == 855)
+		{
+		//	LogMsg("Hey");
+		}
+#endif
 			if (g_pSpriteSurface[g_dglos.g_seq[seqID].s+1] == 0) //make sure it's not already loaded
 		ReloadSequence(seqID, 1, bScanOnly);
 	}
@@ -2104,7 +2132,7 @@ bool figure_out(const char *line, int load_seq)
 		int seqID = atol(ev[3]);
 		
 #ifdef _DEBUG
-		if (seqID == 131)
+		if (seqID == 439)
 		{
 
 			LogMsg("Loading sand stuff");
@@ -2136,7 +2164,10 @@ bool figure_out(const char *line, int load_seq)
 				
 			}
 
+	
 			ReadFromLoadSequenceString(ev);
+			//ScanSeqFilesIfNeeded(seqID);
+
 			FreeSequence(seqID); //force a full reload, the anim probably changed
 			ReloadSequence(seqID);
 		}
@@ -2184,7 +2215,7 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly)
 			int seqID = atol(ev[3]);
 
 #ifdef _DEBUG
-			if (seqID == 131)
+			if (seqID == 439)
 			{
 
 				LogMsg("Loading sand stuff prefigure out");
@@ -2209,9 +2240,17 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly)
 
 			ReadFromLoadSequenceString(ev);
 			
-			bReturn = load_sprites(g_dglos.g_seq[seqID].m_fileName,seqID,g_dglos.g_seq[seqID].m_speed,g_dglos.g_seq[seqID].m_xoffset,g_dglos.g_seq[seqID].m_yoffset, g_dglos.g_seq[seqID].m_hardbox
-				, g_dglos.g_seq[seqID].m_transType, g_dglos.g_seq[seqID].m_bLeftAlign, true); //Crap
-					return bReturn;     
+			if (compare(ev[1], "LOAD_SEQUENCE_NOW"))
+				//  if (     (load_seq == -1) | (load_seq == atol(ev[3]))  )
+			{
+				bReturn = load_sprites(g_dglos.g_seq[seqID].m_fileName, seqID, g_dglos.g_seq[seqID].m_speed, g_dglos.g_seq[seqID].m_xoffset, g_dglos.g_seq[seqID].m_yoffset, g_dglos.g_seq[seqID].m_hardbox
+					, g_dglos.g_seq[seqID].m_transType, g_dglos.g_seq[seqID].m_bLeftAlign, true);
+				return bReturn;
+			}
+
+			//ScanSeqFilesIfNeeded(seqID);
+
+			return 1;
 		}
 	
 		return true;
@@ -2226,10 +2265,14 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly)
 	
 	if (compare(ev[1],"SET_SPRITE_INFO"))
 	{
+
+		
 	//           name   seq    speed       offsetx     offsety       hardx      hardy   
 	//if (k[seq[myseq].frame[myframe]].frame = 0) Msg("Changing sprite that doesn't exist...");
 	myseq = atol(ev[2]);
 	myframe = atol(ev[3]);
+
+	ScanSeqFilesIfNeeded(myseq);
 
 	g_dglos.g_picInfo[g_dglos.g_seq[myseq].frame[myframe]].xoffset = atol(ev[4]);
 	g_dglos.g_picInfo[g_dglos.g_seq[myseq].frame[myframe]].yoffset = atol(ev[5]);
@@ -2274,9 +2317,13 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly)
 	//           name   seq    speed       offsetx     offsety       hardx      hardy   
 	//if (k[seq[myseq].frame[myframe]].frame = 0) Msg("Changing sprite that doesn't exist...");
 
+
+
 	myseq = atol(ev[2]);
 	myframe = atol(ev[3]);
 	special = atol(ev[4]);
+
+	ScanSeqFilesIfNeeded(myseq);
 
 	g_dglos.g_seq[myseq].delay[myframe] = special;
 	//LogMsg("Set delay.  %d %d %d",myseq, myframe, special);
@@ -2302,6 +2349,10 @@ bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly)
 	special = atol(ev[4]);
 	special2 = atol(ev[5]);
 
+
+	ScanSeqFilesIfNeeded(myseq);
+	if (myseq != special && special > 0)
+		ScanSeqFilesIfNeeded(special);
 
 #ifdef _DEBUG
 	//LogMsg("Set frame.  %d %d %d",myseq, myframe, special);
@@ -2549,9 +2600,9 @@ void draw_bar(int life, int seqman)
 
 void draw_health()
 {
-	g_dglos.g_guiLifeMax = *plifemax;
+	//g_dglos.g_guiLifeMax = *plifemax;
 	draw_bar(g_dglos.g_guiLifeMax, 190);
-	g_dglos.g_guiLife = *plife;
+	//g_dglos.g_guiLife = *plife;
 	draw_bar(g_dglos.g_guiLife, 451);
 }
 
@@ -2590,8 +2641,19 @@ void draw_icons()
 		seq = g_dglos.g_playerInfo.g_MagicData[*pcur_magic].seq;
 		frame = g_dglos.g_playerInfo.g_MagicData[*pcur_magic].frame;
 
+#ifdef _DEBUG
+		if (seq == 437)
+		{
+		//	LogMsg("Hey");
+		}
+#endif
 		if (!check_seq_status(seq, frame)) return;
 
+		if (!g_pSpriteSurface[g_dglos.g_seq[seq].frame[frame]])
+		{
+			LogMsg("Bad magic item frame of %d", frame);
+			return;
+		}
 		DrawFilledRect(153, 413, 
 			g_pSpriteSurface[g_dglos.g_seq[seq].frame[frame]]->m_pSurf->GetWidth()
 			,g_pSpriteSurface[g_dglos.g_seq[seq].frame[frame]]->m_pSurf->GetHeight(), MAKE_RGBA(0,0,0,255));
@@ -2692,6 +2754,7 @@ void draw_status_all(void)
 	g_forceBuildBackgroundFromScratch = true;
 	ClearBitmapCopy();
 
+	
 	g_dglos.g_guiStrength = *pstrength;
 	g_dglos.g_guiMagic = *pmagic;
 	g_dglos.g_guiGold = *pgold;
@@ -2749,6 +2812,9 @@ void BlitGUIOverlay()
 		return;
 	}
 
+
+	/*
+
 	g_dglos.g_guiRaise = next_raise();
 	if ( *pexper < g_dglos.g_guiRaise )
 	{
@@ -2758,6 +2824,8 @@ void BlitGUIOverlay()
 	{
 		g_dglos.g_guiExp = g_dglos.g_guiRaise - 1;
 	}
+
+	*/
 
 	/*
 	g_dglos.g_guiStrength = *pstrength;
@@ -2987,8 +3055,24 @@ bool get_box (int spriteID, rtRect32 * pDstRect, rtRect32 * pSrcRect )
 	//	txoffset = g_dglos.g_picInfo[picID].xoffset;
 		//tyoffset = g_dglos.g_picInfo[picID].yoffset;
 
-		txoffset = g_dglos.g_picInfo[picID].xoffset;
-		tyoffset = g_dglos.g_picInfo[picID].yoffset;
+
+		//this is.. probably not a good solution.  Some dmods want the original offset, others want to keep the offset of the frame they are replacing.  If speed == 0, it's probably not a real anim and we'll
+		//be happy with the replacement pics offset.  I think.
+
+		//this works for the dmod mayhem
+		if (g_dglos.g_seq[g_dglos.g_picInfo[originalSurfPic].m_parentSeq].m_speed == 0)
+		{
+			txoffset = g_dglos.g_picInfo[originalSurfPic].xoffset;
+			tyoffset = g_dglos.g_picInfo[originalSurfPic].yoffset;
+		}
+		else
+		{
+			//but this works with cast awakening 5, the sycth guy swings that have frame sets in them
+			txoffset = g_dglos.g_picInfo[picID].xoffset;
+			tyoffset = g_dglos.g_picInfo[picID].yoffset;
+		}
+
+	
 
 	}
 	else
@@ -3259,6 +3343,7 @@ int load_script(const char *pScript, int sprite, bool set_sprite, bool bQuietErr
 
 	string fName = "story/"+ToLowerCaseString(pScript);
 
+    StringReplace("\\", "/", fName);
 	int script;
 	FILE *stream;  
 	bool comp = false;
@@ -4107,6 +4192,17 @@ bool check_pic_status(int picID)
 	return check_seq_status(g_dglos.g_picInfo[picID].m_parentSeq);
 }
 
+void ScanSeqFilesIfNeeded(int seq)
+{
+	if (!g_dglos.g_seq[seq].m_bDidFileScan)
+	{
+		//LogMsg("Need to scan it now");
+		load_sprites(g_dglos.g_seq[seq].m_fileName, seq, g_dglos.g_seq[seq].m_speed, g_dglos.g_seq[seq].m_xoffset, g_dglos.g_seq[seq].m_yoffset, g_dglos.g_seq[seq].m_hardbox,
+			g_dglos.g_seq[seq].m_transType, g_dglos.g_seq[seq].m_bLeftAlign, true);
+	}
+
+}
+
 bool check_seq_status(int seq, int frame)
 {
 	
@@ -4123,6 +4219,7 @@ LogMsg("Seq %d missing?", seq);
 		return true;
 	}
 	
+	
 #ifdef _DEBUG
 	if (seq == 180)
 	{
@@ -4138,6 +4235,8 @@ LogMsg("Seq %d missing?", seq);
 		assert(!"Illegal sprite frame. Track where it came from!");
 		return true; //avoid crash
 	}
+
+	ScanSeqFilesIfNeeded(seq);
 
 	if (frame != 0)
 	{
@@ -5176,6 +5275,10 @@ void draw_sprite_game(LPDIRECTDRAWSURFACE lpdest,int h)
 		//check to see if we need a 32 bit buffer for this or not
 		if (lpdest->m_pSurf && lpdest->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_PALETTE_8BIT)
 		{
+#ifdef _DEBUG
+			
+			SoftSurface *pSoftTemp = g_pSpriteSurface[getpic(h)]->m_pSurf;
+#endif
 			if (g_pSpriteSurface[getpic(h)]->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGBA)
 			{
 				//yep, convert what we've got to 32 bit.  We don't lose what we've done so far.
@@ -5461,6 +5564,10 @@ void update_play_changes( void )
 
 void update_status_all(void)
 {
+#ifdef _DEBUG
+	//LogMsg("Updating status... %d", g_dglos.g_dinkTick);
+#endif
+
 	bool drawexp = false;
 	int next = next_raise();
 	int script;
@@ -5761,7 +5868,7 @@ void place_sprites_game(bool bBackgroundOnly )
 				if (strlen(g_dglos.g_smallMap.sprite[j].script) > 1)
 				{
 #ifdef _DEBUG
-					//LogMsg("Sprite %d is requesting that script %s is loaded when the map is drawn, vision is %d", j, g_dglos.g_smallMap.sprite[j].script, *pvision);
+					LogMsg("Sprite %d is requesting that script %s is loaded when the map is drawn, vision is %d", j, g_dglos.g_smallMap.sprite[j].script, *pvision);
 #endif
 					g_sprite[sprite].script = load_script(g_dglos.g_smallMap.sprite[j].script, sprite, true);
 				}
@@ -6116,6 +6223,8 @@ void update_sound(void)
 int playbank( int sound, int min,int plus, int sound3d, bool repeat, int forceBank = 0 )
 {
 	
+	if (g_soundInfo[sound].m_fileName.empty()) return 0;
+
 if (GetEmulatedPlatformID() == PLATFORM_ID_ANDROID)
 {
 	if (repeat)
@@ -8035,7 +8144,7 @@ pass:
 
 				fill_screen(g_nlist[0]);
 				SetBitmapCopy(""); //no bitmap, but it will trigger the no status bar rendering until "something happens"
-				//g_dglos.m_bRenderBackgroundOnLoad = true;
+				g_dglos.m_bRenderBackgroundOnLoad = false;
 
 			}
 
@@ -8149,7 +8258,7 @@ pass:
 				if (sound_on)
 				{
 #ifdef _DEBUG
-					LogMsg("getting %s..",slist[0]);
+					LogMsg("getting %s",slist[0]);
 #endif
 					CreateBufferFromWaveFile(slist[0],g_nlist[1]);
 				}
@@ -12716,16 +12825,34 @@ void StartScreenScrollTransition(int direction)
 
 	CheckTransitionSurface();
 	//remember this for later
-  	
+  	 
+
+	if (GetApp()->GetVar("disable_glread")->GetUINT32() == 1)
+	{
+		//no_transition = true;
+
+		return;
+	
+	}
+
 	//remove the aspect ratio hack
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 
+	//g_transitionSurf.InitBlankSurface(GetPrimaryGLX(), GetPrimaryGLY());
+	
 	UpdateFrameWithoutTransitionAndThinking();
-	g_transitionSurf.CopyFromScreen();
-    
+	
+	
+	if (GetApp()->GetVar("disable_glread")->GetUINT32() == 1)
+	{
+		g_transitionSurf.FillColor(glColorBytes(0, 0, 0, 255));
+	}
+	else
+	{
+		g_transitionSurf.CopyFromScreen();
+	}
 	ApplyAspectRatioGLMatrix();
-
 	if (g_dglo.GetActiveView() != DinkGlobals::VIEW_ZOOMED)
 	{
 		//clear background if needed
@@ -12734,9 +12861,7 @@ void StartScreenScrollTransition(int direction)
 	}
 	//redraw it the correct way, otherwise we can see a flash
 	UpdateFrameWithoutTransitionAndThinking();
-
-	
-	
+		
 	g_bInitiateScreenMove = true;
 	g_bTransitionActive = true;
 	g_dglo.m_transitionTimer = 0;
@@ -12783,6 +12908,8 @@ void ProcessTransition(void)
 
 	float inverseProg = 1.0f - g_dglo.m_transitionProgress;
 	
+	
+
 	if (g_dglo.m_transitionProgress >= 1)
 	{
 		g_bTransitionActive = false;
@@ -12799,6 +12926,7 @@ void ProcessTransition(void)
 	//LogMsg("Trans: %.2f", g_dglo.m_transitionProgress);
 	//glScalef(G_TRANSITION_SCALE_TRICK,G_TRANSITION_SCALE_TRICK,1);
 
+	
 }
 
 void EndProcessTransition()
@@ -12877,7 +13005,7 @@ void BlitSecondTransitionScreen()
 
 	}
 
-
+	
 }
 
 void did_player_cross_screen(bool bCheckWithoutMoving, int playerID)
@@ -16906,6 +17034,8 @@ void DinkGlobals::SetView( eView view )
 	{
 	case VIEW_ZOOMED:
 	
+		g_dglo.m_aspectRatioModX = g_dglo.m_aspectRatioModY = 1.0f;
+		g_dglo.m_centeringOffset = CL_Vec2f(0, 0);
 		g_dglo.m_nativeGameArea = rtRectf(0,0,GetScreenSizeX(),GetScreenSizeY());
 		g_dglo.m_gameArea = rtRect32 (20, 0, 620, 400);
 		g_dglo.m_orthoRenderRect = rtRect32 (20, 0, 620, 400);
@@ -16926,7 +17056,7 @@ void DinkGlobals::SetView( eView view )
 
 		g_dglo.m_nativeGameArea = rtRectf(float(g_dglo.m_gameArea.left)/ aspect,0,float(g_dglo.m_gameArea.right)/aspect,float(g_dglo.m_gameArea.bottom)/aspectY);
 		g_dglo.m_orthoRenderRect = rtRect32 (0, 0, 640, 480);
-		
+		RecomputeAspectRatio();
 
 #ifdef _DEBUG
 		LogMsg("Rect %s AspectX: %.4f, Aspect Y: %.4f", PrintRect(g_dglo.m_nativeGameArea).c_str(), aspect, aspectY);
@@ -17620,7 +17750,7 @@ float DinkGetHealthPercent()
 {
 	if (*plifemax > 0)
 	{
-		return float(*plife)/ float(*plifemax);
+		return float(g_dglos.g_guiLife)/ float(g_dglos.g_guiLifeMax);
 	} 
 	return 0;
 }
@@ -17734,9 +17864,6 @@ void ApplyAspectRatioGLMatrix()
 	glTranslatef(g_dglo.m_centeringOffset.x, g_dglo.m_centeringOffset.y, 0);
 
 	//glGetFloatv(GL_PROJECTION_MATRIX, &Matrix);
-
-
-
 }
 
 void RecomputeAspectRatio()

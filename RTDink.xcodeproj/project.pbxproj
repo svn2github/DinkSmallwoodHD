@@ -196,7 +196,9 @@
 		5DD878261261BDC000EB4365 /* FileManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DD878201261BDC000EB4365 /* FileManager.cpp */; };
 		5DD878391261BEC500EB4365 /* unzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 5DD878351261BEC500EB4365 /* unzip.c */; };
 		5DD8783A1261BEC500EB4365 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 5DD878371261BEC500EB4365 /* ioapi.c */; };
-		5DD87D1A1263069600EB4365 /* dmods in Resources */ = {isa = PBXBuildFile; fileRef = 5DD8791A1263069200EB4365 /* dmods */; };
+		5DDA4DEF1F8609EF0079D738 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DDA4DEE1F8609EE0079D738 /* Default-568h@2x.png */; };
+		5DDA4DF21F862F3F0079D738 /* RenderScissorComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA4DF01F862F3E0079D738 /* RenderScissorComponent.cpp */; };
+		5DDA5C781F8642080079D738 /* dmods_include in Resources */ = {isa = PBXBuildFile; fileRef = 5DDA5C771F8642080079D738 /* dmods_include */; };
 		5DDEC25F1294E63200C42C5E /* ExpiredMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DDEC25E1294E63200C42C5E /* ExpiredMenu.cpp */; };
 		5DE39F1114C3F9B300163EA1 /* dink in Resources */ = {isa = PBXBuildFile; fileRef = 5DE39F1014C3F9B300163EA1 /* dink */; };
 		5DE5068310EC800400CEAA3C /* FFReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DE5068110EC800400CEAA3C /* FFReader.cpp */; };
@@ -542,8 +544,11 @@
 		5DD878361261BEC500EB4365 /* ioapi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ioapi.h; path = util/unzip/ioapi.h; sourceTree = "<group>"; };
 		5DD878371261BEC500EB4365 /* ioapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ioapi.c; path = util/unzip/ioapi.c; sourceTree = "<group>"; };
 		5DD878381261BEC500EB4365 /* crypt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = crypt.h; path = util/unzip/crypt.h; sourceTree = "<group>"; };
-		5DD8791A1263069200EB4365 /* dmods */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dmods; path = bin/dmods; sourceTree = "<group>"; };
 		5DD9544D0E960962004E403D /* PlatformSetup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformSetup.h; sourceTree = "<group>"; };
+		5DDA4DEE1F8609EE0079D738 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		5DDA4DF01F862F3E0079D738 /* RenderScissorComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderScissorComponent.cpp; path = Entity/RenderScissorComponent.cpp; sourceTree = "<group>"; };
+		5DDA4DF11F862F3F0079D738 /* RenderScissorComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderScissorComponent.h; path = Entity/RenderScissorComponent.h; sourceTree = "<group>"; };
+		5DDA5C771F8642080079D738 /* dmods_include */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dmods_include; path = bin/dmods_include; sourceTree = "<group>"; };
 		5DDEC25D1294E63200C42C5E /* ExpiredMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExpiredMenu.h; path = source/GUI/ExpiredMenu.h; sourceTree = "<group>"; };
 		5DDEC25E1294E63200C42C5E /* ExpiredMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExpiredMenu.cpp; path = source/GUI/ExpiredMenu.cpp; sourceTree = "<group>"; };
 		5DE39F1014C3F9B300163EA1 /* dink */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dink; path = bin/dink; sourceTree = "<group>"; };
@@ -624,6 +629,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				5DDA4DEE1F8609EE0079D738 /* Default-568h@2x.png */,
 				5D2F53D515A7F29700B8CED1 /* SystemConfiguration.framework */,
 				5DC692580E947EBD00E5AC44 /* shared */,
 				29B97315FDCFA39411CA2CEA /* Source */,
@@ -640,6 +646,7 @@
 		29B97315FDCFA39411CA2CEA /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				5DDA5C771F8642080079D738 /* dmods_include */,
 				5D7AB8F010CF3ED000398F0F /* Dink */,
 				5DF1D5771045019100826147 /* Component */,
 				5D4760860FBB1D04008400E3 /* GUI */,
@@ -654,7 +661,6 @@
 			isa = PBXGroup;
 			children = (
 				5DE39F1014C3F9B300163EA1 /* dink */,
-				5DD8791A1263069200EB4365 /* dmods */,
 				5D10469D1224D9E700BFC249 /* Icon-72.png */,
 				5D6E8C18121A75F2008F1D26 /* icon@2x.png */,
 				5D6E8C1A121A75F2008F1D26 /* Default@2x.png */,
@@ -876,6 +882,8 @@
 		5D82C88E0FF4BB660082EBE7 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				5DDA4DF01F862F3E0079D738 /* RenderScissorComponent.cpp */,
+				5DDA4DF11F862F3F0079D738 /* RenderScissorComponent.h */,
 				5DEB1A0212CC6FAD00A3A6DB /* EmitVirtualKeyComponent.h */,
 				5DEB1A0312CC6FAD00A3A6DB /* EmitVirtualKeyComponent.cpp */,
 				5D8CA6AD128ACA3E00188DA6 /* CustomInputComponent.h */,
@@ -1258,6 +1266,7 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastUpgradeCheck = 0900;
 				TargetAttributes = {
 					1D6058900D05DD3D006BFB54 = {
 						ProvisioningStyle = Automatic;
@@ -1296,11 +1305,12 @@
 				5D82C8C50FF4C1500082EBE7 /* audio in Resources */,
 				5D7C32B910BBB755009C5324 /* game in Resources */,
 				5D9BA548116232830008E859 /* MainWindow-iPad.xib in Resources */,
+				5DDA4DEF1F8609EF0079D738 /* Default-568h@2x.png in Resources */,
 				5D6E8C1B121A75F2008F1D26 /* icon@2x.png in Resources */,
 				5D6E8C1D121A75F2008F1D26 /* Default@2x.png in Resources */,
 				5D6E8C1F121A765F008F1D26 /* Default-Landscape.png in Resources */,
 				5D10469E1224D9E700BFC249 /* Icon-72.png in Resources */,
-				5DD87D1A1263069600EB4365 /* dmods in Resources */,
+				5DDA5C781F8642080079D738 /* dmods_include in Resources */,
 				5DE39F1114C3F9B300163EA1 /* dink in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1412,6 +1422,7 @@
 				5D7B11C510FC50D800997135 /* CursorComponent.cpp in Sources */,
 				5D7B11DA10FCD26400997135 /* InventoryComponent.cpp in Sources */,
 				5D2E40151109B94800A76983 /* LogMenu.cpp in Sources */,
+				5DDA4DF21F862F3F0079D738 /* RenderScissorComponent.cpp in Sources */,
 				5D8A5321110B0E7A007F5CF4 /* ScriptAccelerator.cpp in Sources */,
 				5DBFC66F11144967009195F6 /* vec1.cpp in Sources */,
 				5DBFC70411144AFD009195F6 /* mat3.cpp in Sources */,
@@ -1508,7 +1519,6 @@
 		1D6058940D05DD3E006BFB54 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_IDENTITY = "iPhone Developer: Seth Robinson (MX6953T2FS)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
@@ -1539,6 +1549,7 @@
 				);
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-lfmod_$PLATFORM_NAME";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rtsoft.${PRODUCT_NAME:identifier}";
 				PRODUCT_NAME = RTDink;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -1548,16 +1559,30 @@
 		5D8733740FA9A0BC001DB559 /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = (
-					armv7,
-					armv6,
-				);
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_ENTITLEMENTS = Entitlements.plist;
 				CODE_SIGN_IDENTITY = "Don't Code Sign";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Seth Robinson (638X6EAY9H)";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_AUTO_VECTORIZATION = YES;
-				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ../shared/PlatformPrecomp.h;
@@ -1569,7 +1594,11 @@
 				);
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					source,
@@ -1604,7 +1633,6 @@
 		5D8733750FA9A0BC001DB559 /* AdHoc */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				CODE_SIGN_IDENTITY = "iPhone Developer: Seth Robinson (MX6953T2FS)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
@@ -1638,6 +1666,7 @@
 					/Users/Seth/dev/rtsvn/projects/proton/api/lowlevel/lib,
 				);
 				OTHER_LDFLAGS = "-lfmod_$PLATFORM_NAME";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.rtsoft.${PRODUCT_NAME:identifier}";
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
@@ -1646,11 +1675,29 @@
 		C01FCF4F08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Seth Robinson (638X6EAY9H)";
-				GCC_C_LANGUAGE_STANDARD = c99;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = c11;
+				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ../shared/PlatformPrecomp.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1661,7 +1708,11 @@
 				);
 				GCC_THUMB_SUPPORT = NO;
 				GCC_VERSION = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					source,
@@ -1673,7 +1724,7 @@
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LIBRARY_SEARCH_PATHS = ../shared/iOS/fmod/api/lib;
-				ONLY_ACTIVE_ARCH = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-lfmodex_$PLATFORM_NAME",
 					"-weak_library",

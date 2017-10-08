@@ -105,6 +105,7 @@ void OptionsMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity 
 		GetApp()->UpdateVideoSettings();
 	}
 
+
 	if (pEntClicked->GetName() == "smoothing_0")
 	{
 		GetApp()->GetShared()->GetVar("smoothing")->Set(uint32(1));
@@ -143,6 +144,17 @@ void OptionsMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity 
 		DinkReInitSurfacesAfterVideoChange();
 		DinkOnForeground();
 	}
+
+	//if (GetEmulatedPlatformID() == PLATFORM_ID_ANDROID)
+	{
+		if (pEntClicked->GetName() == "allow_glread")
+		{
+			bool bChecked = IsCheckboxChecked(pEntClicked);
+			GetApp()->GetVar("disable_glread")->Set(uint32(!bChecked));
+		}
+	}
+	
+
 
 #ifdef WINAPI
 	if (pEntClicked->GetName() == "check_borderless")
@@ -331,7 +343,7 @@ void OptionsMenuAddScrollContent(Entity *pParent)
 	float startX = iPhoneMapX(28);
 	float offsetX = iPhoneMapX(0);
 	float spacerX = iPhoneMapX(46);
-	float spacerY = iPhoneMapY(40);
+	float spacerY = iPhoneMapY(27.5);
 	float columnX = 140;
 
 	eFont fontID = FONT_SMALL;
@@ -482,6 +494,13 @@ void OptionsMenuAddScrollContent(Entity *pParent)
 	y += GetSize2DEntity(pEnt).y;
 	y += spacerY;
 
+	bool bDisableRead = GetApp()->GetVar("disable_glread")->GetUINT32() != 0;
+	pEnt = CreateCheckbox(pBG, "allow_glread", "Enable screen scroll effect", startX, y, !bDisableRead, FONT_SMALL, 1.0f);
+	pEnt->GetFunction("OnButtonSelected")->sig_function.connect(&OptionsMenuOnSelect);
+	y += GetSize2DEntity(pEnt).y;
+	y += spacerY;
+
+
 	/*
 	//fps limit
 	pEnt = CreateTextLabelEntity(pBG, "", startX, y, "Lock to 30 FPS:");
@@ -503,7 +522,7 @@ void OptionsMenuAddScrollContent(Entity *pParent)
 
 	if (GetPlatformID() != PLATFORM_ID_IOS)
 	{
-		y += spacerY;
+		//y += spacerY;
 		//audio on/off button
 
 		pEnt = CreateTextLabelEntity(pBG, "", startX, y, "Audio:");

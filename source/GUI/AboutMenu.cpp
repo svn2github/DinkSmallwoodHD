@@ -191,7 +191,7 @@ void AboutMenuAddScrollContent(Entity *pParent)
 	
 
 	string msg =
-		GetAppName()+string("`$ ")+GetApp()->GetVersionString()+" Build "+toString(GetApp()->GetBuild())+"``\nCopyright (c) 2012 Robinson Technologies\n"\
+		GetAppName()+string("`$ ")+GetApp()->GetVersionString()+" Build "+toString(GetApp()->GetBuild())+"``\nCopyright (c) 1997-2017 Robinson Technologies\n"\
 		"\nDink Script Version: `$1.10``\n\n"\
 		;
 
@@ -432,8 +432,8 @@ msg += \
 		"Chris Black\n"\
 		"Erik Harrison\n"\
 		"James Hutt\n" \
-		"Robj\n"\
-		"liquid141\n"\
+		"Robert J. Deans\n"\
+		"liquidsnakehpks\n"\
 		"Tal\n"\
 		"Quiztis\n"\
 		"rabidwolf9\n"\

@@ -178,7 +178,7 @@ const int32 C_MAX_SPRITES_AT_ONCE = 300; //don't change, there are still hardcod
 const int32 C_MAX_SCRIPT_CALLBACKS = 100;
 const int32 max_vars = 250;
 
-#define C_MAX_SPRITE_FRAMES 51
+#define C_MAX_SPRITE_FRAMES 100
 #define C_SPRITE_MAX_FILENAME_SIZE 64
 const int32 C_MAX_SCRIPTS = 200;
 
@@ -206,6 +206,8 @@ struct sequence
 	byte m_spaceAllowed;
 	byte m_bFrameSetUsed;
 	byte m_bIsAnim;
+	byte m_bDidFileScan;
+	
 };
 
 const int32 C_DINK_VERSION = 110;

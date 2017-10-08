@@ -76,7 +76,7 @@ void ActionButtonComponent::OnRender(VariantList *pVList)
 		if (IsLargeScreen())
 		{
 
-			dstRect = rtRectf(0,0, 90,90);
+			dstRect = rtRectf(0,0, 68,68);
 
 		} else
 		{
@@ -88,7 +88,7 @@ void ActionButtonComponent::OnRender(VariantList *pVList)
 		dstRect.AdjustPosition(vFinalPos.x, vFinalPos.y);
 		if (IsLargeScreen())
 		{
-			dstRect.AdjustPosition(19, 25);
+			dstRect.AdjustPosition(30, 31);
 		} else
 		{
 			dstRect.AdjustPosition(9, 12);

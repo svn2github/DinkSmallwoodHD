@@ -4,6 +4,7 @@
 #include "dink/dink.h"
 #include "LogMenu.h"
 #include "GameMenu.h"
+#include "PopUpMenu.h"
 
 extern bool g_script_debug_mode;
 
@@ -135,6 +136,7 @@ Entity * DebugMenuCreate(Entity *pParentEnt)
 	//Entity *pBG = CreateOverlayEntity(pParentEnt, "DebugMenu", "interface/generic_bg.rttex", 0,0);
 	
 	Entity *pBG = CreateOverlayRectEntity(pParentEnt, CL_Vec2f(0,0), GetScreenSize(), MAKE_RGBA(0,0,0,140));
+	pBG->SetName("CheatMenu");
 
 	AddFocusIfNeeded(pBG);
 
@@ -198,6 +200,13 @@ if (GetApp()->GetCheatsEnabled())
 	}
 	SlideScreen(pBG, true, 500);
 	
+	if (GetApp()->GetVarWithDefault("cheat_warning", uint32(0))->GetUINT32() == 0)
+	{
+		GetApp()->GetVar("cheat_warning")->Set(uint32(1));
+
+		PopUpCreate(pBG, "`4WARNING!``\n\nUsing cheats may break the game in strange ways and is only for testing or if you're desperate!", "", "cancel", "I get it", "", "", true);
+	}
+
 
 	return pBG;
 }

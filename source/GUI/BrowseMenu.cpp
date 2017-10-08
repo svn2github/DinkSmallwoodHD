@@ -268,6 +268,16 @@ void UpdateBrowseControlButtons(Entity *pParent)
 
 }
 
+bool DmodEntrySortByName(const DMODEntry& lhs, const DMODEntry& rhs)
+{
+	return lhs.m_name < rhs.m_name;
+}
+
+bool DmodEntrySortByDate(const DMODEntry& lhs, const DMODEntry& rhs)
+{
+	return lhs.m_date < rhs.m_date;
+}
+
 void BrowseMenuAddScrollContent(Entity *pParent, TextScanner *t)
 {
 	pParent = pParent->GetEntityByName("scroll_child");
@@ -339,18 +349,12 @@ void BrowseMenuAddScrollContent(Entity *pParent, TextScanner *t)
 	{
 
 	case DMOD_SORT_ALPHABETICAL:
-		sort(g_dmodData.begin(), g_dmodData.end(), [](const DMODEntry& lhs, const DMODEntry& rhs)
-		{
-			return lhs.m_name < rhs.m_name;
-		});
+		sort(g_dmodData.begin(), g_dmodData.end(), DmodEntrySortByName);
 		break;
 
 	case DMOD_SORT_DATE:
 
-		sort(g_dmodData.rbegin(), g_dmodData.rend(), [](const DMODEntry& lhs, const DMODEntry& rhs)
-		{
-			return lhs.m_date < rhs.m_date;
-		});
+		sort(g_dmodData.rbegin(), g_dmodData.rend(), DmodEntrySortByDate);
 		break;
 
 	default:

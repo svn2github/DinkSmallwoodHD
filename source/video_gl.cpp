@@ -293,6 +293,8 @@ void IDirectDrawSurface::UpdateShadowSurface()
 
 		if (m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_PALETTE_8BIT)
 		{
+			
+			
 			SoftSurface s;
 			s.Init(m_pSurf->GetWidth(), m_pSurf->GetHeight(), SoftSurface::SURFACE_RGBA);
 			s.FillColor(glColorBytes(0,0,0,0));
@@ -318,6 +320,7 @@ void IDirectDrawSurface::UpdateShadowSurface()
 		} 
 	else
 		{
+
 			assert(m_pSurf);
 			assert(m_pGLSurf);
 			assert(m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGBA);

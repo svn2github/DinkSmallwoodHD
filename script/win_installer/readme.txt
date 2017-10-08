@@ -270,3 +270,15 @@ a specific speed, but by choosing rather snappy speed hopefully mystery island a
 * Misc work on touch controls to prepare for the mobile releases
 * Added some names to credits (if you notice I added anybody twice or would rather be credited a different way or not at all, let me know!)
 * Fixed bug that could sort of over-write random data if more than 100 sprites were active.. wow, bad
+
+------ Change log for 1.8.8 ----------
+
+* Mobile GUI tweaks
+* Added option to disable screen scroll transitions, one of my Android test devices has the slowest glread in the world, it's like 1 full second to walk to the next screen because of it.  This might make dmods that 
+use timing (Myster island camera sequence for example) easier though, not sure.
+* Fixed issue where behavior of two load_sequence commands in a row on the same sequence differed from 1.08 (in 1.08, max frame is set to the second one as long as the first one wasn't actually loaded yet.  key now shows up in TGKA)
+* Fixed regression where offsets in Mayhem were incorrect on the hand mouse pointer
+* Upped max frames per seq to 100 instead of 50, fixes Echoes of the Ancient.  I should probably make it dynamic but changing one const number is much easier!
+* Now gives a clear warning in the log.txt if a seq tries to go beyond what it can handle and will truncate it (better than breaking the whole sequence as it did before)
+* Added support for a weird bmp header type, fixes incorrect palette issue in the dmod The Orb of Darkness
+* Fixed life/exp/health to correctly interpolate between values like the original dink, huge thanks to Dan's detailed bug report on this, he even made a mod which made testing the fix a breeze!
