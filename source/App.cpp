@@ -762,8 +762,9 @@ void App::Update()
 		AddKeyBinding(pComp, "Magic", VIRTUAL_KEY_SHIFT, VIRTUAL_KEY_GAME_MAGIC);
 		AddKeyBinding(pComp, "Fire", VIRTUAL_KEY_CONTROL, VIRTUAL_KEY_GAME_FIRE);
 		AddKeyBinding(pComp, "Speedup", 9, 9); //handle tab
-		AddKeyBinding(pComp, "Quicksave", VIRTUAL_KEY_F1, VIRTUAL_KEY_F1);
+		AddKeyBinding(pComp, "Quicksave", VIRTUAL_KEY_F4, VIRTUAL_KEY_F4);
 		AddKeyBinding(pComp, "Quickload", VIRTUAL_KEY_F8, VIRTUAL_KEY_F8);
+		AddKeyBinding(pComp, "DinkHDMenu", VIRTUAL_KEY_F1, VIRTUAL_KEY_F1);
 }
 
 		if (GetVar("check_icade")->GetUINT32() == 0)

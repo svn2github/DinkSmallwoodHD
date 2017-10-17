@@ -89,6 +89,7 @@ void GameOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sent fr
 		{
 
 #ifdef WINAPI
+/*
 			if (GetKeyState(VK_SHIFT) & 0xfe)
 			{
 				if (!pMenu->GetEntityByName("PauseMenu"))
@@ -98,12 +99,13 @@ void GameOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sent fr
 				}
 				return;
 			}
+			*/
 #endif
 
 			g_dglo.m_dirInput[DINK_INPUT_BUTTON5] = true;
 			g_dglo.m_dirInputFinished[DINK_INPUT_BUTTON5] = true;
 
-			ShowQuickMessageBottom("(Use Shift-Escape to bring up the Dink HD menu!)");
+			ShowQuickMessageBottom("(Use `wF1`` to bring up the Dink HD menu!)");
 			return;
 		}
 		else
@@ -1121,11 +1123,30 @@ void OnArcadeInput(VariantList *pVList)
 		LogMsg("Quitting");
 		break;
 
-	case VIRTUAL_KEY_F1:
+	case VIRTUAL_KEY_F4:
 	
 		if (bIsDown)
 		SaveStateWithExtra();
 		break;
+
+	case VIRTUAL_KEY_F1:
+
+		if (bIsDown)
+		{
+
+			Entity *pMenu = GetEntityRoot()->GetEntityByName("GameMenu");
+
+				if (pMenu)
+				{
+					if (!pMenu->GetEntityByName("PauseMenu"))
+					{
+						pMenu->RemoveComponentByName("FocusInput");
+						PauseMenuCreate(pMenu);
+					}
+				}
+		}
+		break;
+
 
 	case VIRTUAL_KEY_F8:
 		{

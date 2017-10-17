@@ -9,7 +9,7 @@ NOTE: Quick saves might give a "Can't load old version" error if the data format
 
 Controls:
 
-F1 - Quick save
+F4 - Quick save
 F10 - Quick load
 Control - Attack
 Arrow keys - Movement
@@ -17,7 +17,7 @@ Space - Talk
 Enter - Inventory
 Shift - Magic
 Escape - Bring up classic dink escape menu
-Shift-Escape - Bring up Dink HD escape menu
+F1 - Bring up Dink HD escape menu
 Drag on window borders - scale the play area (when windowed)
 
 NOTE: If you have a controller (like an xbox 360 pad) plugged in when you start the game, you can use that instead of keyboard, but you still need to use the
@@ -282,3 +282,7 @@ use timing (Myster island camera sequence for example) easier though, not sure.
 * Now gives a clear warning in the log.txt if a seq tries to go beyond what it can handle and will truncate it (better than breaking the whole sequence as it did before)
 * Added support for a weird bmp header type, fixes incorrect palette issue in the dmod The Orb of Darkness
 * Fixed life/exp/health to correctly interpolate between values like the original dink, huge thanks to Dan's detailed bug report on this, he even made a mod which made testing the fix a breeze!
+* BUGFIX: .dmod files detected in the main Dink HD dir are now properly deleted after auto-installing them
+* (Windows) Key binding changes: F1 now brings up the Dink Menu (Shift-Escape was .. weird..) and quicksave was moved to F4
+
+- Note:  Save state version has changed, old save states won't load!

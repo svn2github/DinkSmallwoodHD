@@ -1561,8 +1561,8 @@ bool LoadSpriteSingleFrame(string fNameBase, int seq, int oo, int picIndex, eTra
 	if (oo < 10) fName += "0";
 	fName += toString(oo) + ".bmp";
 
-
-	byte *pMem = pReader->LoadFileIntoMemory(fName, NULL, fNameBase + "01.bmp");
+	int pMemSize = 0;
+	byte *pMem = pReader->LoadFileIntoMemory(fName, &pMemSize, fNameBase + "01.bmp");
 	
 	if (g_dglos.g_seq[seq].m_spaceAllowed != 0)
 	{
@@ -1633,7 +1633,7 @@ bool LoadSpriteSingleFrame(string fNameBase, int seq, int oo, int picIndex, eTra
 			transType = TRANSPARENT_WHITE;
 		}
 
-		g_pSpriteSurface[picIndex] = LoadBitmapIntoSurface("", transType, IDirectDrawSurface::MODE_SHADOW_GL, pMem, bUseCheckerboardFix);
+		g_pSpriteSurface[picIndex] = LoadBitmapIntoSurface("", transType, IDirectDrawSurface::MODE_SHADOW_GL, pMem, pMemSize, bUseCheckerboardFix);
 	}
 	else
 	{
@@ -1858,10 +1858,11 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 			//	LogMsg("Loading seq %d frame %d", seq, oo);
 			}
 #endif
-			if (oo <= C_MAX_SPRITE_FRAMES && reader.DoesFileExist(fNameBase+string(hold)+toString(oo)+".bmp", fNameBase + "01.bmp"))
+			// 2 hours of debugging found that this is key to make 'png' graphics work.
+			if (oo <= C_MAX_SPRITE_FRAMES && (reader.DoesFileExist(fNameBase+string(hold)+toString(oo)+".bmp", fNameBase + "01.bmp") || 
+											  reader.DoesFileExist(fNameBase+string(hold)+toString(oo)+".png", fNameBase + "01.png")))
 			{
 				g_dglos.g_curPicIndex++;
-				
 			} else
 			{
 				if (oo ==  1)

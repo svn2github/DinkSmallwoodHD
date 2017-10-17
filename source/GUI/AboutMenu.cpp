@@ -212,8 +212,9 @@ if (IsDesktop())
 		"Enter ``- `8Inventory screen/Inventory select\n``"\
 		"M ``- `8Show map\n\n``"\
 		"TAB ``- `8Speed up game (hold it down)\n``"\
-		"F1 ``- `8Quick state save\n``"\
+		"F4 ``- `8Quick state save\n``"\
 		"F8 ``- `8Quick state load\n``"\
+		"F1 ``- `8Dink HD Menu\n``"\
 		"Alt-Enter ``- `8Toggle fullscreen\n``"\
 		"Drag window corners ``- `8Changes screensize. Hold Shift to allow any aspect ratio\n``"\
 	"\n`6Stuck? Try visiting `wdinknetwork.com`` or use google to find a walkthrough.\n"\

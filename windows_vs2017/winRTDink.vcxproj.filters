@@ -167,6 +167,9 @@
     <Filter Include="source\StackWalker">
       <UniqueIdentifier>{13d115b8-2e63-4a6c-bd5e-a660ca6d16fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="shared\Renderer\libpng">
+      <UniqueIdentifier>{7d52fbf0-de4b-498f-a8ef-a41773d0da66}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\App.cpp">
@@ -790,6 +793,48 @@
     <ClCompile Include="..\source\StackWalker\StackWalker.cpp">
       <Filter>source\StackWalker</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\shared\Irrlicht\source\Irrlicht\libpng\png.c">
+      <Filter>shared\Renderer\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\shared\Irrlicht\source\Irrlicht\libpng\pngerror.c">
+      <Filter>shared\Renderer\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\shared\Irrlicht\source\Irrlicht\libpng\pngget.c">
+      <Filter>shared\Renderer\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\shared\Irrlicht\source\Irrlicht\libpng\pngmem.c">
+      <Filter>shared\Renderer\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\shared\Irrlicht\source\Irrlicht\libpng\pngpread.c">
+      <Filter>shared\Renderer\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\shared\Irrlicht\source\Irrlicht\libpng\pngread.c">
+      <Filter>shared\Renderer\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\shared\Irrlicht\source\Irrlicht\libpng\pngrio.c">
+      <Filter>shared\Renderer\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\shared\Irrlicht\source\Irrlicht\libpng\pngrtran.c">
+      <Filter>shared\Renderer\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\shared\Irrlicht\source\Irrlicht\libpng\pngrutil.c">
+      <Filter>shared\Renderer\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\shared\Irrlicht\source\Irrlicht\libpng\pngset.c">
+      <Filter>shared\Renderer\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\shared\Irrlicht\source\Irrlicht\libpng\pngtrans.c">
+      <Filter>shared\Renderer\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\shared\Irrlicht\source\Irrlicht\libpng\pngvcrd.c">
+      <Filter>shared\Renderer\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\shared\Irrlicht\source\Irrlicht\libpng\pngwio.c">
+      <Filter>shared\Renderer\libpng</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\shared\Irrlicht\source\Irrlicht\libpng\pngwtran.c">
+      <Filter>shared\Renderer\libpng</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\App.h">
@@ -1349,6 +1394,12 @@
     </ClInclude>
     <ClInclude Include="..\source\StackWalker\StackWalker.h">
       <Filter>source\StackWalker</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\shared\Irrlicht\source\Irrlicht\libpng\png.h">
+      <Filter>shared\Renderer\libpng</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\shared\Irrlicht\source\Irrlicht\libpng\pngconf.h">
+      <Filter>shared\Renderer\libpng</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

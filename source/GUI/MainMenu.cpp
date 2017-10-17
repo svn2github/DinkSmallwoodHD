@@ -211,6 +211,8 @@ void MainMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sen
 
 string GetNextDMODToInstall(bool &bIsCommandLineInstall, const bool bDeleteCommandLineParms)
 {
+
+	bIsCommandLineInstall = false;
 	//if (!GetApp()->CanDownloadDMODS()) return ""; //ignore it
 
 	if (IsDesktop())

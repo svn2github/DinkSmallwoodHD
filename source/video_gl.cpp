@@ -28,7 +28,7 @@ void KillVideoEngine()
 
 void dderror(int hErr){};
 
-IDirectDrawSurface * LoadBitmapIntoSurface(const char *pName, eTransparencyType trans, IDirectDrawSurface::eMode mode, byte *pMem, bool bUseCheckerboardFix)
+IDirectDrawSurface * LoadBitmapIntoSurface(const char *pName, eTransparencyType trans, IDirectDrawSurface::eMode mode, byte *pMem, int pMemSize, bool bUseCheckerboardFix)
 {
 
 	IDirectDrawSurface * pSurf;
@@ -45,7 +45,7 @@ IDirectDrawSurface * LoadBitmapIntoSurface(const char *pName, eTransparencyType 
 		//LogMsg("loading DDRAW bmp from mem");
 #endif
 		//if this is set, ignore the filename
-		pSurf->m_pSurf->LoadFileFromMemory(pMem, SoftSurface::eColorKeyType(trans), 0, false, bUseCheckerboardFix);
+		pSurf->m_pSurf->LoadFileFromMemory(pMem, SoftSurface::eColorKeyType(trans), pMemSize, false, bUseCheckerboardFix);
 	} else
 	{
 #ifdef _DEBUG

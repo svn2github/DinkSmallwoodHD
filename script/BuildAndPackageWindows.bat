@@ -31,6 +31,9 @@ if not exist %C_TARGET_EXE% beeper.exe /p
 
 :Sign it with the RTsoft cert (optional)
 
+echo "Waiting 5 seconds "
+timeout 5
+
 call sign.bat %C_TARGET_EXE%
 
 REM Do a little cleanup in  the dink bin dir as well
@@ -64,6 +67,9 @@ cd win_installer
 
 cd ..
 set d_fname=%C_FILENAME%
+
+echo "Waiting 5 seconds because NSIS does something and ruins the signing if I don't"
+timeout 5
 
 call sign.bat %C_FILENAME%
 

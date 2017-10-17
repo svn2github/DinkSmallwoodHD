@@ -403,6 +403,14 @@ Entity * PauseMenuCreate(Entity *pParentEnt)
 	pKeys->GetVar("disabled")->Set(uint32(1));
 	GetMessageManager()->SetComponentVariable(pKeys, 500, "disabled", uint32(0)); //enable it again
 
+	if (IsDesktop())
+	{
+		EntityComponent *pKeys = AddHotKeyToButton(pButtonEntity, VIRTUAL_KEY_F1);
+		//work around problem of it instantly closing
+		pKeys->GetVar("disabled")->Set(uint32(1));
+		GetMessageManager()->SetComponentVariable(pKeys, 500, "disabled", uint32(0)); //enable it again
+	}
+
 	/*
 	pKeys = AddHotKeyToButton(pButtonEntity, VIRTUAL_KEY_PROPERTIES);	
 	//work around problem of it instantly closing

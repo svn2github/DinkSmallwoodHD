@@ -1,11 +1,12 @@
 cd ..\android
-call build.bat
+call ..\app_info_setup.bat
+:call buildRelease.bat
 @ECHO ON
-set D_FILE_NAME=%APP_NAME%-unprotected.apk
-del ..\%D_FILE_NAME%
-copy bin\%APP_NAME%-debug.apk ..\%D_FILE_NAME%
-cd ..
+cd bin
+set D_FILE_NAME=%APP_NAME%-release.apk
+copy %D_FILE_NAME% ..\..\script
+cd ..\..\script
 set d_fname=%D_FILE_NAME%
-call script\FTPToSite.bat
-cd script
+call FTPToSiteWin.bat
+
 pause
