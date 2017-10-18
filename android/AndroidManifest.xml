@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.rtsoft.rtdink"
       android:versionCode="9"
-      android:versionName="1.8.8"
+      android:versionName="1.89"
       android:installLocation="preferExternal"
       >
 

@@ -198,7 +198,7 @@
 		5DD8783A1261BEC500EB4365 /* ioapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 5DD878371261BEC500EB4365 /* ioapi.c */; };
 		5DDA4DEF1F8609EF0079D738 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 5DDA4DEE1F8609EE0079D738 /* Default-568h@2x.png */; };
 		5DDA4DF21F862F3F0079D738 /* RenderScissorComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DDA4DF01F862F3E0079D738 /* RenderScissorComponent.cpp */; };
-		5DDA5C781F8642080079D738 /* dmods_include in Resources */ = {isa = PBXBuildFile; fileRef = 5DDA5C771F8642080079D738 /* dmods_include */; };
+		5DDA5C7A1F9619E60079D738 /* dmods in Resources */ = {isa = PBXBuildFile; fileRef = 5DDA5C791F9619E60079D738 /* dmods */; };
 		5DDEC25F1294E63200C42C5E /* ExpiredMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DDEC25E1294E63200C42C5E /* ExpiredMenu.cpp */; };
 		5DE39F1114C3F9B300163EA1 /* dink in Resources */ = {isa = PBXBuildFile; fileRef = 5DE39F1014C3F9B300163EA1 /* dink */; };
 		5DE5068310EC800400CEAA3C /* FFReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DE5068110EC800400CEAA3C /* FFReader.cpp */; };
@@ -548,7 +548,7 @@
 		5DDA4DEE1F8609EE0079D738 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		5DDA4DF01F862F3E0079D738 /* RenderScissorComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderScissorComponent.cpp; path = Entity/RenderScissorComponent.cpp; sourceTree = "<group>"; };
 		5DDA4DF11F862F3F0079D738 /* RenderScissorComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderScissorComponent.h; path = Entity/RenderScissorComponent.h; sourceTree = "<group>"; };
-		5DDA5C771F8642080079D738 /* dmods_include */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dmods_include; path = bin/dmods_include; sourceTree = "<group>"; };
+		5DDA5C791F9619E60079D738 /* dmods */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dmods; path = bin/dmods; sourceTree = "<group>"; };
 		5DDEC25D1294E63200C42C5E /* ExpiredMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExpiredMenu.h; path = source/GUI/ExpiredMenu.h; sourceTree = "<group>"; };
 		5DDEC25E1294E63200C42C5E /* ExpiredMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExpiredMenu.cpp; path = source/GUI/ExpiredMenu.cpp; sourceTree = "<group>"; };
 		5DE39F1014C3F9B300163EA1 /* dink */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dink; path = bin/dink; sourceTree = "<group>"; };
@@ -646,7 +646,6 @@
 		29B97315FDCFA39411CA2CEA /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				5DDA5C771F8642080079D738 /* dmods_include */,
 				5D7AB8F010CF3ED000398F0F /* Dink */,
 				5DF1D5771045019100826147 /* Component */,
 				5D4760860FBB1D04008400E3 /* GUI */,
@@ -660,6 +659,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5DDA5C791F9619E60079D738 /* dmods */,
 				5DE39F1014C3F9B300163EA1 /* dink */,
 				5D10469D1224D9E700BFC249 /* Icon-72.png */,
 				5D6E8C18121A75F2008F1D26 /* icon@2x.png */,
@@ -1300,6 +1300,7 @@
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
 				5DC6D63F0EA47C0E001482E0 /* interface in Resources */,
 				5DC6D77D0EA4B397001482E0 /* Default.png in Resources */,
+				5DDA5C7A1F9619E60079D738 /* dmods in Resources */,
 				5DC6D77E0EA4B397001482E0 /* icon.png in Resources */,
 				5D8272910FA9DEE00097DE6A /* Entitlements.plist in Resources */,
 				5D82C8C50FF4C1500082EBE7 /* audio in Resources */,
@@ -1310,7 +1311,6 @@
 				5D6E8C1D121A75F2008F1D26 /* Default@2x.png in Resources */,
 				5D6E8C1F121A765F008F1D26 /* Default-Landscape.png in Resources */,
 				5D10469E1224D9E700BFC249 /* Icon-72.png in Resources */,
-				5DDA5C781F8642080079D738 /* dmods_include in Resources */,
 				5DE39F1114C3F9B300163EA1 /* dink in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

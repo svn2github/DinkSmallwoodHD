@@ -671,9 +671,21 @@ void fill_whole_hard(void)
 		{
 			for (int y = 0; y < 50; y++)
 			{
-				g_dglos.g_hitmap.x[offx +x].y[offy+y] = g_hmap.tile[  realhard(til)  ].x[x].y[y];
+				int tileToWrite = realhard(til);
+				if (tileToWrite >= 0 && tileToWrite < 800)
+				{
+					g_dglos.g_hitmap.x[offx + x].y[offy + y] = g_hmap.tile[tileToWrite].x[x].y[y];
+				}
+				else
+				{
+					LogMsg("Avoiding crash, it tried to write hardness data to block %d from illegal tile %d",til, tileToWrite);
+					goto skip;
+				}
 			}
 		}
+
+	skip:;
+
 	}
 }
 

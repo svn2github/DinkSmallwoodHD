@@ -324,6 +324,11 @@ void IDirectDrawSurface::UpdateShadowSurface()
 			assert(m_pSurf);
 			assert(m_pGLSurf);
 			assert(m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGBA);
+			
+			if (m_pSurf->GetSurfaceType() != SoftSurface::SURFACE_RGBA)
+			{
+				LogMsg("Don't know how to deal with surface type %d", m_pSurf->GetSurfaceType());
+			}
 			//m_pSurf->FillColor(glColorBytes(0,0,0,0));
 			if (m_pSurf->GetPixelData())
 			{

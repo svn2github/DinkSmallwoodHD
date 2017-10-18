@@ -451,13 +451,16 @@ void DownloadDMODList(Entity *pMenu)
 
 	VariantList v;
 
-	string url = "www.dinknetwork.com";
 	uint32 port = 80;
 	//GetApp()->GetServerInfo(url, port);
 
-	v.m_variant[0].Set(url);
+	string host = "www.dinknetwork.com";
+	string url = "api";
+
+
+	v.m_variant[0].Set(host);
 	v.m_variant[1].Set(port);
-	v.m_variant[2].Set("api");
+	v.m_variant[2].Set(url);
 	v.m_variant[3].Set(uint32(NetHTTP::END_OF_DATA_SIGNAL_HTTP)); //need this for it to detect a disconnect instead of the weird RTsoft symbol
 	pComp->GetFunction("Init")->sig_function(&v);
 	pComp->GetFunction("OnError")->sig_function.connect(&OnDownloadError);

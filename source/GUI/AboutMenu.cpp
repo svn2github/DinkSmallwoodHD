@@ -98,7 +98,7 @@ void AboutMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity se
 	}
 	if (pEntClicked->GetName() == "dinknetwork")
 	{
-		PopUpCreate(pEntClicked->GetParent()->GetParent()->GetParent(), "Would you like to check out `wThe Dink Network``?", "http://www.dinknetwork.com?device="+toString(GetEmulatedPlatformID()),
+		PopUpCreate(pEntClicked->GetParent()->GetParent()->GetParent(), "Would you like to check out `wThe Dink Network``?", "http://www.dinknetwork.com?platform="+toString(GetEmulatedPlatformID()),
 			"cancel", "`wCancel", "url", "`wLaunch", true);
 		return;
 	}

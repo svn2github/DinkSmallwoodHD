@@ -19,6 +19,8 @@ Shift - Magic
 Escape - Bring up classic dink escape menu
 F1 - Bring up Dink HD escape menu
 Drag on window borders - scale the play area (when windowed)
+(Hold) Tab - Turbo mode, entire game runs 3x speed
+(Hold) Shift + Tab - Super Turbo mode, entire game runs up to 6x speed
 
 NOTE: If you have a controller (like an xbox 360 pad) plugged in when you start the game, you can use that instead of keyboard, but you still need to use the
 mouse to navigate the initial menus to start the game
@@ -286,3 +288,9 @@ use timing (Myster island camera sequence for example) easier though, not sure.
 * (Windows) Key binding changes: F1 now brings up the Dink Menu (Shift-Escape was .. weird..) and quicksave was moved to F4
 
 - Note:  Save state version has changed, old save states won't load!
+
+------ Change log for 1.89 ----------
+
+ * Added Dan Walma's .png support (untested)
+ * Another bugfix in the .dmod decompresser, fixes issue with Attack of the veggies
+ * (Windows) Holding Shift in addition to Tab will cause "super turbo" mode, speeding up the game faster than just holding Tab.  (Secret tip:  If you really want to see speed, hold down the Control key too)

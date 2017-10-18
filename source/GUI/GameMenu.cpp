@@ -1065,7 +1065,23 @@ void OnGameMenuRender(VariantList *pVList)
 	if (DinkGetSpeedUpMode())
 	{
 		//3x speed
-		for (int i = 0; i < 2; i++)
+		
+		
+		int speedup = 2;
+
+#ifdef WINAPI
+
+		if (GetKeyState(VK_SHIFT) & 0xfe)
+		{
+			speedup = 8; //super turbo mode
+			if (GetKeyState(VK_CONTROL) & 0xfe)
+			{
+				speedup *= 3; //super turbo mode
+			}
+		}
+
+#endif
+		for (int i = 0; i < speedup; i++)
 		{
 			//GetApp()->SetGameTick(GetApp()->GetGameTick() + GetApp()->GetDeltaTick() * 3);
 			//GetApp()->GetGameTimer()->Update();
