@@ -1575,6 +1575,7 @@ Entity * GameCreate(Entity *pParentEnt, int gameIDToLoad, string stateToLoad, st
 
 bool IsInFlingMode()
 {
-	return (GetApp()->GetShared()->GetVar("controlStyle")->GetUINT32() == CONTROLS_FLING);
+	return false; //fling is dead
+	//return (GetApp()->GetShared()->GetVar("controlStyle")->GetUINT32() == CONTROLS_FLING);
 }
 

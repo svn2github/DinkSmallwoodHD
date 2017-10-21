@@ -400,6 +400,7 @@ void OptionsMenuAddScrollContent(Entity *pParent)
 	pEnt->GetFunction("OnButtonSelected")->sig_function.connect(OptionsMenuOnSelect);
 	offsetX += pEnt->GetVar("size2d")->GetVector2().x + smallSpacerX;
 
+	/*
 	if (IsIPADSize)
 	{
 		pEnt = CreateTextButtonEntity(pBG, "controls_2", offsetX, y, "Fling Mode", false);
@@ -407,6 +408,8 @@ void OptionsMenuAddScrollContent(Entity *pParent)
 		pEnt->GetFunction("OnButtonSelected")->sig_function.connect(OptionsMenuOnSelect);
 		offsetX += pEnt->GetVar("size2d")->GetVector2().x + smallSpacerX;
 	}
+
+	*/
 
 	uint32 controlsID = GetApp()->GetVar("controlStyle")->GetUINT32();
 	SetupLightBarSelect(pBG, "controls_", controlsID, MAKE_RGBA(190, 0, 35, 255));

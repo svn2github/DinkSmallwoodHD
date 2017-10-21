@@ -179,13 +179,14 @@ void AboutMenuAddScrollContent(Entity *pParent)
 
 	float blurbSpacingY = iPhoneMapX(27);
 
+	/*
 	if (IsIPAD())
 	{
 		AddBlurb(pParent, x, y, "fling_ad", "`6This game is compatible with the `wFling analog joystick``.  Tap the Fling logo to visit Ten One Design to learn more.");
 		y += iPhoneMapY(blurbSpacingY);
 		//y += ySpacer;
-
 	}
+	*/
 	CL_Vec2f vTextBoxPos(iPhoneMapX(x),y);
 	CL_Vec2f vTextBounds(iPhoneMapX(434), iPhoneMapY(200));
 	
@@ -218,7 +219,6 @@ if (IsDesktop())
 		"Alt-Enter ``- `8Toggle fullscreen\n``"\
 		"Drag window corners ``- `8Changes screensize. Hold Shift to allow any aspect ratio\n``"\
 	"\n`6Stuck? Try visiting `wdinknetwork.com`` or use google to find a walkthrough.\n"\
-	"\n`wFPS Lock``: If enabled, the game is limited to 30 frames per second.  This should be enabled on most devices for more consistent gameplay.\n"\
 	"\n`wPushing:`` If you make Dink walk against an object for one second, he will begin to push it.  Useful when you see rocks blocking cave entrances.\n"\
 	"\n`wTrees:`` Some trees can be burned down with magic to reveal secrets.\n"\
 	"\n`wSave Machines:`` Use Save Machines frequently and don't only rely on quick saves as they may sometimes put you in a difficult spot.\n"\
@@ -233,12 +233,10 @@ if (IsDesktop())
 
 	//android
 	msg += \
-		"`6Thanks for buying `wDink Smallwood HD`` for Android.  Here are some tips and info to get started.\n"\
+		"`6Here are some tips and info to get started.\n"\
 		"\n`wControl mode - Virtual Joypad:`` This is the default control method, simple to use.\n"\
 		"\n`wControl mode - Drag Anywhere:`` This control scheme allows you to draw an angle with your finger and dink will walk in that angle. It doesn't matter where you draw it on the screen. As long as you don't let your finger up, he'll keep moving.\n"\
-		"\n`wTrackball:`` You can also use the trackball to move.  You may wish to reverse the action icon positions from the Option menu.\n"\
 		"\n`wiCade:`` Pair the iCade with your device, then start the game.  Choose `$Use iCade Controller Mode`` from the options menu.\n"\
-		"\n`wXperia Play:`` Explode the pay and play, no special setup required.  Note that the shoulder buttons map to the map and speed-up.\n"\
 		"\n`wHW Keyboard:`` If your device has a hardware keyboard, you can use WASZ to move, I for inventory, shift for punch, enter/menu for magic, space to talk.\n"\
 
 		"\n`wPushing:`` If you make Dink walk against an object for one second, he will begin to push it.  Useful when you see rocks blocking cave entrances.\n"\
@@ -246,19 +244,17 @@ if (IsDesktop())
 		"\n`wQuick save/load:`` In addition to the full auto state save whenever you exit the game, and the normal save system, you can use `wQuick Save/Load`` from the pause menu.  It's very useful to beat a tough boss.\n"\
 		"\n`wSave Machines:`` Use Save Machines frequently and don't only rely on quick saves as they may sometimes put you in a difficult spot.\n"\
 		"\n`wAuto Save:`` Your game is automatically saved every five minutes to save slot 10 as long as you have more than 30% health.\n"\
-		"\n`wFPS Lock:`` If enabled, the game is limited to 30 frames per second.  This should be enabled on slower devices for smoother gameplay.\n"\
 		"\n`wInstalling DMODS by Browse:`` Click Browse from the Add-On menu to see a selection of recommended DMODs to install.\n"\
 		"\n`wInstalling DMODS from URL:`` Click Install from URL from the Add-On menu.\n"\
 		"\n`wInstalling DMODS from SD card:`` Place a .dmod file on your SD card in `w/Android/data/com.rtsoft.dink/files`` and it will be installed the next time you play.\n"\
-		"\n`wIf the game is slow:`` Try turning Pic Smoothing to off in the options menu.\n"\
-		"\n`wMulti-touch:`` Multi touch is supported when possible.  Please note that many HTC phones such as the Nexus One only partially support multi-touch resulting in strange behavior when two fingers are on the screen.\n"\
+		"\n`wIf the game is slow:`` Try disabling the screen scroll effect and improved shadows in the options menu.\n"\
 		;
 } else  if (  GetEmulatedPlatformID() == PLATFORM_ID_WEBOS || GetEmulatedPlatformID() == PLATFORM_ID_BBX)
 {
 
 	//android
 	msg += \
-		"`6Thanks for buying `wDink Smallwood HD``.  Here are some tips and info to get started.\n"\
+		"`6Here are some tips and info to get started.\n"\
 		"\n`wControl mode - Virtual Joypad:`` This is the default control method, simple to use.\n"\
 		"\n`wControl mode - Drag Anywhere:`` This control scheme allows you to draw an angle with your finger and dink will walk in that angle. It doesn't matter where you draw it on the screen. As long as you don't let your finger up, he'll keep moving.\n"\
 	
@@ -267,10 +263,8 @@ if (IsDesktop())
 		"\n`wQuick save/load:`` In addition to the full auto state save whenever you exit the game, and the normal save system, you can use `wQuick Save/Load`` from the pause menu.  It's very useful to beat a tough boss.\n"\
 		"\n`wSave Machines:`` Use Save Machines frequently and don't only rely on quick saves as they may sometimes put you in a difficult spot.\n"\
 		"\n`wAuto Save:`` Your game is automatically saved every five minutes to save slot 10 as long as you have more than 30% health.\n"\
-		"\n`wFPS Lock:`` If enabled, the game is limited to 30 frames per second.  This should be enabled on slower devices for smoother gameplay.\n"\
 		"\n`wInstalling DMODS by Browse:`` Click Browse from the Add-On menu to see a selection of recommended DMODs to install.\n"\
 		"\n`wInstalling DMODS from URL:`` Click Install from URL from the Add-On menu.\n"\
-		"\n`wIf the game is slow:`` Try turning Pic Smoothing to off in the options menu.\n"\
 		;
 } else
 {
@@ -280,22 +274,19 @@ if (IsDesktop())
 
 //iphone
 	msg += \
-		"`6Thanks for buying `wDink Smallwood HD`` for iPhone, iPod Touch, and iPad.  Here are some tips and info to get started.\n"\
+		"`6Here are some tips and info to get started.\n"\
 		"\n`wControls - Virtual Joypad:`` This is the default control method, simple to use.\n"\
 		"\n`wControls - Drag Anywhere:`` This control scheme allows you to draw an angle with your finger and dink will walk in that angle. It doesn't matter where you draw it on the screen. As long as you don't let your finger up, he'll keep moving.\n"\
-		"\n`wControls - Fling Mode:`` This control scheme is optimized for the Fling analog joystick for iPad from Ten One Design.\n"\
 		"\n`wPushing:`` If you make Dink walk against an object for one second, he will begin to push it.  Useful when you see rocks blocking cave entrances.\n"\
 		"\n`wTrees:`` Some trees can be burned down with magic to reveal secrets.\n"\
 		"\n`wQuick save/load:`` In addition to the full auto state save whenever you exit the game, and the normal save system, you can use `wQuick Save/Load`` from the pause menu.  It's very useful to beat a tough boss.\n"\
 		"\n`wSave Machines:`` Use Save Machines frequently and don't only rely on quick saves as they may sometimes put you in a difficult spot.\n"\
 		"\n`wAuto Save:`` Your game is automatically saved every five minutes to save slot 10 as long as you have more than 30% health.\n"\
-	"\n`wFPS Lock:`` If enabled, the game is limited to 30 frames per second.  This should be enabled on slower devices for smoother gameplay.\n"\
-	"\n`wHow to import saves from desktop (iOS 3.2+):`` Drag and drop a save<num>.dat file in the Dink HD Documents file sharing area in iTunes. Import happens when the main menu is visited. Use save<num>_<dmod dir name>.dat to import a save to an installed DMOD.\n"\
 	;
 	} else
 	{
 		msg += \
-			"`6Thanks for buying `wDink Smallwood HD`` for iPhone, iPod Touch, and iPad.  Here are some tips and info to get started.\n"\
+			"`6Here are some tips and info to get started.\n"\
 			"\n`wControls - Virtual Joypad:`` This is the default control method, simple to use.\n"\
 			"\n`wControls - Drag Anywhere:`` This control scheme allows you to draw an angle with your finger and dink will walk in that angle. It doesn't matter where you draw it on the screen. As long as you don't let your finger up, he'll keep moving.\n"\
 			"\n`wPushing:`` If you make Dink walk against an object for one second, he will begin to push it.  Useful when you see rocks blocking cave entrances.\n"\
@@ -303,9 +294,6 @@ if (IsDesktop())
 			"\n`wQuick save/load:`` In addition to the full auto state save whenever you exit the game, and the normal save system, you can use `wQuick Save/Load`` from the pause menu.  It's very useful to beat a tough boss.\n"\
 			"\n`wSave Machines:`` Use Save Machines frequently and don't only rely on quick saves as they may sometimes put you in a difficult spot.\n"\
 			"\n`wAuto Save:`` Your game is automatically saved every five minutes to save slot 10 as long as you have more than 30% health.\n"\
-			"\n`wFPS Lock:`` If enabled, the game is limited to 30 frames per second.  This should be enabled on slower devices for smoother gameplay.\n"\
-			"\n`wHow to import saves from desktop (iOS 3.2+):`` Drag and drop a save<num>.dat file in the Dink HD Documents file sharing area in iTunes. Import happens when the main menu is visited. Use save<num>_<dmod dir name>.dat to import a save to an installed DMOD.\n"\
-			
 			;
 	}
 }
@@ -316,8 +304,8 @@ if (!IsDesktop())
 
 msg += \
 "\n`wAdd-on warning:`` Depending on your device's speed and memory not all quest add-ons may be smoothly playable.\n"\
-"\n`wOutdated instructions warning:`` Sometimes quest add-ons will refer to controls not available, like pressing a specific key.  Keep in mind most add-ons were developed for the Windows version of the game.\n"\
-"\n`wKeyboard:`` You can work around these issues by using the in-game keyboard option, available from the pause menu.\n";
+"\n`wOutdated instructions warning:`` Sometimes quest add-ons will refer to controls not available, like pressing a specific key.  Keep in mind most add-ons were developed for the desktop versions of the game.\n"\
+"\n`wKeyboard:`` You can probably work around these issues by using the in-game keyboard option, available from the pause menu.\n";
 }
 
 	Entity *pEnt = CreateTextBoxEntity(pParent, "", vTextBoxPos, vTextBounds, msg);

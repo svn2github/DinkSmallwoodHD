@@ -9,7 +9,8 @@
 #include "BaseApp.h"
 #include "Manager/AdManager.h"
 
-#define RT_IS_BETA 1
+//note: This is set in  the ReleaseBeta GL configuration, not here
+ //#define RT_IS_BETA 1
 
 enum eExtendedVirtualKeys
 {

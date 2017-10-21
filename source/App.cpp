@@ -499,10 +499,12 @@ bool App::Init()
 	GetApp()->GetVarWithDefault("gui_transparency",0.35f)->GetFloat();
 
   
-	#ifdef PLATFORM_WINDOWS
-	
 	GetApp()->GetVarWithDefault("checkerboard_fix", uint32(1)); //default to on for Windows
 
+
+	#ifdef PLATFORM_WINDOWS
+	
+	
 	//If you don't have directx, just comment out this and remove the dx lib dependency, directx is only used for the
 		//gamepad input on windows
 		GetGamepadManager()->AddProvider(new GamepadProviderDirectX); //use directx joysticks
@@ -964,27 +966,29 @@ bool App::OnPreInitVideo()
 		
 		
 		
-		VariantDB temp;
-		temp.Load("save.dat");
-		Variant *pVarX = temp.GetVarIfExists("videox");
-		Variant *pVarY = temp.GetVarIfExists("videoy");
-		if (pVarX && pVarY && pVarX->GetUINT32() != 0 && pVarY->GetUINT32() != 0)
+		if (GetEmulatedPlatformID() == PLATFORM_ID_WINDOWS)
 		{
+			VariantDB temp;
+			temp.Load("save.dat");
+			Variant *pVarX = temp.GetVarIfExists("videox");
+			Variant *pVarY = temp.GetVarIfExists("videoy");
+			if (pVarX && pVarY && pVarX->GetUINT32() != 0 && pVarY->GetUINT32() != 0)
+			{
 
-			g_winVideoScreenX = pVarX->GetUINT32();
-			g_winVideoScreenY = pVarY->GetUINT32();
+				g_winVideoScreenX = pVarX->GetUINT32();
+				g_winVideoScreenY = pVarY->GetUINT32();
+			}
+
+			g_bIsFullScreen = temp.GetVarWithDefault("fullscreen", uint32(1))->GetUINT32();
+
+			if (DoesCommandLineParmExist("-window") || DoesCommandLineParmExist("-windowed"))
+			{
+				g_bIsFullScreen = false;
+				GetApp()->GetVar("fullscreen")->Set(uint32(0));
+			}
+
+			g_bUseBorderlessFullscreenOnWindows = temp.GetVarWithDefault("borderless_fullscreen", uint32(0))->GetUINT32() != 0;
 		}
-
-		g_bIsFullScreen = temp.GetVarWithDefault("fullscreen", uint32(1))->GetUINT32();
-		
-		if (DoesCommandLineParmExist("-window") || DoesCommandLineParmExist("-windowed"))
-		{
-			g_bIsFullScreen = false;
-			GetApp()->GetVar("fullscreen")->Set(uint32(0));
-		}
-
-		g_bUseBorderlessFullscreenOnWindows = temp.GetVarWithDefault("borderless_fullscreen", uint32(0))->GetUINT32() != 0;
-
 		
 #endif
 		return true;

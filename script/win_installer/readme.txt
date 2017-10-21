@@ -32,10 +32,6 @@ Supported command line options:
 
 Note:  If a .dmod file is put in the Dink HD directory (where the .exe is) it will be automatically installed and then deleted
 
-------------- BETA VERSION -----------------
-
-This is a beta version which means it probably has bugs and isn't ready for general consumption.  However, it means you've been recruited to help us make it better!
-
 To report a bug, find or post a thread about Dink HD on dinknetwork.com and and please include the following information if you can:
 
 - Dink files are installed to C:\Users\<user name>\AppData\Local\DinkSmallwoodHD by default.

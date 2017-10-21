@@ -34,6 +34,11 @@
     <LocalDebuggerCommandArguments>-game dmods/tbcb</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseBeta GL|Win32'">
+    <LocalDebuggerCommandArguments>
+    </LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release GL AkikoBox|Win32'">
     <LocalDebuggerCommandArguments>
     </LocalDebuggerCommandArguments>

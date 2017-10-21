@@ -14,7 +14,7 @@ Dink Smallwood HD
 
 
 
-Use the "Debug GL" or "Release GL" solution configuations.
+Use the "Debug GL" or "Release GL" solution configuations in 32 bit.  Debug GL 64 bit is also setup (just to test - as I actually don't package a 64 bit version for Windows, just iOS)
 
 --- Have a bugfix or patch?! Please send it over to Seth!  Please note that any submission (code, media, translations, ect) must be 100% compatible with the license as listed in dinkhd_license.txt
 
