@@ -290,3 +290,8 @@ use timing (Myster island camera sequence for example) easier though, not sure.
  * Added Dan Walma's .png support (untested)
  * Another bugfix in the .dmod decompresser, fixes issue with Attack of the veggies
  * (Windows) Holding Shift in addition to Tab will cause "super turbo" mode, speeding up the game faster than just holding Tab.  (Secret tip:  If you really want to see speed, hold down the Control key too)
+
+ 
+------ Change log for 1.90 ----------
+
+ * Tweaks related to iOS

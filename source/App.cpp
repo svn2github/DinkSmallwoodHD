@@ -184,8 +184,8 @@ App::App()
 	m_bDidPostInit = false;
 	m_bHasDMODSupport = true;
 	//for mobiles
-	m_version = 1.89f;
-	m_versionString = "V1.89";
+	m_version = 1.90f;
+	m_versionString = "V1.90";
 	m_build = 1;
 	m_bCheatsEnabled = false;
 
@@ -226,7 +226,7 @@ bool App::GetForceAspectRatio()
 
 bool App::UseClassicEscapeMenu()
 {
-	if (GetEmulatedPlatformID() == PLATFORM_ID_WINDOWS)
+	if (IsDesktop())
 	{
 		return true;
 	}

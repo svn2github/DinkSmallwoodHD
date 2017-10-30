@@ -7,6 +7,79 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5D21B9E11FA6C31D00B12CB3 /* png.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9CE1FA6C31B00B12CB3 /* png.c */; };
+		5D21B9E21FA6C31D00B12CB3 /* pngerror.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9CF1FA6C31B00B12CB3 /* pngerror.c */; };
+		5D21B9E31FA6C31D00B12CB3 /* pngtrans.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9D01FA6C31B00B12CB3 /* pngtrans.c */; };
+		5D21B9E41FA6C31D00B12CB3 /* pngrutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9D11FA6C31B00B12CB3 /* pngrutil.c */; };
+		5D21B9E51FA6C31D00B12CB3 /* pngwrite.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9D21FA6C31B00B12CB3 /* pngwrite.c */; };
+		5D21B9E61FA6C31D00B12CB3 /* pngget.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9D31FA6C31B00B12CB3 /* pngget.c */; };
+		5D21B9E71FA6C31D00B12CB3 /* pnggccrd.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9D41FA6C31B00B12CB3 /* pnggccrd.c */; };
+		5D21B9E81FA6C31D00B12CB3 /* pngrio.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9D51FA6C31B00B12CB3 /* pngrio.c */; };
+		5D21B9E91FA6C31D00B12CB3 /* pngwtran.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9D61FA6C31C00B12CB3 /* pngwtran.c */; };
+		5D21B9EA1FA6C31D00B12CB3 /* pngpread.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9D71FA6C31C00B12CB3 /* pngpread.c */; };
+		5D21B9EB1FA6C31D00B12CB3 /* pngset.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9D81FA6C31C00B12CB3 /* pngset.c */; };
+		5D21B9EC1FA6C31D00B12CB3 /* pngwio.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9D91FA6C31C00B12CB3 /* pngwio.c */; };
+		5D21B9ED1FA6C31D00B12CB3 /* pngmem.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9DA1FA6C31C00B12CB3 /* pngmem.c */; };
+		5D21B9EE1FA6C31D00B12CB3 /* pngwutil.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9DB1FA6C31C00B12CB3 /* pngwutil.c */; };
+		5D21B9EF1FA6C31D00B12CB3 /* pngvcrd.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9DE1FA6C31D00B12CB3 /* pngvcrd.c */; };
+		5D21B9F01FA6C31D00B12CB3 /* pngread.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9DF1FA6C31D00B12CB3 /* pngread.c */; };
+		5D21B9F11FA6C31D00B12CB3 /* pngrtran.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9E01FA6C31D00B12CB3 /* pngrtran.c */; };
+		5D21B9F91FA6C34500B12CB3 /* GamepadProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9F41FA6C34500B12CB3 /* GamepadProvider.cpp */; };
+		5D21B9FA1FA6C34500B12CB3 /* GamepadManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9F61FA6C34500B12CB3 /* GamepadManager.cpp */; };
+		5D21B9FB1FA6C34500B12CB3 /* Gamepad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9F81FA6C34500B12CB3 /* Gamepad.cpp */; };
+		5D21B9FE1FA6C37E00B12CB3 /* AudioManagerFMODStudio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D21B9FD1FA6C37E00B12CB3 /* AudioManagerFMODStudio.cpp */; };
+		5D21BA051FA6C3DD00B12CB3 /* AdProvider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA021FA6C3DD00B12CB3 /* AdProvider.cpp */; };
+		5D21BA071FA6C3DD00B12CB3 /* GamepadiCade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA041FA6C3DD00B12CB3 /* GamepadiCade.cpp */; };
+		5D21BA0B1FA6C47F00B12CB3 /* JPGSurfaceLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA091FA6C47E00B12CB3 /* JPGSurfaceLoader.cpp */; };
+		5D21BA0E1FA6C6BF00B12CB3 /* RenderScissorComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA0C1FA6C6BE00B12CB3 /* RenderScissorComponent.cpp */; };
+		5D21BA111FA6C6EE00B12CB3 /* GamepadProvideriCade.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA0F1FA6C6EE00B12CB3 /* GamepadProvideriCade.cpp */; };
+		5D21BA461FA6C76C00B12CB3 /* jdatadst.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA131FA6C76500B12CB3 /* jdatadst.c */; };
+		5D21BA471FA6C76C00B12CB3 /* jdatasrc.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA141FA6C76500B12CB3 /* jdatasrc.c */; };
+		5D21BA481FA6C76C00B12CB3 /* jfdctint.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA151FA6C76500B12CB3 /* jfdctint.c */; };
+		5D21BA491FA6C76C00B12CB3 /* jcapimin.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA171FA6C76500B12CB3 /* jcapimin.c */; };
+		5D21BA4A1FA6C76C00B12CB3 /* jidctred.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA181FA6C76500B12CB3 /* jidctred.c */; };
+		5D21BA4B1FA6C76C00B12CB3 /* jcprepct.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA191FA6C76500B12CB3 /* jcprepct.c */; };
+		5D21BA4C1FA6C76C00B12CB3 /* jfdctflt.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA1A1FA6C76500B12CB3 /* jfdctflt.c */; };
+		5D21BA4D1FA6C76C00B12CB3 /* jidctint.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA1C1FA6C76500B12CB3 /* jidctint.c */; };
+		5D21BA4E1FA6C76C00B12CB3 /* jmemmgr.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA1D1FA6C76600B12CB3 /* jmemmgr.c */; };
+		5D21BA4F1FA6C76C00B12CB3 /* jmemnobs.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA1E1FA6C76600B12CB3 /* jmemnobs.c */; };
+		5D21BA501FA6C76C00B12CB3 /* jutils.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA1F1FA6C76600B12CB3 /* jutils.c */; };
+		5D21BA511FA6C76C00B12CB3 /* jddctmgr.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA201FA6C76600B12CB3 /* jddctmgr.c */; };
+		5D21BA521FA6C76C00B12CB3 /* jctrans.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA211FA6C76600B12CB3 /* jctrans.c */; };
+		5D21BA531FA6C76C00B12CB3 /* jdtrans.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA231FA6C76600B12CB3 /* jdtrans.c */; };
+		5D21BA541FA6C76C00B12CB3 /* jdcoefct.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA241FA6C76600B12CB3 /* jdcoefct.c */; };
+		5D21BA551FA6C76C00B12CB3 /* jdapistd.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA251FA6C76700B12CB3 /* jdapistd.c */; };
+		5D21BA561FA6C76C00B12CB3 /* jidctfst.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA261FA6C76700B12CB3 /* jidctfst.c */; };
+		5D21BA571FA6C76C00B12CB3 /* jcmainct.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA281FA6C76700B12CB3 /* jcmainct.c */; };
+		5D21BA581FA6C76C00B12CB3 /* jfdctfst.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA2A1FA6C76700B12CB3 /* jfdctfst.c */; };
+		5D21BA591FA6C76C00B12CB3 /* jcparam.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA2B1FA6C76800B12CB3 /* jcparam.c */; };
+		5D21BA5A1FA6C76C00B12CB3 /* jdmerge.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA2C1FA6C76800B12CB3 /* jdmerge.c */; };
+		5D21BA5B1FA6C76C00B12CB3 /* jcapistd.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA2D1FA6C76800B12CB3 /* jcapistd.c */; };
+		5D21BA5C1FA6C76C00B12CB3 /* jerror.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA2E1FA6C76800B12CB3 /* jerror.c */; };
+		5D21BA5D1FA6C76C00B12CB3 /* jccolor.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA2F1FA6C76800B12CB3 /* jccolor.c */; };
+		5D21BA5E1FA6C76C00B12CB3 /* jcmarker.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA301FA6C76800B12CB3 /* jcmarker.c */; };
+		5D21BA5F1FA6C76C00B12CB3 /* jdcolor.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA311FA6C76800B12CB3 /* jdcolor.c */; };
+		5D21BA601FA6C76C00B12CB3 /* jchuff.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA321FA6C76900B12CB3 /* jchuff.c */; };
+		5D21BA611FA6C76C00B12CB3 /* jcdctmgr.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA341FA6C76900B12CB3 /* jcdctmgr.c */; };
+		5D21BA621FA6C76C00B12CB3 /* jquant1.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA351FA6C76900B12CB3 /* jquant1.c */; };
+		5D21BA631FA6C76C00B12CB3 /* jdmarker.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA361FA6C76900B12CB3 /* jdmarker.c */; };
+		5D21BA641FA6C76C00B12CB3 /* jdhuff.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA371FA6C76900B12CB3 /* jdhuff.c */; };
+		5D21BA651FA6C76C00B12CB3 /* jcphuff.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA381FA6C76900B12CB3 /* jcphuff.c */; };
+		5D21BA661FA6C76C00B12CB3 /* jdinput.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA391FA6C76A00B12CB3 /* jdinput.c */; };
+		5D21BA671FA6C76C00B12CB3 /* jcinit.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA3A1FA6C76A00B12CB3 /* jcinit.c */; };
+		5D21BA681FA6C76C00B12CB3 /* jdphuff.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA3B1FA6C76A00B12CB3 /* jdphuff.c */; };
+		5D21BA691FA6C76C00B12CB3 /* jccoefct.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA3C1FA6C76A00B12CB3 /* jccoefct.c */; };
+		5D21BA6A1FA6C76C00B12CB3 /* jcomapi.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA3D1FA6C76A00B12CB3 /* jcomapi.c */; };
+		5D21BA6B1FA6C76C00B12CB3 /* jdpostct.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA3E1FA6C76A00B12CB3 /* jdpostct.c */; };
+		5D21BA6C1FA6C76C00B12CB3 /* jidctflt.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA3F1FA6C76A00B12CB3 /* jidctflt.c */; };
+		5D21BA6D1FA6C76C00B12CB3 /* jdmaster.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA401FA6C76B00B12CB3 /* jdmaster.c */; };
+		5D21BA6E1FA6C76C00B12CB3 /* jdapimin.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA411FA6C76B00B12CB3 /* jdapimin.c */; };
+		5D21BA6F1FA6C76C00B12CB3 /* jdmainct.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA421FA6C76B00B12CB3 /* jdmainct.c */; };
+		5D21BA701FA6C76C00B12CB3 /* jcmaster.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA431FA6C76B00B12CB3 /* jcmaster.c */; };
+		5D21BA711FA6C76C00B12CB3 /* jquant2.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA451FA6C76B00B12CB3 /* jquant2.c */; };
+		5D21BA731FA6C7AD00B12CB3 /* jdsample.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA721FA6C7AC00B12CB3 /* jdsample.c */; };
+		5D21BA761FA6C7D300B12CB3 /* AdManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA741FA6C7D300B12CB3 /* AdManager.cpp */; };
+		5D4E96E81FA6B7D7001AAECE /* libfmod.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4E96E71FA6B7D6001AAECE /* libfmod.dylib */; };
 		5D70B62512B5FED300A1AB17 /* OSXUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D70B61B12B5FED300A1AB17 /* OSXUtils.mm */; };
 		5D70B62612B5FED300A1AB17 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D70B61E12B5FED300A1AB17 /* main.m */; };
 		5D70B62712B5FED300A1AB17 /* MainController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D70B62012B5FED300A1AB17 /* MainController.mm */; };
@@ -29,7 +102,6 @@
 		5D70C0BE12B72BE700A1AB17 /* NetHTTP.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D70C00B12B72BE600A1AB17 /* NetHTTP.cpp */; };
 		5D70C0BF12B72BE700A1AB17 /* NetSocket.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D70C00D12B72BE600A1AB17 /* NetSocket.cpp */; };
 		5D70C0C012B72BE700A1AB17 /* NetUtils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D70C00F12B72BE700A1AB17 /* NetUtils.cpp */; };
-		5D70C0C112B72BE700A1AB17 /* AudioManagerFMOD.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D70C01212B72BE700A1AB17 /* AudioManagerFMOD.cpp */; };
 		5D70C0C312B72BE700A1AB17 /* AudioManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D70C01512B72BE700A1AB17 /* AudioManager.cpp */; };
 		5D70C0C412B72BE700A1AB17 /* mat3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D70C01A12B72BE700A1AB17 /* mat3.cpp */; };
 		5D70C0C512B72BE700A1AB17 /* mat4.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D70C01B12B72BE700A1AB17 /* mat4.cpp */; };
@@ -141,8 +213,8 @@
 		5D8FA49F12DBFA1100E9B3B8 /* game in Resources */ = {isa = PBXBuildFile; fileRef = 5D8FA49D12DBFA1100E9B3B8 /* game */; };
 		5D8FA52212DBFA3100E9B3B8 /* dink in Resources */ = {isa = PBXBuildFile; fileRef = 5D8FA4A012DBFA3000E9B3B8 /* dink */; };
 		5D8FA52312DBFA3100E9B3B8 /* audio in Resources */ = {isa = PBXBuildFile; fileRef = 5D8FA51512DBFA3100E9B3B8 /* audio */; };
-		5DB7E05E14C183020097F054 /* libfmodex.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DB7E05D14C183020097F054 /* libfmodex.dylib */; };
-		5DB7E05F14C184610097F054 /* libfmodex.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5DB7E05D14C183020097F054 /* libfmodex.dylib */; };
+		5DBEA04C1FA6C94C0081C341 /* jcsample.c in Sources */ = {isa = PBXBuildFile; fileRef = 5DBEA04B1FA6C94C0081C341 /* jcsample.c */; };
+		5DBEA04D1FA6CE360081C341 /* libfmod.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D4E96E71FA6B7D6001AAECE /* libfmod.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		5DD32A5A12CAE4340009B0F3 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5DD32A5912CAE4340009B0F3 /* Info.plist */; };
 		5DDDC70712CAEB4C0075D2F9 /* EmitVirtualKeyComponent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5DDDC70612CAEB4C0075D2F9 /* EmitVirtualKeyComponent.cpp */; };
 		5DDE02A012B4F50D000C5CC0 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DDE029F12B4F50D000C5CC0 /* libz.dylib */; };
@@ -162,7 +234,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				5DB7E05F14C184610097F054 /* libfmodex.dylib in CopyFiles */,
+				5DBEA04D1FA6CE360081C341 /* libfmod.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -174,6 +246,98 @@
 		256AC3F00F4B6AF500CF3369 /* RTDink_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTDink_Prefix.pch; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		5D21B9CE1FA6C31B00B12CB3 /* png.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = png.c; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/png.c; sourceTree = "<group>"; };
+		5D21B9CF1FA6C31B00B12CB3 /* pngerror.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngerror.c; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/pngerror.c; sourceTree = "<group>"; };
+		5D21B9D01FA6C31B00B12CB3 /* pngtrans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngtrans.c; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/pngtrans.c; sourceTree = "<group>"; };
+		5D21B9D11FA6C31B00B12CB3 /* pngrutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngrutil.c; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/pngrutil.c; sourceTree = "<group>"; };
+		5D21B9D21FA6C31B00B12CB3 /* pngwrite.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwrite.c; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/pngwrite.c; sourceTree = "<group>"; };
+		5D21B9D31FA6C31B00B12CB3 /* pngget.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngget.c; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/pngget.c; sourceTree = "<group>"; };
+		5D21B9D41FA6C31B00B12CB3 /* pnggccrd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pnggccrd.c; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/pnggccrd.c; sourceTree = "<group>"; };
+		5D21B9D51FA6C31B00B12CB3 /* pngrio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngrio.c; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/pngrio.c; sourceTree = "<group>"; };
+		5D21B9D61FA6C31C00B12CB3 /* pngwtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwtran.c; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/pngwtran.c; sourceTree = "<group>"; };
+		5D21B9D71FA6C31C00B12CB3 /* pngpread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngpread.c; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/pngpread.c; sourceTree = "<group>"; };
+		5D21B9D81FA6C31C00B12CB3 /* pngset.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngset.c; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/pngset.c; sourceTree = "<group>"; };
+		5D21B9D91FA6C31C00B12CB3 /* pngwio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwio.c; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/pngwio.c; sourceTree = "<group>"; };
+		5D21B9DA1FA6C31C00B12CB3 /* pngmem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngmem.c; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/pngmem.c; sourceTree = "<group>"; };
+		5D21B9DB1FA6C31C00B12CB3 /* pngwutil.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngwutil.c; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/pngwutil.c; sourceTree = "<group>"; };
+		5D21B9DC1FA6C31C00B12CB3 /* png.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = png.h; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/png.h; sourceTree = "<group>"; };
+		5D21B9DD1FA6C31C00B12CB3 /* pngconf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pngconf.h; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/pngconf.h; sourceTree = "<group>"; };
+		5D21B9DE1FA6C31D00B12CB3 /* pngvcrd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngvcrd.c; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/pngvcrd.c; sourceTree = "<group>"; };
+		5D21B9DF1FA6C31D00B12CB3 /* pngread.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngread.c; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/pngread.c; sourceTree = "<group>"; };
+		5D21B9E01FA6C31D00B12CB3 /* pngrtran.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pngrtran.c; path = ../../../shared/Irrlicht/source/Irrlicht/libpng/pngrtran.c; sourceTree = "<group>"; };
+		5D21B9F31FA6C34500B12CB3 /* GamepadManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GamepadManager.h; path = ../../shared/Gamepad/GamepadManager.h; sourceTree = "<group>"; };
+		5D21B9F41FA6C34500B12CB3 /* GamepadProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GamepadProvider.cpp; path = ../../shared/Gamepad/GamepadProvider.cpp; sourceTree = "<group>"; };
+		5D21B9F51FA6C34500B12CB3 /* Gamepad.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Gamepad.h; path = ../../shared/Gamepad/Gamepad.h; sourceTree = "<group>"; };
+		5D21B9F61FA6C34500B12CB3 /* GamepadManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GamepadManager.cpp; path = ../../shared/Gamepad/GamepadManager.cpp; sourceTree = "<group>"; };
+		5D21B9F71FA6C34500B12CB3 /* GamepadProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GamepadProvider.h; path = ../../shared/Gamepad/GamepadProvider.h; sourceTree = "<group>"; };
+		5D21B9F81FA6C34500B12CB3 /* Gamepad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Gamepad.cpp; path = ../../shared/Gamepad/Gamepad.cpp; sourceTree = "<group>"; };
+		5D21B9FC1FA6C37E00B12CB3 /* AudioManagerFMODStudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioManagerFMODStudio.h; path = ../../shared/Audio/AudioManagerFMODStudio.h; sourceTree = "<group>"; };
+		5D21B9FD1FA6C37E00B12CB3 /* AudioManagerFMODStudio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioManagerFMODStudio.cpp; path = ../../shared/Audio/AudioManagerFMODStudio.cpp; sourceTree = "<group>"; };
+		5D21B9FF1FA6C3DC00B12CB3 /* AdProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdProvider.h; path = ../../shared/Ad/AdProvider.h; sourceTree = "<group>"; };
+		5D21BA001FA6C3DC00B12CB3 /* GamepadiCade.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GamepadiCade.h; path = ../../shared/Gamepad/GamepadiCade.h; sourceTree = "<group>"; };
+		5D21BA021FA6C3DD00B12CB3 /* AdProvider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AdProvider.cpp; path = ../../shared/Ad/AdProvider.cpp; sourceTree = "<group>"; };
+		5D21BA041FA6C3DD00B12CB3 /* GamepadiCade.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GamepadiCade.cpp; path = ../../shared/Gamepad/GamepadiCade.cpp; sourceTree = "<group>"; };
+		5D21BA091FA6C47E00B12CB3 /* JPGSurfaceLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JPGSurfaceLoader.cpp; path = ../../shared/Renderer/JPGSurfaceLoader.cpp; sourceTree = "<group>"; };
+		5D21BA0A1FA6C47E00B12CB3 /* JPGSurfaceLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JPGSurfaceLoader.h; path = ../../shared/Renderer/JPGSurfaceLoader.h; sourceTree = "<group>"; };
+		5D21BA0C1FA6C6BE00B12CB3 /* RenderScissorComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderScissorComponent.cpp; path = ../../shared/Entity/RenderScissorComponent.cpp; sourceTree = "<group>"; };
+		5D21BA0D1FA6C6BE00B12CB3 /* RenderScissorComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderScissorComponent.h; path = ../../shared/Entity/RenderScissorComponent.h; sourceTree = "<group>"; };
+		5D21BA0F1FA6C6EE00B12CB3 /* GamepadProvideriCade.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GamepadProvideriCade.cpp; path = ../../shared/Gamepad/GamepadProvideriCade.cpp; sourceTree = "<group>"; };
+		5D21BA101FA6C6EE00B12CB3 /* GamepadProvideriCade.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GamepadProvideriCade.h; path = ../../shared/Gamepad/GamepadProvideriCade.h; sourceTree = "<group>"; };
+		5D21BA131FA6C76500B12CB3 /* jdatadst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdatadst.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jdatadst.c; sourceTree = "<group>"; };
+		5D21BA141FA6C76500B12CB3 /* jdatasrc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdatasrc.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jdatasrc.c; sourceTree = "<group>"; };
+		5D21BA151FA6C76500B12CB3 /* jfdctint.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jfdctint.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jfdctint.c; sourceTree = "<group>"; };
+		5D21BA161FA6C76500B12CB3 /* cdjpeg.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cdjpeg.h; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/cdjpeg.h; sourceTree = "<group>"; };
+		5D21BA171FA6C76500B12CB3 /* jcapimin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcapimin.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jcapimin.c; sourceTree = "<group>"; };
+		5D21BA181FA6C76500B12CB3 /* jidctred.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jidctred.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jidctred.c; sourceTree = "<group>"; };
+		5D21BA191FA6C76500B12CB3 /* jcprepct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcprepct.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jcprepct.c; sourceTree = "<group>"; };
+		5D21BA1A1FA6C76500B12CB3 /* jfdctflt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jfdctflt.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jfdctflt.c; sourceTree = "<group>"; };
+		5D21BA1B1FA6C76500B12CB3 /* cderror.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cderror.h; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/cderror.h; sourceTree = "<group>"; };
+		5D21BA1C1FA6C76500B12CB3 /* jidctint.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jidctint.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jidctint.c; sourceTree = "<group>"; };
+		5D21BA1D1FA6C76600B12CB3 /* jmemmgr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jmemmgr.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jmemmgr.c; sourceTree = "<group>"; };
+		5D21BA1E1FA6C76600B12CB3 /* jmemnobs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jmemnobs.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jmemnobs.c; sourceTree = "<group>"; };
+		5D21BA1F1FA6C76600B12CB3 /* jutils.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jutils.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jutils.c; sourceTree = "<group>"; };
+		5D21BA201FA6C76600B12CB3 /* jddctmgr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jddctmgr.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jddctmgr.c; sourceTree = "<group>"; };
+		5D21BA211FA6C76600B12CB3 /* jctrans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jctrans.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jctrans.c; sourceTree = "<group>"; };
+		5D21BA221FA6C76600B12CB3 /* jchuff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jchuff.h; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jchuff.h; sourceTree = "<group>"; };
+		5D21BA231FA6C76600B12CB3 /* jdtrans.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdtrans.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jdtrans.c; sourceTree = "<group>"; };
+		5D21BA241FA6C76600B12CB3 /* jdcoefct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdcoefct.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jdcoefct.c; sourceTree = "<group>"; };
+		5D21BA251FA6C76700B12CB3 /* jdapistd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdapistd.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jdapistd.c; sourceTree = "<group>"; };
+		5D21BA261FA6C76700B12CB3 /* jidctfst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jidctfst.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jidctfst.c; sourceTree = "<group>"; };
+		5D21BA271FA6C76700B12CB3 /* transupp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = transupp.h; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/transupp.h; sourceTree = "<group>"; };
+		5D21BA281FA6C76700B12CB3 /* jcmainct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcmainct.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jcmainct.c; sourceTree = "<group>"; };
+		5D21BA291FA6C76700B12CB3 /* jconfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jconfig.h; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jconfig.h; sourceTree = "<group>"; };
+		5D21BA2A1FA6C76700B12CB3 /* jfdctfst.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jfdctfst.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jfdctfst.c; sourceTree = "<group>"; };
+		5D21BA2B1FA6C76800B12CB3 /* jcparam.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcparam.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jcparam.c; sourceTree = "<group>"; };
+		5D21BA2C1FA6C76800B12CB3 /* jdmerge.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdmerge.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jdmerge.c; sourceTree = "<group>"; };
+		5D21BA2D1FA6C76800B12CB3 /* jcapistd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcapistd.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jcapistd.c; sourceTree = "<group>"; };
+		5D21BA2E1FA6C76800B12CB3 /* jerror.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jerror.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jerror.c; sourceTree = "<group>"; };
+		5D21BA2F1FA6C76800B12CB3 /* jccolor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jccolor.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jccolor.c; sourceTree = "<group>"; };
+		5D21BA301FA6C76800B12CB3 /* jcmarker.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcmarker.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jcmarker.c; sourceTree = "<group>"; };
+		5D21BA311FA6C76800B12CB3 /* jdcolor.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdcolor.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jdcolor.c; sourceTree = "<group>"; };
+		5D21BA321FA6C76900B12CB3 /* jchuff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jchuff.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jchuff.c; sourceTree = "<group>"; };
+		5D21BA331FA6C76900B12CB3 /* jversion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jversion.h; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jversion.h; sourceTree = "<group>"; };
+		5D21BA341FA6C76900B12CB3 /* jcdctmgr.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcdctmgr.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jcdctmgr.c; sourceTree = "<group>"; };
+		5D21BA351FA6C76900B12CB3 /* jquant1.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jquant1.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jquant1.c; sourceTree = "<group>"; };
+		5D21BA361FA6C76900B12CB3 /* jdmarker.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdmarker.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jdmarker.c; sourceTree = "<group>"; };
+		5D21BA371FA6C76900B12CB3 /* jdhuff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdhuff.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jdhuff.c; sourceTree = "<group>"; };
+		5D21BA381FA6C76900B12CB3 /* jcphuff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcphuff.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jcphuff.c; sourceTree = "<group>"; };
+		5D21BA391FA6C76A00B12CB3 /* jdinput.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdinput.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jdinput.c; sourceTree = "<group>"; };
+		5D21BA3A1FA6C76A00B12CB3 /* jcinit.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcinit.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jcinit.c; sourceTree = "<group>"; };
+		5D21BA3B1FA6C76A00B12CB3 /* jdphuff.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdphuff.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jdphuff.c; sourceTree = "<group>"; };
+		5D21BA3C1FA6C76A00B12CB3 /* jccoefct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jccoefct.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jccoefct.c; sourceTree = "<group>"; };
+		5D21BA3D1FA6C76A00B12CB3 /* jcomapi.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcomapi.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jcomapi.c; sourceTree = "<group>"; };
+		5D21BA3E1FA6C76A00B12CB3 /* jdpostct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdpostct.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jdpostct.c; sourceTree = "<group>"; };
+		5D21BA3F1FA6C76A00B12CB3 /* jidctflt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jidctflt.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jidctflt.c; sourceTree = "<group>"; };
+		5D21BA401FA6C76B00B12CB3 /* jdmaster.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdmaster.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jdmaster.c; sourceTree = "<group>"; };
+		5D21BA411FA6C76B00B12CB3 /* jdapimin.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdapimin.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jdapimin.c; sourceTree = "<group>"; };
+		5D21BA421FA6C76B00B12CB3 /* jdmainct.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdmainct.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jdmainct.c; sourceTree = "<group>"; };
+		5D21BA431FA6C76B00B12CB3 /* jcmaster.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcmaster.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jcmaster.c; sourceTree = "<group>"; };
+		5D21BA441FA6C76B00B12CB3 /* jinclude.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = jinclude.h; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jinclude.h; sourceTree = "<group>"; };
+		5D21BA451FA6C76B00B12CB3 /* jquant2.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jquant2.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jquant2.c; sourceTree = "<group>"; };
+		5D21BA721FA6C7AC00B12CB3 /* jdsample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jdsample.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jdsample.c; sourceTree = "<group>"; };
+		5D21BA741FA6C7D300B12CB3 /* AdManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AdManager.cpp; path = ../../shared/Manager/AdManager.cpp; sourceTree = "<group>"; };
+		5D21BA751FA6C7D300B12CB3 /* AdManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AdManager.h; path = ../../shared/Manager/AdManager.h; sourceTree = "<group>"; };
+		5D4E96E71FA6B7D6001AAECE /* libfmod.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libfmod.dylib; sourceTree = "<group>"; };
 		5D70B61A12B5FED300A1AB17 /* PlatformSetupOSX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformSetupOSX.h; path = ../../shared/OSX/PlatformSetupOSX.h; sourceTree = SOURCE_ROOT; };
 		5D70B61B12B5FED300A1AB17 /* OSXUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = OSXUtils.mm; path = ../../shared/OSX/OSXUtils.mm; sourceTree = SOURCE_ROOT; };
 		5D70B61C12B5FED300A1AB17 /* OSXUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OSXUtils.h; path = ../../shared/OSX/OSXUtils.h; sourceTree = SOURCE_ROOT; };
@@ -218,7 +382,6 @@
 		5D70C00E12B72BE600A1AB17 /* NetSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetSocket.h; path = ../../shared/Network/NetSocket.h; sourceTree = SOURCE_ROOT; };
 		5D70C00F12B72BE700A1AB17 /* NetUtils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetUtils.cpp; path = ../../shared/Network/NetUtils.cpp; sourceTree = SOURCE_ROOT; };
 		5D70C01012B72BE700A1AB17 /* NetUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetUtils.h; path = ../../shared/Network/NetUtils.h; sourceTree = SOURCE_ROOT; };
-		5D70C01212B72BE700A1AB17 /* AudioManagerFMOD.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioManagerFMOD.cpp; path = ../../shared/Audio/AudioManagerFMOD.cpp; sourceTree = SOURCE_ROOT; };
 		5D70C01512B72BE700A1AB17 /* AudioManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioManager.cpp; path = ../../shared/Audio/AudioManager.cpp; sourceTree = SOURCE_ROOT; };
 		5D70C01612B72BE700A1AB17 /* AudioManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioManager.h; path = ../../shared/Audio/AudioManager.h; sourceTree = SOURCE_ROOT; };
 		5D70C01A12B72BE700A1AB17 /* mat3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mat3.cpp; path = "../../shared/ClanLib-2.0/Sources/Core/Math/mat3.cpp"; sourceTree = SOURCE_ROOT; };
@@ -420,13 +583,11 @@
 		5D70C14C12B72C0900A1AB17 /* DebugMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DebugMenu.h; path = ../source/GUI/DebugMenu.h; sourceTree = SOURCE_ROOT; };
 		5D70C14D12B72C0900A1AB17 /* MainMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MainMenu.cpp; path = ../source/GUI/MainMenu.cpp; sourceTree = SOURCE_ROOT; };
 		5D70C14E12B72C0900A1AB17 /* MainMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainMenu.h; path = ../source/GUI/MainMenu.h; sourceTree = SOURCE_ROOT; };
-		5D70C25212B72D1A00A1AB17 /* AudioManagerFMOD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioManagerFMOD.h; path = ../../shared/Audio/AudioManagerFMOD.h; sourceTree = SOURCE_ROOT; };
-		5D8CE30114C654B5009EB534 /* RTDink copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "RTDink copy-Info.plist"; path = "/Users/Seth/dev/rtsvn/projects/proton/RTDink/OSX/RTDink copy-Info.plist"; sourceTree = "<absolute>"; };
 		5D8FA3AB12DA754700E9B3B8 /* interface */ = {isa = PBXFileReference; lastKnownFileType = folder; name = interface; path = ../bin/interface; sourceTree = "<group>"; };
 		5D8FA49D12DBFA1100E9B3B8 /* game */ = {isa = PBXFileReference; lastKnownFileType = folder; name = game; path = ../bin/game; sourceTree = "<group>"; };
 		5D8FA4A012DBFA3000E9B3B8 /* dink */ = {isa = PBXFileReference; lastKnownFileType = folder; name = dink; path = ../bin/dink; sourceTree = "<group>"; };
 		5D8FA51512DBFA3100E9B3B8 /* audio */ = {isa = PBXFileReference; lastKnownFileType = folder; name = audio; path = ../bin/audio; sourceTree = "<group>"; };
-		5DB7E05D14C183020097F054 /* libfmodex.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libfmodex.dylib; path = ../../shared/OSX/fmod/api/lib/libfmodex.dylib; sourceTree = "<group>"; };
+		5DBEA04B1FA6C94C0081C341 /* jcsample.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = jcsample.c; path = ../../../shared/Irrlicht/source/Irrlicht/jpeglib/jcsample.c; sourceTree = "<group>"; };
 		5DD32A5912CAE4340009B0F3 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5DDDC70512CAEB4C0075D2F9 /* EmitVirtualKeyComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EmitVirtualKeyComponent.h; path = ../../shared/Entity/EmitVirtualKeyComponent.h; sourceTree = SOURCE_ROOT; };
 		5DDDC70612CAEB4C0075D2F9 /* EmitVirtualKeyComponent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EmitVirtualKeyComponent.cpp; path = ../../shared/Entity/EmitVirtualKeyComponent.cpp; sourceTree = SOURCE_ROOT; };
@@ -445,11 +606,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D4E96E81FA6B7D7001AAECE /* libfmod.dylib in Frameworks */,
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				AFD4D88A113C504F00C2DE76 /* OpenGL.framework in Frameworks */,
 				AF9DBBC6113C611C00D05754 /* QuartzCore.framework in Frameworks */,
 				5DDE02A012B4F50D000C5CC0 /* libz.dylib in Frameworks */,
-				5DB7E05E14C183020097F054 /* libfmodex.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -470,7 +631,7 @@
 		1058C7A2FEA54F0111CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5DB7E05D14C183020097F054 /* libfmodex.dylib */,
+				5D4E96E71FA6B7D6001AAECE /* libfmod.dylib */,
 				29B97324FDCFA39411CA2CEA /* AppKit.framework */,
 				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
 			);
@@ -493,7 +654,6 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
-				5D8CE30114C654B5009EB534 /* RTDink copy-Info.plist */,
 			);
 			name = RTDink;
 			sourceTree = "<group>";
@@ -534,6 +694,120 @@
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
+		};
+		5D21B9F21FA6C32700B12CB3 /* Gamepad */ = {
+			isa = PBXGroup;
+			children = (
+				5D21BA0F1FA6C6EE00B12CB3 /* GamepadProvideriCade.cpp */,
+				5D21BA101FA6C6EE00B12CB3 /* GamepadProvideriCade.h */,
+				5D21BA041FA6C3DD00B12CB3 /* GamepadiCade.cpp */,
+				5D21BA001FA6C3DC00B12CB3 /* GamepadiCade.h */,
+				5D21B9F81FA6C34500B12CB3 /* Gamepad.cpp */,
+				5D21B9F51FA6C34500B12CB3 /* Gamepad.h */,
+				5D21B9F61FA6C34500B12CB3 /* GamepadManager.cpp */,
+				5D21B9F31FA6C34500B12CB3 /* GamepadManager.h */,
+				5D21B9F41FA6C34500B12CB3 /* GamepadProvider.cpp */,
+				5D21B9F71FA6C34500B12CB3 /* GamepadProvider.h */,
+			);
+			name = Gamepad;
+			sourceTree = "<group>";
+		};
+		5D21BA081FA6C3E200B12CB3 /* Ad */ = {
+			isa = PBXGroup;
+			children = (
+				5D21BA741FA6C7D300B12CB3 /* AdManager.cpp */,
+				5D21BA751FA6C7D300B12CB3 /* AdManager.h */,
+				5D21BA021FA6C3DD00B12CB3 /* AdProvider.cpp */,
+				5D21B9FF1FA6C3DC00B12CB3 /* AdProvider.h */,
+			);
+			name = Ad;
+			sourceTree = "<group>";
+		};
+		5D21BA121FA6C6FE00B12CB3 /* LibJpg */ = {
+			isa = PBXGroup;
+			children = (
+				5DBEA04B1FA6C94C0081C341 /* jcsample.c */,
+				5D21BA721FA6C7AC00B12CB3 /* jdsample.c */,
+				5D21BA1B1FA6C76500B12CB3 /* cderror.h */,
+				5D21BA161FA6C76500B12CB3 /* cdjpeg.h */,
+				5D21BA171FA6C76500B12CB3 /* jcapimin.c */,
+				5D21BA2D1FA6C76800B12CB3 /* jcapistd.c */,
+				5D21BA3C1FA6C76A00B12CB3 /* jccoefct.c */,
+				5D21BA2F1FA6C76800B12CB3 /* jccolor.c */,
+				5D21BA341FA6C76900B12CB3 /* jcdctmgr.c */,
+				5D21BA321FA6C76900B12CB3 /* jchuff.c */,
+				5D21BA221FA6C76600B12CB3 /* jchuff.h */,
+				5D21BA3A1FA6C76A00B12CB3 /* jcinit.c */,
+				5D21BA281FA6C76700B12CB3 /* jcmainct.c */,
+				5D21BA301FA6C76800B12CB3 /* jcmarker.c */,
+				5D21BA431FA6C76B00B12CB3 /* jcmaster.c */,
+				5D21BA3D1FA6C76A00B12CB3 /* jcomapi.c */,
+				5D21BA291FA6C76700B12CB3 /* jconfig.h */,
+				5D21BA2B1FA6C76800B12CB3 /* jcparam.c */,
+				5D21BA381FA6C76900B12CB3 /* jcphuff.c */,
+				5D21BA191FA6C76500B12CB3 /* jcprepct.c */,
+				5D21BA211FA6C76600B12CB3 /* jctrans.c */,
+				5D21BA411FA6C76B00B12CB3 /* jdapimin.c */,
+				5D21BA251FA6C76700B12CB3 /* jdapistd.c */,
+				5D21BA131FA6C76500B12CB3 /* jdatadst.c */,
+				5D21BA141FA6C76500B12CB3 /* jdatasrc.c */,
+				5D21BA241FA6C76600B12CB3 /* jdcoefct.c */,
+				5D21BA311FA6C76800B12CB3 /* jdcolor.c */,
+				5D21BA201FA6C76600B12CB3 /* jddctmgr.c */,
+				5D21BA371FA6C76900B12CB3 /* jdhuff.c */,
+				5D21BA391FA6C76A00B12CB3 /* jdinput.c */,
+				5D21BA421FA6C76B00B12CB3 /* jdmainct.c */,
+				5D21BA361FA6C76900B12CB3 /* jdmarker.c */,
+				5D21BA401FA6C76B00B12CB3 /* jdmaster.c */,
+				5D21BA2C1FA6C76800B12CB3 /* jdmerge.c */,
+				5D21BA3B1FA6C76A00B12CB3 /* jdphuff.c */,
+				5D21BA3E1FA6C76A00B12CB3 /* jdpostct.c */,
+				5D21BA231FA6C76600B12CB3 /* jdtrans.c */,
+				5D21BA2E1FA6C76800B12CB3 /* jerror.c */,
+				5D21BA1A1FA6C76500B12CB3 /* jfdctflt.c */,
+				5D21BA2A1FA6C76700B12CB3 /* jfdctfst.c */,
+				5D21BA151FA6C76500B12CB3 /* jfdctint.c */,
+				5D21BA3F1FA6C76A00B12CB3 /* jidctflt.c */,
+				5D21BA261FA6C76700B12CB3 /* jidctfst.c */,
+				5D21BA1C1FA6C76500B12CB3 /* jidctint.c */,
+				5D21BA181FA6C76500B12CB3 /* jidctred.c */,
+				5D21BA441FA6C76B00B12CB3 /* jinclude.h */,
+				5D21BA1D1FA6C76600B12CB3 /* jmemmgr.c */,
+				5D21BA1E1FA6C76600B12CB3 /* jmemnobs.c */,
+				5D21BA351FA6C76900B12CB3 /* jquant1.c */,
+				5D21BA451FA6C76B00B12CB3 /* jquant2.c */,
+				5D21BA1F1FA6C76600B12CB3 /* jutils.c */,
+				5D21BA331FA6C76900B12CB3 /* jversion.h */,
+				5D21BA271FA6C76700B12CB3 /* transupp.h */,
+			);
+			path = LibJpg;
+			sourceTree = SOURCE_ROOT;
+		};
+		5D4E96EC1FA6B893001AAECE /* LibPng */ = {
+			isa = PBXGroup;
+			children = (
+				5D21B9CE1FA6C31B00B12CB3 /* png.c */,
+				5D21B9DC1FA6C31C00B12CB3 /* png.h */,
+				5D21B9DD1FA6C31C00B12CB3 /* pngconf.h */,
+				5D21B9CF1FA6C31B00B12CB3 /* pngerror.c */,
+				5D21B9D41FA6C31B00B12CB3 /* pnggccrd.c */,
+				5D21B9D31FA6C31B00B12CB3 /* pngget.c */,
+				5D21B9DA1FA6C31C00B12CB3 /* pngmem.c */,
+				5D21B9D71FA6C31C00B12CB3 /* pngpread.c */,
+				5D21B9DF1FA6C31D00B12CB3 /* pngread.c */,
+				5D21B9D51FA6C31B00B12CB3 /* pngrio.c */,
+				5D21B9E01FA6C31D00B12CB3 /* pngrtran.c */,
+				5D21B9D11FA6C31B00B12CB3 /* pngrutil.c */,
+				5D21B9D81FA6C31C00B12CB3 /* pngset.c */,
+				5D21B9D01FA6C31B00B12CB3 /* pngtrans.c */,
+				5D21B9DE1FA6C31D00B12CB3 /* pngvcrd.c */,
+				5D21B9D91FA6C31C00B12CB3 /* pngwio.c */,
+				5D21B9D21FA6C31B00B12CB3 /* pngwrite.c */,
+				5D21B9D61FA6C31C00B12CB3 /* pngwtran.c */,
+				5D21B9DB1FA6C31C00B12CB3 /* pngwutil.c */,
+			);
+			path = LibPng;
+			sourceTree = SOURCE_ROOT;
 		};
 		5D70B61912B5FEB000A1AB17 /* OSX */ = {
 			isa = PBXGroup;
@@ -583,6 +857,8 @@
 		5D70BFFF12B72BE600A1AB17 /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				5D21BA091FA6C47E00B12CB3 /* JPGSurfaceLoader.cpp */,
+				5D21BA0A1FA6C47E00B12CB3 /* JPGSurfaceLoader.h */,
 				5D70C00012B72BE600A1AB17 /* ResourceManager.cpp */,
 				5D70C00112B72BE600A1AB17 /* ResourceManager.h */,
 				5D70C00212B72BE600A1AB17 /* VariantDB.cpp */,
@@ -613,8 +889,8 @@
 		5D70C01112B72BE700A1AB17 /* Audio */ = {
 			isa = PBXGroup;
 			children = (
-				5D70C25212B72D1A00A1AB17 /* AudioManagerFMOD.h */,
-				5D70C01212B72BE700A1AB17 /* AudioManagerFMOD.cpp */,
+				5D21B9FD1FA6C37E00B12CB3 /* AudioManagerFMODStudio.cpp */,
+				5D21B9FC1FA6C37E00B12CB3 /* AudioManagerFMODStudio.h */,
 				5D70C01512B72BE700A1AB17 /* AudioManager.cpp */,
 				5D70C01612B72BE700A1AB17 /* AudioManager.h */,
 			);
@@ -668,6 +944,8 @@
 		5D70C02212B72BE700A1AB17 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				5D21BA0C1FA6C6BE00B12CB3 /* RenderScissorComponent.cpp */,
+				5D21BA0D1FA6C6BE00B12CB3 /* RenderScissorComponent.h */,
 				5DDDC70512CAEB4C0075D2F9 /* EmitVirtualKeyComponent.h */,
 				5DDDC70612CAEB4C0075D2F9 /* EmitVirtualKeyComponent.cpp */,
 				5D70C02312B72BE700A1AB17 /* CustomInputComponent.h */,
@@ -749,6 +1027,8 @@
 		5D70C06512B72BE700A1AB17 /* Renderer */ = {
 			isa = PBXGroup;
 			children = (
+				5D21BA121FA6C6FE00B12CB3 /* LibJpg */,
+				5D4E96EC1FA6B893001AAECE /* LibPng */,
 				5D70C06A12B72BE700A1AB17 /* LinearParticle */,
 				5D70C06612B72BE700A1AB17 /* SoftSurface.cpp */,
 				5D70C06712B72BE700A1AB17 /* SoftSurface.h */,
@@ -962,6 +1242,8 @@
 		5DDE012412B4D49C000C5CC0 /* shared */ = {
 			isa = PBXGroup;
 			children = (
+				5D21BA081FA6C3E200B12CB3 /* Ad */,
+				5D21B9F21FA6C32700B12CB3 /* Gamepad */,
 				5D70C08712B72BE700A1AB17 /* util */,
 				5D70C06512B72BE700A1AB17 /* Renderer */,
 				5D70C06212B72BE700A1AB17 /* Math */,
@@ -994,7 +1276,9 @@
 				8D11072C0486CEB800E47090 /* Sources */,
 				8D11072E0486CEB800E47090 /* Frameworks */,
 				5D70BB2712B7208900A1AB17 /* CopyFiles */,
-				5D8CE30414C6570D009EB534 /* ShellScript */,
+				5D8CE30414C6570D009EB534 /* Run Script */,
+				5DBEA0501FA6DBE30081C341 /* ShellScript */,
+				5DBEA04E1FA6D2CF0081C341 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1011,6 +1295,8 @@
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "RTDink" */;
 			compatibilityVersion = "Xcode 3.1";
 			developmentRegion = English;
@@ -1049,7 +1335,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		5D8CE30414C6570D009EB534 /* ShellScript */ = {
+		5D8CE30414C6570D009EB534 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"",
+			);
+			name = "Run Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = "/bin/sh -x";
+			shellScript = "install_name_tool -change ./libfmodex.dylib @loader_path/../Frameworks/libfmodex.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\"";
+		};
+		5DBEA04E1FA6D2CF0081C341 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -1059,8 +1360,21 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = "/bin/sh -x";
-			shellScript = "install_name_tool -change ./libfmodex.dylib @loader_path/../Frameworks/libfmodex.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\"";
+			shellPath = /bin/sh;
+			shellScript = "set -ex\n\nif [ \"${CONFIGURATION}\" = 'Release' ]; then\n[ \"$ACTION\" = build ] || exit 0\n[ \"$BUILD_VARIANTS\" = \"normal\" ] || exit 0\n\nPROJECT_NAME=\"Dink Smallwood HD\"\n\ndir=\"$TEMP_FILES_DIR/disk\"\ndmg=\"$BUILT_PRODUCTS_DIR/$PROJECT_NAME.dmg\"\ntouch ~/\"$PROJECT_NAME.dmg\"\nrm ~/\"$PROJECT_NAME.dmg\"\nrm -rf \"$dir\"\nmkdir \"$dir\"\ncp -R \"$BUILT_PRODUCTS_DIR/$PROJECT_NAME.app\" \"$dir\"\ncp \"$PROJECT_DIR/readme.txt\" \"$dir\"\nrm -f \"$dmg\"\nhdiutil create -srcfolder \"$dir\" -volname \"$PROJECT_NAME\" \"$dmg\"\nhdiutil internet-enable -yes \"$dmg\"\nrm -rf \"$dir\"\ncp \"$dmg\" ~/\ncp \"$dmg\" \"$PROJECT_DIR/../script\"\nfi";
+		};
+		5DBEA0501FA6DBE30081C341 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "APPNAME=\"Dink Smallwood HD\"\n\nCODESIGN=\"Mac Developer: Seth Robinson\"\n#CODESIGN=\"3rd Party Mac Developer Application: Robinson Technologies\"\n\nINSTALLSIGN=\"3rd Party Mac Developer Installer: Robinson Technologies\"\n\ncodesign -vvvv -f -s \"$CODESIGN\" \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/Contents/MacOS/libfmod.dylib\"\ncodesign -vvvv -f -s \"$CODESIGN\" \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app\"\n#codesign -vvvv \"$APPNAME.app\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1069,35 +1383,51 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5D21BA641FA6C76C00B12CB3 /* jdhuff.c in Sources */,
+				5D21BA631FA6C76C00B12CB3 /* jdmarker.c in Sources */,
+				5D21BA5E1FA6C76C00B12CB3 /* jcmarker.c in Sources */,
 				5DDE02A512B4F526000C5CC0 /* App.cpp in Sources */,
 				5D70B62512B5FED300A1AB17 /* OSXUtils.mm in Sources */,
 				5D70B62612B5FED300A1AB17 /* main.m in Sources */,
 				5D70B62712B5FED300A1AB17 /* MainController.mm in Sources */,
+				5D21B9E91FA6C31D00B12CB3 /* pngwtran.c in Sources */,
 				5D70B62812B5FED300A1AB17 /* MyApplication.mm in Sources */,
 				5D70B62912B5FED300A1AB17 /* MyOpenGLView.mm in Sources */,
+				5D21BA661FA6C76C00B12CB3 /* jdinput.c in Sources */,
 				5D70B81112B606DC00A1AB17 /* PlatformSetup.cpp in Sources */,
+				5D21BA5A1FA6C76C00B12CB3 /* jdmerge.c in Sources */,
+				5D21B9ED1FA6C31D00B12CB3 /* pngmem.c in Sources */,
+				5D21BA551FA6C76C00B12CB3 /* jdapistd.c in Sources */,
+				5D21BA6E1FA6C76C00B12CB3 /* jdapimin.c in Sources */,
+				5D21BA071FA6C3DD00B12CB3 /* GamepadiCade.cpp in Sources */,
 				5D70B81212B606DC00A1AB17 /* PlatformPrecomp.cpp in Sources */,
 				5D70B81312B606DC00A1AB17 /* BaseApp.cpp in Sources */,
+				5D21BA0E1FA6C6BF00B12CB3 /* RenderScissorComponent.cpp in Sources */,
 				5D70C0B312B72BE700A1AB17 /* StreamingInstanceZip.cpp in Sources */,
 				5D70C0B412B72BE700A1AB17 /* StreamingInstanceFile.cpp in Sources */,
 				5D70C0B512B72BE700A1AB17 /* StreamingInstance.cpp in Sources */,
 				5D70C0B612B72BE700A1AB17 /* FileSystemZip.cpp in Sources */,
+				5D21B9FA1FA6C34500B12CB3 /* GamepadManager.cpp in Sources */,
 				5D70C0B712B72BE700A1AB17 /* FileSystem.cpp in Sources */,
 				5D70C0B812B72BE700A1AB17 /* FileManager.cpp in Sources */,
 				5D70C0B912B72BE700A1AB17 /* ResourceManager.cpp in Sources */,
+				5D21B9F91FA6C34500B12CB3 /* GamepadProvider.cpp in Sources */,
 				5D70C0BA12B72BE700A1AB17 /* VariantDB.cpp in Sources */,
 				5D70C0BB12B72BE700A1AB17 /* Console.cpp in Sources */,
 				5D70C0BC12B72BE700A1AB17 /* GameTimer.cpp in Sources */,
 				5D70C0BD12B72BE700A1AB17 /* MessageManager.cpp in Sources */,
 				5D70C0BE12B72BE700A1AB17 /* NetHTTP.cpp in Sources */,
 				5D70C0BF12B72BE700A1AB17 /* NetSocket.cpp in Sources */,
+				5D21BA511FA6C76C00B12CB3 /* jddctmgr.c in Sources */,
+				5D21BA501FA6C76C00B12CB3 /* jutils.c in Sources */,
 				5D70C0C012B72BE700A1AB17 /* NetUtils.cpp in Sources */,
-				5D70C0C112B72BE700A1AB17 /* AudioManagerFMOD.cpp in Sources */,
 				5D70C0C312B72BE700A1AB17 /* AudioManager.cpp in Sources */,
 				5D70C0C412B72BE700A1AB17 /* mat3.cpp in Sources */,
 				5D70C0C512B72BE700A1AB17 /* mat4.cpp in Sources */,
+				5D21BA581FA6C76C00B12CB3 /* jfdctfst.c in Sources */,
 				5D70C0C612B72BE700A1AB17 /* vec4.cpp in Sources */,
 				5D70C0C712B72BE700A1AB17 /* vec1.cpp in Sources */,
+				5D21BA701FA6C76C00B12CB3 /* jcmaster.c in Sources */,
 				5D70C0C812B72BE700A1AB17 /* angle.cpp in Sources */,
 				5D70C0C912B72BE700A1AB17 /* vec2.cpp in Sources */,
 				5D70C0CA12B72BE700A1AB17 /* vec3.cpp in Sources */,
@@ -1105,76 +1435,124 @@
 				5D70C0CC12B72BE700A1AB17 /* ArcadeInputComponent.cpp in Sources */,
 				5D70C0CD12B72BE700A1AB17 /* SelectButtonWithCustomInputComponent.cpp in Sources */,
 				5D70C0CE12B72BE700A1AB17 /* SliderComponent.cpp in Sources */,
+				5D21BA571FA6C76C00B12CB3 /* jcmainct.c in Sources */,
 				5D70C0CF12B72BE700A1AB17 /* UnpackArchiveComponent.cpp in Sources */,
 				5D70C0D012B72BE700A1AB17 /* FilterInputComponent.cpp in Sources */,
 				5D70C0D112B72BE700A1AB17 /* RenderClipComponent.cpp in Sources */,
 				5D70C0D212B72BE700A1AB17 /* TouchStripComponent.cpp in Sources */,
+				5D21BA711FA6C76C00B12CB3 /* jquant2.c in Sources */,
 				5D70C0D312B72BE700A1AB17 /* TrailRenderComponent.cpp in Sources */,
 				5D70C0D412B72BE700A1AB17 /* InputTextRenderComponent.cpp in Sources */,
+				5D21BA5C1FA6C76C00B12CB3 /* jerror.c in Sources */,
 				5D70C0D512B72BE700A1AB17 /* RectRenderComponent.cpp in Sources */,
+				5D21BA6A1FA6C76C00B12CB3 /* jcomapi.c in Sources */,
 				5D70C0D612B72BE700A1AB17 /* ScrollBarRenderComponent.cpp in Sources */,
 				5D70C0D712B72BE700A1AB17 /* ScrollComponent.cpp in Sources */,
+				5D21BA111FA6C6EE00B12CB3 /* GamepadProvideriCade.cpp in Sources */,
 				5D70C0D812B72BE700A1AB17 /* TextBoxRenderComponent.cpp in Sources */,
+				5D21B9EB1FA6C31D00B12CB3 /* pngset.c in Sources */,
 				5D70C0D912B72BE700A1AB17 /* HTTPComponent.cpp in Sources */,
 				5D70C0DA12B72BE700A1AB17 /* TyperComponent.cpp in Sources */,
 				5D70C0DB12B72BE700A1AB17 /* ProgressBarComponent.cpp in Sources */,
 				5D70C0DC12B72BE700A1AB17 /* TapSequenceDetectComponent.cpp in Sources */,
+				5D21B9FE1FA6C37E00B12CB3 /* AudioManagerFMODStudio.cpp in Sources */,
+				5D21B9F11FA6C31D00B12CB3 /* pngrtran.c in Sources */,
 				5D70C0DD12B72BE700A1AB17 /* UnderlineRenderComponent.cpp in Sources */,
 				5D70C0DE12B72BE700A1AB17 /* FocusInputComponent.cpp in Sources */,
 				5D70C0DF12B72BE700A1AB17 /* FocusRenderComponent.cpp in Sources */,
 				5D70C0E012B72BE700A1AB17 /* FocusUpdateComponent.cpp in Sources */,
 				5D70C0E112B72BE700A1AB17 /* InterpolateComponent.cpp in Sources */,
+				5D21BA491FA6C76C00B12CB3 /* jcapimin.c in Sources */,
 				5D70C0E212B72BE700A1AB17 /* TextRenderComponent.cpp in Sources */,
 				5D70C0E312B72BE700A1AB17 /* Button2DComponent.cpp in Sources */,
+				5D21BA671FA6C76C00B12CB3 /* jcinit.c in Sources */,
+				5D21B9EF1FA6C31D00B12CB3 /* pngvcrd.c in Sources */,
+				5D21B9E41FA6C31D00B12CB3 /* pngrutil.c in Sources */,
 				5D70C0E412B72BE700A1AB17 /* TouchHandlerComponent.cpp in Sources */,
 				5D70C0E512B72BE700A1AB17 /* OverlayRenderComponent.cpp in Sources */,
 				5D70C0E612B72BE700A1AB17 /* EntityUtils.cpp in Sources */,
+				5D21BA611FA6C76C00B12CB3 /* jcdctmgr.c in Sources */,
 				5D70C0E712B72BE700A1AB17 /* Component.cpp in Sources */,
 				5D70C0E812B72BE700A1AB17 /* Entity.cpp in Sources */,
 				5D70C0E912B72BE700A1AB17 /* RTFont.cpp in Sources */,
 				5D70C0EA12B72BE700A1AB17 /* rtRect.cpp in Sources */,
+				5D21BA651FA6C76C00B12CB3 /* jcphuff.c in Sources */,
+				5D21BA0B1FA6C47F00B12CB3 /* JPGSurfaceLoader.cpp in Sources */,
+				5D21BA761FA6C7D300B12CB3 /* AdManager.cpp in Sources */,
+				5D21BA5B1FA6C76C00B12CB3 /* jcapistd.c in Sources */,
+				5D21B9E31FA6C31D00B12CB3 /* pngtrans.c in Sources */,
+				5DBEA04C1FA6C94C0081C341 /* jcsample.c in Sources */,
 				5D70C0EB12B72BE700A1AB17 /* SoftSurface.cpp in Sources */,
+				5D21B9E51FA6C31D00B12CB3 /* pngwrite.c in Sources */,
 				5D70C0EC12B72BE700A1AB17 /* RenderBatcher.cpp in Sources */,
+				5D21B9E71FA6C31D00B12CB3 /* pnggccrd.c in Sources */,
 				5D70C0ED12B72BE700A1AB17 /* L_Defination.cpp in Sources */,
 				5D70C0EE12B72BE700A1AB17 /* L_DroppingEffect.cpp in Sources */,
 				5D70C0EF12B72BE700A1AB17 /* L_EffectEmitter.cpp in Sources */,
 				5D70C0F012B72BE700A1AB17 /* L_EffectManager.cpp in Sources */,
 				5D70C0F112B72BE700A1AB17 /* L_ExplosionEffect.cpp in Sources */,
+				5D21B9F01FA6C31D00B12CB3 /* pngread.c in Sources */,
+				5D21B9EC1FA6C31D00B12CB3 /* pngwio.c in Sources */,
+				5D21B9EE1FA6C31D00B12CB3 /* pngwutil.c in Sources */,
 				5D70C0F212B72BE700A1AB17 /* L_MotionController.cpp in Sources */,
 				5D70C0F312B72BE700A1AB17 /* L_Particle.cpp in Sources */,
 				5D70C0F412B72BE700A1AB17 /* L_ParticleEffect.cpp in Sources */,
 				5D70C0F512B72BE700A1AB17 /* L_ParticleMem.cpp in Sources */,
 				5D70C0F612B72BE700A1AB17 /* L_ParticleSystem.cpp in Sources */,
+				5D21BA6C1FA6C76C00B12CB3 /* jidctflt.c in Sources */,
 				5D70C0F712B72BE700A1AB17 /* L_ShootingEffect.cpp in Sources */,
 				5D70C0F812B72BE700A1AB17 /* SurfaceAnim.cpp in Sources */,
 				5D70C0F912B72BE700A1AB17 /* Surface.cpp in Sources */,
 				5D70C0FA12B72BE700A1AB17 /* unzip.c in Sources */,
+				5D21BA731FA6C7AD00B12CB3 /* jdsample.c in Sources */,
+				5D21BA541FA6C76C00B12CB3 /* jdcoefct.c in Sources */,
 				5D70C0FB12B72BE700A1AB17 /* ioapi.c in Sources */,
 				5D70C0FC12B72BE700A1AB17 /* TarHandler.cpp in Sources */,
+				5D21BA461FA6C76C00B12CB3 /* jdatadst.c in Sources */,
 				5D70C0FD12B72BE700A1AB17 /* blocksort.c in Sources */,
+				5D21BA531FA6C76C00B12CB3 /* jdtrans.c in Sources */,
 				5D70C0FE12B72BE700A1AB17 /* bzlib.c in Sources */,
 				5D70C0FF12B72BE700A1AB17 /* compress.c in Sources */,
 				5D70C10012B72BE700A1AB17 /* crctable.c in Sources */,
 				5D70C10112B72BE700A1AB17 /* decompress.c in Sources */,
 				5D70C10212B72BE700A1AB17 /* huffman.c in Sources */,
+				5D21BA4B1FA6C76C00B12CB3 /* jcprepct.c in Sources */,
 				5D70C10312B72BE700A1AB17 /* randtable.c in Sources */,
+				5D21BA471FA6C76C00B12CB3 /* jdatasrc.c in Sources */,
+				5D21B9E61FA6C31D00B12CB3 /* pngget.c in Sources */,
+				5D21BA681FA6C76C00B12CB3 /* jdphuff.c in Sources */,
+				5D21BA4C1FA6C76C00B12CB3 /* jfdctflt.c in Sources */,
 				5D70C10412B72BE700A1AB17 /* CRandom.cpp in Sources */,
 				5D70C10512B72BE700A1AB17 /* PrimeSearch.cpp in Sources */,
 				5D70C10612B72BE700A1AB17 /* TextScanner.cpp in Sources */,
+				5D21BA601FA6C76C00B12CB3 /* jchuff.c in Sources */,
+				5D21BA051FA6C3DD00B12CB3 /* AdProvider.cpp in Sources */,
+				5D21BA6B1FA6C76C00B12CB3 /* jdpostct.c in Sources */,
 				5D70C10712B72BE700A1AB17 /* MathUtils.cpp in Sources */,
 				5D70C10812B72BE700A1AB17 /* Variant.cpp in Sources */,
+				5D21BA591FA6C76C00B12CB3 /* jcparam.c in Sources */,
 				5D70C10912B72BE700A1AB17 /* connection.cpp in Sources */,
 				5D70C10A12B72BE700A1AB17 /* named_slot_map.cpp in Sources */,
 				5D70C10B12B72BE700A1AB17 /* signal_base.cpp in Sources */,
 				5D70C10C12B72BE700A1AB17 /* slot.cpp in Sources */,
+				5D21B9E11FA6C31D00B12CB3 /* png.c in Sources */,
 				5D70C10D12B72BE700A1AB17 /* trackable.cpp in Sources */,
+				5D21BA4F1FA6C76C00B12CB3 /* jmemnobs.c in Sources */,
+				5D21BA4E1FA6C76C00B12CB3 /* jmemmgr.c in Sources */,
+				5D21B9FB1FA6C34500B12CB3 /* Gamepad.cpp in Sources */,
 				5D70C10E12B72BE700A1AB17 /* GLESUtils.cpp in Sources */,
 				5D70C10F12B72BE700A1AB17 /* ResourceUtils.cpp in Sources */,
+				5D21BA691FA6C76C00B12CB3 /* jccoefct.c in Sources */,
+				5D21BA621FA6C76C00B12CB3 /* jquant1.c in Sources */,
+				5D21B9E21FA6C31D00B12CB3 /* pngerror.c in Sources */,
 				5D70C11012B72BE700A1AB17 /* MiscUtils.cpp in Sources */,
 				5D70C11112B72BE700A1AB17 /* RenderUtils.cpp in Sources */,
+				5D21BA521FA6C76C00B12CB3 /* jctrans.c in Sources */,
 				5D70C14F12B72C0900A1AB17 /* ScriptAccelerator.cpp in Sources */,
 				5D70C15012B72C0900A1AB17 /* FFReader.cpp in Sources */,
 				5D70C15112B72C0900A1AB17 /* dink.cpp in Sources */,
+				5D21BA5D1FA6C76C00B12CB3 /* jccolor.c in Sources */,
+				5D21BA6F1FA6C76C00B12CB3 /* jdmainct.c in Sources */,
 				5D70C15212B72C0900A1AB17 /* misc_util.cpp in Sources */,
 				5D70C15312B72C0900A1AB17 /* video_gl.cpp in Sources */,
 				5D70C15412B72C0900A1AB17 /* DragControlComponent.cpp in Sources */,
@@ -1183,14 +1561,22 @@
 				5D70C15712B72C0900A1AB17 /* CursorComponent.cpp in Sources */,
 				5D70C15812B72C0900A1AB17 /* FPSControlComponent.cpp in Sources */,
 				5D70C15912B72C0900A1AB17 /* ParticleTestComponent.cpp in Sources */,
+				5D21BA4A1FA6C76C00B12CB3 /* jidctred.c in Sources */,
+				5D21BA5F1FA6C76C00B12CB3 /* jdcolor.c in Sources */,
 				5D70C15A12B72C0900A1AB17 /* ExpiredMenu.cpp in Sources */,
 				5D70C15B12B72C0900A1AB17 /* ReadTextMenu.cpp in Sources */,
 				5D70C15C12B72C0900A1AB17 /* BrowseMenu.cpp in Sources */,
 				5D70C15D12B72C0900A1AB17 /* AboutMenu.cpp in Sources */,
 				5D70C15E12B72C0900A1AB17 /* QuickTipMenu.cpp in Sources */,
 				5D70C15F12B72C0900A1AB17 /* OptionsMenu.cpp in Sources */,
+				5D21BA481FA6C76C00B12CB3 /* jfdctint.c in Sources */,
+				5D21B9EA1FA6C31D00B12CB3 /* pngpread.c in Sources */,
+				5D21BA4D1FA6C76C00B12CB3 /* jidctint.c in Sources */,
 				5D70C16012B72C0900A1AB17 /* LogMenu.cpp in Sources */,
+				5D21B9E81FA6C31D00B12CB3 /* pngrio.c in Sources */,
+				5D21BA561FA6C76C00B12CB3 /* jidctfst.c in Sources */,
 				5D70C16112B72C0900A1AB17 /* PauseMenu.cpp in Sources */,
+				5D21BA6D1FA6C76C00B12CB3 /* jdmaster.c in Sources */,
 				5D70C16212B72C0900A1AB17 /* EnterURLMenu.cpp in Sources */,
 				5D70C16312B72C0900A1AB17 /* PopUpMenu.cpp in Sources */,
 				5D70C16412B72C0900A1AB17 /* DMODMenu.cpp in Sources */,
@@ -1230,9 +1616,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application: Robinson Technologies";
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ../../shared/PlatformPrecomp.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -1249,11 +1635,12 @@
 					"../../shared/ClanLib-2.0/Sources",
 					../../shared/FliteTTS/include,
 					../../shared/OSX,
+					/Users/Seth/dev/rtsvn/projects/proton/locallibs,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PREBINDING = NO;
-				PROVISIONING_PROFILE = "6044ADA4-9CDB-4292-A168-234CB4B89669";
-				SDKROOT = macosx10.6;
+				PROVISIONING_PROFILE = "";
+				SDKROOT = macosx;
 				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Dist;
@@ -1261,26 +1648,32 @@
 		5D8CE30314C655CE009EB534 /* Dist */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
+				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = MK4EZB35P7;
 				GCC_MODEL_TUNING = G5;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DEVELOPER_DIR)/FMOD Programmers API Mac/api/lib\"",
-					"\"$(SRCROOT)/../../shared/OSX/fmod/api/lib\"",
+					"$(PROJECT_DIR)",
 				);
 				PRODUCT_NAME = "Dink Smallwood HD";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Dist;
 		};
 		C01FCF4B08A954540054247B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = MK4EZB35P7;
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -1290,27 +1683,30 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DEVELOPER_DIR)/FMOD Programmers API Mac/api/lib\"",
-					"\"$(SRCROOT)/../../shared/OSX/fmod/api/lib\"",
+					"$(PROJECT_DIR)",
 				);
 				PRODUCT_NAME = "Dink Smallwood HD";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
 		C01FCF4C08A954540054247B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				ALWAYS_SEARCH_USER_PATHS = YES;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = MK4EZB35P7;
 				GCC_MODEL_TUNING = G5;
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(DEVELOPER_DIR)/FMOD Programmers API Mac/api/lib\"",
-					"\"$(SRCROOT)/../../shared/OSX/fmod/api/lib\"",
+					"$(PROJECT_DIR)",
 				);
 				PRODUCT_NAME = "Dink Smallwood HD";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Release;
 		};
@@ -1321,7 +1717,7 @@
 				CODE_SIGN_IDENTITY = "";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1330,6 +1726,10 @@
 					_DEBUG,
 					BOOST_ALL_NO_LIB,
 					C_GL_MODE,
+					RT_JPG_SUPPORT,
+					RT_IPV6,
+					RT_PNG_SUPPORT,
+					RT_CUSTOM_LOGMSG,
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -1340,11 +1740,12 @@
 					"../../shared/ClanLib-2.0/Sources",
 					../../shared/FliteTTS/include,
 					../../shared/OSX,
+					/Users/Seth/dev/rtsvn/projects/proton/locallibs,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -1354,13 +1755,17 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CODE_SIGN_IDENTITY = "";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_C_LANGUAGE_STANDARD = c11;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = ../../shared/PlatformPrecomp.h;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					BOOST_ALL_NO_LIB,
 					NDEBUG,
 					C_GL_MODE,
+					RT_CUSTOM_LOGMSG,
+					RT_JPG_SUPPORT,
+					RT_IPV6,
+					RT_PNG_SUPPORT,
 				);
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
@@ -1371,10 +1776,11 @@
 					"../../shared/ClanLib-2.0/Sources",
 					../../shared/FliteTTS/include,
 					../../shared/OSX,
+					/Users/Seth/dev/rtsvn/projects/proton/locallibs,
 				);
-				MACOSX_DEPLOYMENT_TARGET = 10.5;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				PREBINDING = NO;
-				SDKROOT = macosx10.6;
+				SDKROOT = macosx;
 				VALID_ARCHS = "i386 x86_64";
 			};
 			name = Release;
