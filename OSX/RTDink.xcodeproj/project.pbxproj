@@ -79,7 +79,7 @@
 		5D21BA711FA6C76C00B12CB3 /* jquant2.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA451FA6C76B00B12CB3 /* jquant2.c */; };
 		5D21BA731FA6C7AD00B12CB3 /* jdsample.c in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA721FA6C7AC00B12CB3 /* jdsample.c */; };
 		5D21BA761FA6C7D300B12CB3 /* AdManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D21BA741FA6C7D300B12CB3 /* AdManager.cpp */; };
-		5D4E96E81FA6B7D7001AAECE /* libfmod.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4E96E71FA6B7D6001AAECE /* libfmod.dylib */; };
+		5D4E96E81FA6B7D7001AAECE /* libfmod.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D4E96E71FA6B7D6001AAECE /* libfmod.dylib */; settings = {ATTRIBUTES = (Required, ); }; };
 		5D70B62512B5FED300A1AB17 /* OSXUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D70B61B12B5FED300A1AB17 /* OSXUtils.mm */; };
 		5D70B62612B5FED300A1AB17 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D70B61E12B5FED300A1AB17 /* main.m */; };
 		5D70B62712B5FED300A1AB17 /* MainController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5D70B62012B5FED300A1AB17 /* MainController.mm */; };
@@ -1348,7 +1348,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = "/bin/sh -x";
-			shellScript = "install_name_tool -change ./libfmodex.dylib @loader_path/../Frameworks/libfmodex.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\"";
+			shellScript = "install_name_tool -change @rpath/libfmod.dylib @loader_path/../Frameworks/libfmod.dylib \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\"\notool -L \"$TARGET_BUILD_DIR/$PRODUCT_NAME.app/Contents/MacOS/$PRODUCT_NAME\"";
 		};
 		5DBEA04E1FA6D2CF0081C341 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1361,7 +1361,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -ex\n\nif [ \"${CONFIGURATION}\" = 'Release' ]; then\n[ \"$ACTION\" = build ] || exit 0\n[ \"$BUILD_VARIANTS\" = \"normal\" ] || exit 0\n\nPROJECT_NAME=\"Dink Smallwood HD\"\n\ndir=\"$TEMP_FILES_DIR/disk\"\ndmg=\"$BUILT_PRODUCTS_DIR/$PROJECT_NAME.dmg\"\ntouch ~/\"$PROJECT_NAME.dmg\"\nrm ~/\"$PROJECT_NAME.dmg\"\nrm -rf \"$dir\"\nmkdir \"$dir\"\ncp -R \"$BUILT_PRODUCTS_DIR/$PROJECT_NAME.app\" \"$dir\"\ncp \"$PROJECT_DIR/readme.txt\" \"$dir\"\nrm -f \"$dmg\"\nhdiutil create -srcfolder \"$dir\" -volname \"$PROJECT_NAME\" \"$dmg\"\nhdiutil internet-enable -yes \"$dmg\"\nrm -rf \"$dir\"\ncp \"$dmg\" ~/\ncp \"$dmg\" \"$PROJECT_DIR/../script\"\nfi";
+			shellScript = "echo Disabled, run PackageDinkOSX.command instead, that way this signs it for us first\nexit\n\nset -ex\n\nif [ \"${CONFIGURATION}\" = 'Release' ]; then\n[ \"$ACTION\" = build ] || exit 0\n[ \"$BUILD_VARIANTS\" = \"normal\" ] || exit 0\n\nPROJECT_NAME=\"Dink Smallwood HD\"\n\ndir=\"$TEMP_FILES_DIR/disk\"\ndmg=\"$BUILT_PRODUCTS_DIR/$PROJECT_NAME.dmg\"\ntouch ~/\"$PROJECT_NAME.dmg\"\nrm ~/\"$PROJECT_NAME.dmg\"\nrm -rf \"$dir\"\nmkdir \"$dir\"\ncp -R \"$BUILT_PRODUCTS_DIR/$PROJECT_NAME.app\" \"$dir\"\ncp \"$PROJECT_DIR/readme.txt\" \"$dir\"\nrm -f \"$dmg\"\nhdiutil create -srcfolder \"$dir\" -volname \"$PROJECT_NAME\" \"$dmg\"\nhdiutil internet-enable -yes \"$dmg\"\nrm -rf \"$dir\"\ncp \"$dmg\" ~/\ncp \"$dmg\" \"$PROJECT_DIR/../script\"\nfi";
 		};
 		5DBEA0501FA6DBE30081C341 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1374,7 +1374,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "APPNAME=\"Dink Smallwood HD\"\n\nCODESIGN=\"Mac Developer: Seth Robinson\"\n#CODESIGN=\"3rd Party Mac Developer Application: Robinson Technologies\"\n\nINSTALLSIGN=\"3rd Party Mac Developer Installer: Robinson Technologies\"\n\ncodesign -vvvv -f -s \"$CODESIGN\" \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/Contents/MacOS/libfmod.dylib\"\ncodesign -vvvv -f -s \"$CODESIGN\" \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app\"\n#codesign -vvvv \"$APPNAME.app\"\n";
+			shellScript = "echo Disabled, run PackageDinkOSX.command instead, that way this signs it for us first\nexit\n\nif [ \"${CONFIGURATION}\" = 'Release' ]; then\n[ \"$ACTION\" = build ] || exit 0\n[ \"$BUILD_VARIANTS\" = \"normal\" ] || exit 0\n\n\nAPPNAME=\"Dink Smallwood HD\"\n\nCODESIGN=\"Mac Developer: Seth Robinson\"\n#CODESIGN=\"3rd Party Mac Developer Application: Robinson Technologies\"\n\nINSTALLSIGN=\"3rd Party Mac Developer Installer: Robinson Technologies\"\n\n#codesign -vvvv -f -s \"$CODESIGN\" \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app/Contents/MacOS/libfmod.dylib\"\n#codesign -vvvv -f -s \"$CODESIGN\" \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app\"\n#codesign -vvvv \"$BUILT_PRODUCTS_DIR/$PRODUCT_NAME.app\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1649,11 +1649,20 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				CODE_SIGN_STYLE = Manual;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = MK4EZB35P7;
 				GCC_MODEL_TUNING = G5;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					BOOST_ALL_NO_LIB,
+					NDEBUG,
+					RT_CUSTOM_LOGMSG,
+					RT_PNG_SUPPORT,
+					RT_IPV6,
+					RT_JPG_SUPPORT,
+					C_GL_MODE,
+				);
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = (
@@ -1670,7 +1679,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
 				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = MK4EZB35P7;
@@ -1694,8 +1703,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = YES;
-				CODE_SIGN_IDENTITY = "Mac Developer";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				CODE_SIGN_STYLE = Manual;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = MK4EZB35P7;
 				GCC_MODEL_TUNING = G5;

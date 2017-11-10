@@ -294,4 +294,6 @@ use timing (Myster island camera sequence for example) easier though, not sure.
  
 ------ Change log for 1.90 ----------
 
- * Tweaks related to iOS
+ * iOS version recompiled as Release instead of debug, oops
+ * OSX version released as a code-signed secure download from rtsoft.com.  Removed from Mac App Store.  It supports notifying the user about
+ new versions, same as the Windows version.  Like the windows version, the window can be stretched to any size, but it lacks a full screen option.

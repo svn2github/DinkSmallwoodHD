@@ -1074,14 +1074,39 @@ void LogMsg(const char* traceStr, ...)
 		GetBaseApp()->GetConsole()->AddLine(buffer);
 		strcat(buffer, "\r\n");
 		//OutputDebugString( (string("writing to ")+GetSavePath()+"log.txt\n").c_str());
-		
 		//this is the slow part.  Or was...
-
-
-		
 		GetApp()->AddTextToLog(buffer, (GetSavePath() + "log.txt").c_str());
 	}
 
+}
+
+#endif
+
+#ifdef PLATFORM_OSX
+
+
+//our custom LogMsg that isn't slow as shit
+void LogMsg(const char* traceStr, ...)
+{
+    va_list argsVA;
+    const int logSize = 1024 * 10;
+    char buffer[logSize];
+    memset((void*)buffer, 0, logSize);
+    
+    va_start(argsVA, traceStr);
+    vsnprintf(buffer, logSize, traceStr, argsVA);
+    va_end(argsVA);
+    
+    
+    if (IsBaseAppInitted())
+    {
+        GetBaseApp()->GetConsole()->AddLine(buffer);
+        strcat(buffer, "\r\n");
+        //OutputDebugString( (string("writing to ")+GetSavePath()+"log.txt\n").c_str());
+        //this is the slow part.  Or was...
+        GetApp()->AddTextToLog(buffer, (GetSavePath() + "log.txt").c_str());
+    }
+    
 }
 
 #endif

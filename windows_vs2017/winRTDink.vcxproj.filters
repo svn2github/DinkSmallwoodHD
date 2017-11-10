@@ -1412,6 +1412,9 @@
     <Text Include="..\programmer_readme.txt" />
     <Text Include="..\script\win_installer\readme.txt" />
     <Text Include="..\dinkhd_license.txt" />
+    <Text Include="..\OSX\readme.txt">
+      <Filter>source</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <Xml Include="..\android\AndroidManifest.xml">
