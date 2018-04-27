@@ -12,7 +12,16 @@
 
 void PlayMenuMusic()
 {
+	
+#ifdef PLATFORM_HTML5
+	//hacking this in for now, figure out how to consolidate file types between all platforms later. I mean, mp3 was a legal problem
+	//previously but now it's ok.  But not sure if native android build can play them or not.  Does the android build even use FMOD?  Can't recall
+	GetAudioManager()->Play("dink/sound/3.mp3", true, true, true);
+
+#else
 	GetAudioManager()->Play("dink/sound/3.ogg", true, true, true);
+
+#endif
 }
 
 Entity * DinkQuitGame()
