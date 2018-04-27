@@ -22,6 +22,10 @@
 #include "Gamepad/GamepadManager.h"
 #include "Gamepad/GamepadProvideriCade.h"
 
+#ifdef PLATFORM_HTML5
+#include "html5/HTML5Utils.h"
+#endif
+
 #ifdef WINAPI
 
 extern int g_winVideoScreenX;
@@ -403,7 +407,7 @@ bool App::Init()
 
 	if (GetEmulatedPlatformID() == PLATFORM_ID_HTML5)
 	{
-		g_dglo.m_bUsingDinkPak = true;
+		//g_dglo.m_bUsingDinkPak = true; //but we're not tho
 	}
 
 
@@ -944,8 +948,7 @@ bool App::OnPreInitVideo()
 	if (!BaseApp::OnPreInitVideo()) return false;
 
 #ifdef PLATFORM_HTML5
-	g_winVideoScreenX = 1024;
-	g_winVideoScreenY = 768;
+	//don't do anything, we get the size from the browser
 #endif
 
 //#if !defined(_DEBUG) && defined(WINAPI)
@@ -1109,4 +1112,19 @@ void LogMsg(const char* traceStr, ...)
     
 }
 
+
 #endif
+
+
+bool TouchesHaveBeenReceived()
+{
+
+#ifdef _DEBUG
+	//return true;
+#endif
+
+#ifdef PLATFORM_HTML5
+	if (GetTouchesReceived() > 0) return true;
+#endif
+	return false;
+}

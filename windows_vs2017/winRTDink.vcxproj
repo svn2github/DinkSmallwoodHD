@@ -4232,6 +4232,7 @@
     <ClInclude Include="..\..\shared\GUI\RTFontFileFormat.h" />
     <ClInclude Include="..\..\shared\html5\HTML5Utils.h" />
     <ClInclude Include="..\..\shared\html5\PlatformSetupHTML5.h" />
+    <ClInclude Include="..\..\shared\html5\SharedJSLIB.h" />
     <ClInclude Include="..\..\shared\iOS\app\EAGLView.h" />
     <ClInclude Include="..\..\shared\iOS\app\MyAppDelegate.h" />
     <ClInclude Include="..\..\shared\iOS\app\MyViewController.h" />
@@ -4387,6 +4388,7 @@
     <None Include="..\..\shared\Gamepad\Gamepad60Beat.mm" />
     <None Include="..\..\shared\Gamepad\GamepadProvider60Beat.mm" />
     <None Include="..\..\shared\Gamepad\GamepadProvider60BeatNative.mm" />
+    <None Include="..\..\shared\html5\SharedJSLIB.js" />
     <None Include="..\..\shared\iOS\app\EAGLView.mm" />
     <None Include="..\..\shared\iOS\app\main.mm" />
     <None Include="..\..\shared\iOS\app\MyAppDelegate.mm" />

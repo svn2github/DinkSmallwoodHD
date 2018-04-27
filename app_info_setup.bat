@@ -1,5 +1,6 @@
-REM ** Make sure american code page is used, otherwise the %DATE environmental var might be wrong
-CHCP 437
+:Set some variables for our whole proton installation
 
-#just a batch file so any other batch files in windows can snag the name of this project.  Used by batch files in /android and /html5
+call ..\base_setup.bat
+
+:Set some project specific variables
 set APP_NAME=RTDink

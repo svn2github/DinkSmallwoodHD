@@ -15,6 +15,11 @@
 #include "Entity/CustomInputComponent.h"
 #include "Entity/HTTPComponent.h"
 
+#ifdef PLATFORM_HTML5
+#include "html5/SharedJSLIB.h";
+int GetTouchesReceived();
+#endif
+
 bool g_bMainMenuFirstTime = true;
 bool g_bDidVersionCheck = false;
 
@@ -125,6 +130,19 @@ void MainMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity sen
 	Entity *pEntClicked = pVList->m_variant[1].GetEntity();
 
 	LogMsg("Clicked %s entity at %s", pEntClicked->GetName().c_str(),pVList->m_variant[1].Print().c_str());
+
+#ifdef PLATFORM_HTML5
+	if (GetTouchesReceived() > 0)
+	{
+		//using a touch screen, go into that mode
+		GetApp()->SetUsingTouchScreen(true);
+	}
+
+#endif
+
+	//fix it, was set the other way for ios' safari to get tricked into playing sound
+	//SetDefaultButtonStyle(Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH_RELEASE);
+
 
 	if (pEntClicked->GetName() == "New")
 	{

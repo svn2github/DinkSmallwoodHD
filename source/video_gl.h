@@ -2,7 +2,7 @@
 #define video_dx_h__
 
 #include "PlatformSetup.h"
-#include "math/rtRect.h"
+#include "Math/rtRect.h"
 
 class SoftSurface;
 class Surface;

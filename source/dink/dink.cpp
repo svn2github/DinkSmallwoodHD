@@ -5015,8 +5015,19 @@ bool PlayMidi(const char *sFileName)
 			bTryUsingOgg = false;
 		}
 		
-		string tempName = ModifyFileExtension(fName, "ogg");
 
+		string tempName;
+		
+		if (GetEmulatedPlatformID() == PLATFORM_ID_HTML5)
+		{
+			//ios browsers don't support ogg?!  Fine, let's assume we have MP3 versions
+			tempName = ModifyFileExtension(fName, "mp3");
+		}
+		else
+		{
+			tempName = ModifyFileExtension(fName, "ogg");
+		}
+		
 		if (bTryUsingOgg && !g_dglo.m_dmodGameDir.empty() && FileExists(g_dglo.m_dmodGamePathWithDir+tempName))
 		{
 
@@ -6287,8 +6298,19 @@ if (1)
 
 	//first try with oggs
 	
-	string temp = ModifyFileExtension(soundFilePathAndName, "ogg");
+	string temp;
+	
+	if (GetEmulatedPlatformID() == PLATFORM_ID_HTML5)
+	{
+		temp = ModifyFileExtension(soundFilePathAndName, "mp3");
 
+	}
+	else
+	{
+		temp = ModifyFileExtension(soundFilePathAndName, "ogg");
+
+	}
+	
 	temp = GetFileLocationString(temp);
 
 	if (FileExists(temp))

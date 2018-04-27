@@ -72,6 +72,7 @@ public:
 	Variant * GetVarWithDefault(const string &varName, const Variant &var) {return m_varDB.GetVarWithDefault(varName, var);}
 	int GetSpecial();
 	void UpdateVideoSettings();
+	void SetUsingTouchScreen(bool bNew) { m_bUsingTouchScreen = bNew; }
 	bool GetUsingTouchScreen() {return m_bUsingTouchScreen;}
 	bool CanDownloadDMODS() {return m_bHasDMODSupport;}
 	void SetCheatsEnabled(bool bCheatsEnabled) {m_bCheatsEnabled = bCheatsEnabled;}
@@ -130,3 +131,4 @@ App * GetApp();
 const char * GetAppName();
 const char * GetBundleName();
 const char * GetBundlePrefix();
+bool TouchesHaveBeenReceived();
