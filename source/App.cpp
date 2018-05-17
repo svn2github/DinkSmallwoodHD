@@ -24,6 +24,7 @@
 
 #ifdef PLATFORM_HTML5
 #include "html5/HTML5Utils.h"
+#include "html5/SharedJSLIB.h"
 #endif
 
 #ifdef WINAPI
@@ -356,6 +357,31 @@ bool App::Init()
 
 
 	LogMsg("Initializing Dink HD %s", GetVersionString().c_str());
+
+	//add fake parms
+
+
+#ifdef PLATFORM_HTML5
+	string crap = JLIB_GetURL();
+
+	int n = crap.find_last_of('?');
+	if (n == string::npos)
+	{
+		//I thought maybe this would be useful later to use # instead of ? to prevent caching? Dunno, doesn't hurt to add though
+		n = crap.find_last_of('#');
+	}
+	if (n != string::npos)
+	{
+		//we should fake add whatever this command is
+		string final = crap.substr(n + 1, crap.length() - n);
+		GetBaseApp()->AddCommandLineParm(final);
+	}
+
+
+#endif
+	//string crap = "http://www.rtsoft.com/web/dink/?-game http://www.rtsoft.com/web/srchmili.dmod";
+
+	
 
 	vector<string> parm = GetBaseApp()->GetCommandLineParms();
 

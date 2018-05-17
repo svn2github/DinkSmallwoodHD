@@ -233,7 +233,7 @@ string GetNextDMODToInstall(bool &bIsCommandLineInstall, const bool bDeleteComma
 	bIsCommandLineInstall = false;
 	//if (!GetApp()->CanDownloadDMODS()) return ""; //ignore it
 
-	if (IsDesktop())
+	if (IsDesktop() || GetEmulatedPlatformID() == PLATFORM_ID_HTML5)
 	{
 		vector<string> parms = GetApp()->GetCommandLineParms();
 
@@ -284,6 +284,18 @@ void MainOnStartLoading(VariantList *pVList)
 
 	string fName = GetNextDMODToInstall(bIsCommandLineInstall, true);
 	
+	if (IsInString(fName, "http:") || IsInString(fName, "https:")
+		||
+		(GetEmulatedPlatformID() == PLATFORM_ID_HTML5 && IsInString(fName, ".dmod"))
+		)
+	{
+		//we should download and install this
+		StringReplace("-game ", "", fName);
+		StringReplace("dmod=", "", fName);
+		DMODInstallMenuCreate(pBG->GetParent(), fName, GetDMODRootPath(), "", true, fName);
+		return;
+	}
+
 	if (!fName.empty())
 	{
 		DMODInstallMenuCreate(pBG->GetParent(), "", GetDMODRootPath(), GetSavePath()+fName, false, "", !bIsCommandLineInstall);

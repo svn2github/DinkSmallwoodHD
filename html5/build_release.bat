@@ -115,7 +115,7 @@ REM **************************************** END SOURCE
 
 :unused so far: -s USE_GLFW=3 -s NO_EXIT_RUNTIME=1 -s FORCE_ALIGNED_MEMORY=1 -s EMTERPRETIFY=1  -s EMTERPRETIFY_ASYNC=1 -DRT_EMTERPRETER_ENABLED
 :To skip font loading so it needs no resource files or zlib, add  -DC_NO_ZLIB
-SET CUSTOM_FLAGS= -DHAS_SOCKLEN_T -DBOOST_ALL_NO_LIB -DPLATFORM_HTML5 -DRT_USE_SDL_AUDIO -DRT_JPG_SUPPORT -DC_GL_MODE -s LEGACY_GL_EMULATION=1 -DPLATFORM_HTML5 -s TOTAL_MEMORY=16MB -Wno-c++11-compat-deprecated-writable-strings -Wno-shift-negative-value -s ALLOW_MEMORY_GROWTH=1
+SET CUSTOM_FLAGS= -DHAS_SOCKLEN_T -DBOOST_ALL_NO_LIB -DPLATFORM_HTML5 -DRT_USE_SDL_AUDIO -DRT_JPG_SUPPORT -DC_GL_MODE -s LEGACY_GL_EMULATION=1 -DPLATFORM_HTML5 -s TOTAL_MEMORY=16MB -s ALLOW_MEMORY_GROWTH=1 -Wno-c++11-compat-deprecated-writable-strings --ignore-dynamic-linking --memory-init-file 0 -Wno-switch
 
 :unused:   -s FULL_ES2=1 --emrun
 
@@ -129,7 +129,7 @@ SET FINAL_EXTENSION=html
 
 IF %DEBUG% EQU 0 (
 echo Compiling in release mode
-SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -O2 -DNDEBUG -s EMTERPRETIFY=1  -s EMTERPRETIFY_ASYNC=1 -DRT_EMTERPRETER_ENABLED -s WASM=1
+SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -O2 -DNDEBUG 
 ) else (
 echo Compiling in debug mode
 SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -D_DEBUG -s GL_UNSAFE_OPTS=0 -s WARN_ON_UNDEFINED_SYMBOLS=1 -s EXCEPTION_DEBUG=1 -s DEMANGLE_SUPPORT=1 -s ALIASING_FUNCTION_POINTERS=0 -s SAFE_HEAP=1 --emrun
@@ -153,7 +153,7 @@ call emcc %CUSTOM_FLAGS% %INCLUDE_DIRS% ^
 
 call emcc %CUSTOM_FLAGS% %INCLUDE_DIRS% ^
 %APP_SRC% %SRC% %COMPONENT_SRC% temp.bc ^
---preload-file ../bin/interface@interface/ --preload-file ../bin/audio@audio/ --preload-file ../bin/dink_html5@dink/ --js-library %SHARED%\html5\SharedJSLIB.js -o %APP_NAME%.%FINAL_EXTENSION%
+--preload-file ../bin/interface@interface/ --preload-file ../bin/audio@audio/ --preload-file ../bin/dink_html5_uncompressed@dink/ --js-library %SHARED%\html5\SharedJSLIB.js -o %APP_NAME%.%FINAL_EXTENSION%
 
 REM Make sure the file compiled ok
 if not exist %APP_NAME%.js beeper.exe /p
