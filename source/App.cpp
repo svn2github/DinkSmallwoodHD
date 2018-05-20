@@ -102,9 +102,9 @@ GamepadManager * GetGamepadManager() {return &g_gamepadManager;}
   //AudioManager g_audioManager; //to disable sound
   AudioManagerBBX g_audioManager;
 #elif defined PLATFORM_HTML5
-#include "Audio/AudioManagerSDL.h"
+#include "Audio/AudioManagerFMODStudio.h"
 //AudioManager g_audioManager; //to disable sound
-AudioManagerSDL g_audioManager;
+AudioManagerFMOD g_audioManager;
 
 #elif defined PLATFORM_FLASH
   //AudioManager g_audioManager; //to disable sound
@@ -581,15 +581,12 @@ bool App::Init()
 	//preload audio
 
 
-if (GetEmulatedPlatformID() == PLATFORM_ID_IOS)
+if (GetEmulatedPlatformID() == PLATFORM_ID_IOS || GetEmulatedPlatformID() == PLATFORM_ID_HTML5 )
 {
 	//use our own DLS, as iPhone/iPad don't have any midi system
 	g_audioManager.SetDLS("dink/midi/TimGM6mbTiny.dls");
 }
 
-#ifdef _DEBUG
-
-#endif
 #ifdef _WIN32
 
 	//temporary while I make movies

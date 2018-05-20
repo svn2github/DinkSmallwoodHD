@@ -71,7 +71,7 @@ set SRC= %SHARED%\PlatformSetup.cpp  %SHARED%\html5\HTML5Main.cpp %SHARED%\html5
 %SHARED%\util\CRandom.cpp %SHARED%\util\GLESUtils.cpp %SHARED%\util\MathUtils.cpp %SHARED%\util\MiscUtils.cpp %SHARED%\util\RenderUtils.cpp %SHARED%\util\ResourceUtils.cpp ^
 %SHARED%\util\Variant.cpp %SHARED%\util\boost\libs\signals\src\connection.cpp %SHARED%\util\boost\libs\signals\src\named_slot_map.cpp %SHARED%\util\boost\libs\signals\src\signal_base.cpp ^
 %SHARED%\util\boost\libs\signals\src\slot.cpp %SHARED%\util\boost\libs\signals\src\trackable.cpp %SHARED%\BaseApp.cpp %SHARED%\util\TextScanner.cpp %SHARED%\Entity\EntityUtils.cpp ^
-%SHARED%\Network\NetSocket.cpp %SHARED%\Network\NetUtils.cpp %SHARED%\Audio\AudioManagerSDL.cpp %SHARED%\FileSystem\StreamingInstance.cpp %SHARED%\FileSystem\FileSystem.cpp ^
+%SHARED%\Network\NetSocket.cpp %SHARED%\Network\NetUtils.cpp %SHARED%\Audio\AudioManagerFMODStudio.cpp %SHARED%\FileSystem\StreamingInstance.cpp %SHARED%\FileSystem\FileSystem.cpp ^
 %SHARED%\FileSystem\StreamingInstanceZip.cpp %SHARED%\FileSystem\StreamingInstanceFile.cpp %SHARED%\FileSystem\FileSystemZip.cpp %SHARED%\util\unzip\unzip.c %SHARED%\util\unzip\ioapi.c %SHARED%\util\PrimeSearch.cpp ^
 %SHARED%\Manager\AdManager.cpp %SHARED%/Renderer/JPGSurfaceLoader.cpp %SHARED%\util\archive\TarHandler.cpp %SHARED%\Gamepad\GamepadManager.cpp ^
 %SHARED%\Gamepad\GamepadProvideriCade.cpp %SHARED%\Gamepad\Gamepad.cpp %SHARED%\Gamepad\GamepadProvider.cpp %SHARED%\util\bzip2\blocksort.c ^
@@ -136,7 +136,7 @@ SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -D_DEBUG -s GL_UNSAFE_OPTS=0 -s WARN_ON_UNDEFINE
 )
 
 SET INCLUDE_DIRS=-I%SHARED% -I%APP% -I../../shared/util/boost -I../../shared/ClanLib-2.0/Sources -I../../shared/Network/enet/include ^
--I%ZLIBPATH%
+-I%ZLIBPATH% -I../../shared/html5
 
 :compile some libs into a separate thing, otherwise our list of files is too long and breaks stuff
 
@@ -151,9 +151,10 @@ del temp.bc
 call emcc %CUSTOM_FLAGS% %INCLUDE_DIRS% ^
 %ZLIB_SRC% %JPG_SRC% %PARTICLE_SRC% -o temp.bc
 
+:../../shared/html5/fmodstudio/api/studio/lib/fmodstudio.bc
 call emcc %CUSTOM_FLAGS% %INCLUDE_DIRS% ^
-%APP_SRC% %SRC% %COMPONENT_SRC% temp.bc ^
---preload-file ../bin/interface@interface/ --preload-file ../bin/audio@audio/ --preload-file ../bin/dink_html5_uncompressed@dink/ --js-library %SHARED%\html5\SharedJSLIB.js -o %APP_NAME%.%FINAL_EXTENSION%
+%APP_SRC% %SRC% %COMPONENT_SRC% temp.bc ../../shared/html5/fmodstudio/api/lowlevel/lib/fmod.bc --exclude-file .svn ^
+--preload-file ../bin/interface@interface/ --preload-file ../bin/audio@audio/ --preload-file ../bin/dink_html5@dink/ --js-library %SHARED%\html5\SharedJSLIB.js -o %APP_NAME%.%FINAL_EXTENSION%
 
 REM Make sure the file compiled ok
 if not exist %APP_NAME%.js beeper.exe /p
