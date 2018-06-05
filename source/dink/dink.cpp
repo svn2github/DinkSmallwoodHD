@@ -9330,8 +9330,8 @@ pass:
 			int32 p[20] = {1,1,0,0,0,0,0,0,0,0};  
 			if (get_parms(ev[1], script, h, p))
 			{
-
-				if (g_nlist[1] < 0 || g_nlist[1] >= C_MAX_SPRITE_FRAMES)
+                //Allow -1, in case a script needs to get the current frame.
+				if (g_nlist[1] < -1 || g_nlist[1] >= C_MAX_SPRITE_FRAMES)
 				{
 					LogMsg("sp_frame trying to set something to frame %d?  Illegal, forcing to 1.", g_nlist[1]);
 					g_nlist[1] = 1;
