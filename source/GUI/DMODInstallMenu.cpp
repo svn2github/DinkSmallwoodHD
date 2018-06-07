@@ -243,6 +243,8 @@ void OnDMODUnpackFinish(VariantList *pVList)
 		pMenu->GetVar("dmoddir")->Set(GetDMODRootPath()+ pVList->m_variant[0].GetComponent()->GetVar("firstDirCreated")->GetString());
 
 	}
+	
+	SyncPersistentData();
 }
 
 void OnDMODInstallHTTPFinish(VariantList *pVList)
@@ -257,6 +259,7 @@ void OnDMODInstallHTTPFinish(VariantList *pVList)
 	EntityComponent *pUnpack = pMenu->AddComponent(new UnpackArchiveComponent);
 	pUnpack->GetVar("sourceFileName")->Set(pMenu->GetVar("tempFileName")->GetString());
 	bool bDeleteOnFinish = pMenu->GetVar("deleteOnFinish")->GetUINT32();
+	pUnpack->GetVar("limitToSingleSubdir")->Set(uint32(1));
 
 	pUnpack->GetVar("deleteSourceOnFinish")->Set(uint32(bDeleteOnFinish));
 	
@@ -390,6 +393,7 @@ Entity * DMODInstallMenuCreate(Entity *pParentEnt, string dmodURL, string instal
 		//don't download, we already have the file
 		pBG->GetVar("tempFileName")->Set(sourceFileName);
 		pBG->GetVar("originalFileName")->Set(GetFileNameFromString(sourceFileName));
+		pBG->GetVar("limitToSingleSubdir")->Set(uint32(1));
 
 		EntityComponent *pCrapComp = pBG->AddComponent(new EntityComponent("CRAP")); //I don't need this, but the function want a component and gets the parent for the menu, so fine
 		pBG->GetVar("exitto")->Set("main");

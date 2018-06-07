@@ -297,3 +297,9 @@ use timing (Myster island camera sequence for example) easier though, not sure.
  * iOS version recompiled as Release instead of debug, oops
  * OSX version released as a code-signed secure download from rtsoft.com.  Removed from Mac App Store.  It supports notifying the user about
  new versions, same as the Windows version.  Like the windows version, the window can be stretched to any size, but it lacks a full screen option.
+
+ ------ Change log for 1.91 ----------
+
+ * This release fixes CVE-2018-0496: Sylvain Beucler and Dan Walma discovered several directory traversal issues in DFArc, an extension manager for the Dink Smallwood game, allowing an attacker to overwrite arbitrary files on the user's system. (While this doesn't use DFArc, some of the same "zip slip" issues applied)
+* Applied Dan Walma's fix so DinkHD would not incorrectly interpret sp_frame(x, -1) as sp_frame(x, 1), this fixes an issue with the Malachi the Jerk DMOD
+ 

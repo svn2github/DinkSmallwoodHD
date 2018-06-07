@@ -115,7 +115,7 @@ REM **************************************** END SOURCE
 
 :unused so far: -s USE_GLFW=3 -s NO_EXIT_RUNTIME=1 -s FORCE_ALIGNED_MEMORY=1 -s EMTERPRETIFY=1  -s EMTERPRETIFY_ASYNC=1 -DRT_EMTERPRETER_ENABLED
 :To skip font loading so it needs no resource files or zlib, add  -DC_NO_ZLIB
-SET CUSTOM_FLAGS= -DHAS_SOCKLEN_T -DBOOST_ALL_NO_LIB -DPLATFORM_HTML5 -DRT_USE_SDL_AUDIO -DRT_JPG_SUPPORT -DC_GL_MODE -s LEGACY_GL_EMULATION=1 -DPLATFORM_HTML5 -s TOTAL_MEMORY=16MB -s ALLOW_MEMORY_GROWTH=1 -Wno-c++11-compat-deprecated-writable-strings --ignore-dynamic-linking --memory-init-file 0 -Wno-switch
+SET CUSTOM_FLAGS= -DHAS_SOCKLEN_T -DBOOST_ALL_NO_LIB -DPLATFORM_HTML5 -DRT_USE_SDL_AUDIO -DRT_JPG_SUPPORT -DC_GL_MODE -s LEGACY_GL_EMULATION=1 -DPLATFORM_HTML5 -s TOTAL_MEMORY=16MB -s ALLOW_MEMORY_GROWTH=1 -Wno-c++11-compat-deprecated-writable-strings --ignore-dynamic-linking --memory-init-file 0 -Wno-switch -s PRECISE_F32=2
 
 :unused:   -s FULL_ES2=1 --emrun
 
@@ -132,7 +132,8 @@ echo Compiling in release mode
 SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -O2 -DNDEBUG 
 ) else (
 echo Compiling in debug mode
-SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -D_DEBUG -s GL_UNSAFE_OPTS=0 -s WARN_ON_UNDEFINED_SYMBOLS=1 -s EXCEPTION_DEBUG=1 -s DEMANGLE_SUPPORT=1 -s ALIASING_FUNCTION_POINTERS=0 -s SAFE_HEAP=1 --emrun
+:removed -s SAFE_HEAP=1 , causes alignment error with FMOD
+SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -D_DEBUG -s GL_UNSAFE_OPTS=0 -s WARN_ON_UNDEFINED_SYMBOLS=1 -s EXCEPTION_DEBUG=1 -s DEMANGLE_SUPPORT=1 -s ALIASING_FUNCTION_POINTERS=0 --emrun
 )
 
 SET INCLUDE_DIRS=-I%SHARED% -I%APP% -I../../shared/util/boost -I../../shared/ClanLib-2.0/Sources -I../../shared/Network/enet/include ^

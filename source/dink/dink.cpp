@@ -1056,6 +1056,9 @@ void save_game(int num)
 	last_saved_game = num;
 	fwrite(&g_dglos.g_playerInfo,sizeof(g_dglos.g_playerInfo),1,fp);
 	fclose(fp);
+
+	SyncPersistentData();
+
 }
 
 
@@ -3013,14 +3016,14 @@ bool get_box (int spriteID, rtRect32 * pDstRect, rtRect32 * pSrcRect )
 #ifdef _DEBUG
 	if (g_sprite[spriteID].pseq == 204 )
 	{
-		LogMsg("Yo");
+		//LogMsg("Yo");
 	}
 #endif
 
 #ifdef _DEBUG
 	if (g_sprite[spriteID].pseq == 202)
 	{
-		LogMsg("Original");
+		//LogMsg("Original");
 	}
 #endif
 
@@ -9330,7 +9333,7 @@ pass:
 			int32 p[20] = {1,1,0,0,0,0,0,0,0,0};  
 			if (get_parms(ev[1], script, h, p))
 			{
-                //Allow -1, in case a script needs to get the current frame.
+				//Allow -1, in case a script needs to get the current frame.
 				if (g_nlist[1] < -1 || g_nlist[1] >= C_MAX_SPRITE_FRAMES)
 				{
 					LogMsg("sp_frame trying to set something to frame %d?  Illegal, forcing to 1.", g_nlist[1]);
@@ -16739,7 +16742,7 @@ string GetDMODRootPath(string *pDMODNameOutOrNull)
 	}
 	
 
-#if defined(WIN32) || defined(PLATFORM_HTML5)
+#if defined(WIN32)
 	
 	string dmodpath = "dmods/";
 	string refdir = "";
@@ -17568,8 +17571,9 @@ bool LoadScriptState(FILE *fp)
 
 bool SaveState(string const &path)
 {
-	LogMsg("Saving %s", path.c_str());
+	LogMsg("Saving %s (inside %s which is off of %s)", path.c_str(), g_dglo.m_gameDir.c_str(), g_dglo.m_savePath.c_str());
 	CreateDirectoryRecursively(g_dglo.m_savePath, g_dglo.m_gameDir);
+	CreateDirectoryRecursively("", g_dglo.m_savePath); //added to fix issue with emscripten
 
 	FILE *fp = fopen(path.c_str(), "wb");
 	
@@ -17607,6 +17611,9 @@ bool SaveState(string const &path)
 	}
 
 	fclose(fp);
+
+	SyncPersistentData();
+
 	return bOk; //success
 }
 

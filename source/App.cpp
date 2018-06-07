@@ -189,8 +189,8 @@ App::App()
 	m_bDidPostInit = false;
 	m_bHasDMODSupport = true;
 	//for mobiles
-	m_version = 1.90f;
-	m_versionString = "V1.90";
+	m_version = 1.91f;
+	m_versionString = "V1.91";
 	m_build = 1;
 	m_bCheatsEnabled = false;
 
@@ -381,8 +381,6 @@ bool App::Init()
 #endif
 	//string crap = "http://www.rtsoft.com/web/dink/?-game http://www.rtsoft.com/web/srchmili.dmod";
 
-	
-
 	vector<string> parm = GetBaseApp()->GetCommandLineParms();
 
 	string parms;
@@ -475,6 +473,7 @@ bool App::Init()
 
 		RemoveFile(GetDMODRootPath()+"temp.dmod");
 		RemoveFile("temp.dmod");
+
 	}
 
 	
@@ -484,7 +483,7 @@ bool App::Init()
 	case PLATFORM_ID_BBX:
 	case PLATFORM_ID_WEBOS:
 	case PLATFORM_ID_HTML5:
-		CreateDirectoryRecursively("", GetDMODRootPath());
+		CreateDirectoryRecursively(GetSavePath(), GetDMODRootPath());
 		break;
 
 

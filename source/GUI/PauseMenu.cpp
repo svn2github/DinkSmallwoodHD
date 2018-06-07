@@ -51,6 +51,7 @@ Entity * DinkQuitGame()
 	}
 
 	PlayMenuMusic();
+
 	return pFinalMenu;
 }
 
@@ -101,6 +102,9 @@ void PauseEnd(Entity *pMenu)
 	FadeOutEntity(pMenu, true, 499);
 	GetMessageManager()->CallEntityFunction(pMenu, 500, "OnDelete", NULL);
 	GetBaseApp()->SetGameTickPause(false);
+
+	SyncPersistentData();
+
 	
 }
 
@@ -225,6 +229,8 @@ void PauseMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity se
 				RemoveFile(fName, false);
 				GetAudioManager()->Play("audio/buzzer2.wav");
 				PopUpCreate(pMenu, "Error loading save state.  Probably an older version, sorry.", "", "cancel", "Continue", "", "", true);
+				SyncPersistentData();
+
 			} else
 			{
 				LoadStateWithExtra();

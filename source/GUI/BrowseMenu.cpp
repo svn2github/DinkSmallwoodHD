@@ -497,6 +497,9 @@ void BrowseOnPostIntroTransition(VariantList *pVList)
 
 Entity * BrowseMenuCreate( Entity *pParentEnt )
 {
+
+	SyncPersistentData();
+
 	//GetMessageManager()->SendGame(MESSAGE_TYPE_PLAY_MUSIC, "audio/title.mp3", 200);
 	GetBaseApp()->ClearError();
 

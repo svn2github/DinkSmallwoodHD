@@ -17,7 +17,6 @@
 
 #ifdef PLATFORM_HTML5
 #include "html5/SharedJSLIB.h";
-int GetTouchesReceived();
 #endif
 
 bool g_bMainMenuFirstTime = true;
@@ -517,11 +516,8 @@ void CheckForNewVersion(Entity *pMenu)
 	pComp->GetFunction("OnError")->sig_function.connect(&OnVersionDownloadError);
 	pComp->GetFunction("OnFinish")->sig_function.connect(&OnVersionDownloadHTTPFinish);
 	
-	
 	//pComp->GetFunction("Init")->sig_function(&v);
 	GetMessageManager()->CallComponentFunction(pComp,100, "Init", &v); //call it in a bit
-
-
 
 
 	Entity *pEnt = VersionShowScoreMessage(pMenu, "`wChecking for updates..");
@@ -529,6 +525,40 @@ void CheckForNewVersion(Entity *pMenu)
 	pTyper->GetVar("text")->Set("...................");
 	pTyper->GetVar("speedMS")->Set(uint32(200));
 
+
+}
+
+
+void OnSyncUpdate(VariantList *pVList)
+{
+
+	if (IsStillLoadingPersistentData()) return;
+
+	if (g_bDidVersionCheck) return;
+
+	g_bDidVersionCheck = true;
+	GetBaseApp()->GetEntityRoot()->PrintTreeAsText();
+	//Entity *pMenu = pVList->m_variant[0].GetComponent()->GetParent();
+	Entity *pMenu = GetBaseApp()->GetEntityRoot()->GetEntityByName("MainMenu");
+
+	
+	//kill current menu
+	GetMessageManager()->CallEntityFunction(pMenu, 200, "OnDelete", NULL);
+	pMenu->SetName("MainMenuDelete");
+
+	//reload the main menu in a bit
+
+	VariantList vList(pMenu->GetParent());
+	GetMessageManager()->CallStaticFunction(ReloadMainMenu, 200, &vList, TIMER_SYSTEM);
+}
+
+void WaitForSync(Entity *pMenu)
+{
+	Entity *pEnt = VersionShowScoreMessage(pMenu, "`wFinding saved data...");
+	EntityComponent *pTyper = pEnt->AddComponent(new TyperComponent);
+	pTyper->GetVar("text")->Set("...................");
+	pTyper->GetVar("speedMS")->Set(uint32(200));
+	pEnt->GetFunction("OnUpdate")->sig_function.connect(&OnSyncUpdate);
 
 }
 
@@ -609,6 +639,8 @@ Entity * MainMenuCreate( Entity *pParentEnt, bool bFadeIn )
 
 #endif
 
+
+
 	if (!g_bDidVersionCheck && IsDesktop())
 	{
 		g_bDidVersionCheck = true;
@@ -616,6 +648,15 @@ Entity * MainMenuCreate( Entity *pParentEnt, bool bFadeIn )
 		return pBG;
 	}
 
+
+#ifdef PLATFORM_HTML5
+	if (!g_bDidVersionCheck && IsStillLoadingPersistentData() )
+	{
+		WaitForSync(pBG);
+		return pBG;
+	}
+
+#endif
 
 	Entity *pEntDinkLogo = CreateOverlayEntity(pBG, "dinklogo", ReplaceWithDeviceNameInFileName("interface/iphone/logo_dink.rttex"), 0, 0);
 
