@@ -12863,24 +12863,18 @@ void StartScreenScrollTransition(int direction)
 
 	CheckTransitionSurface();
 	//remember this for later
-  	 
 
 	if (GetApp()->GetVar("disable_glread")->GetUINT32() == 1)
 	{
 		//no_transition = true;
-
 		return;
-	
 	}
 
 	//remove the aspect ratio hack
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 
-	//g_transitionSurf.InitBlankSurface(GetPrimaryGLX(), GetPrimaryGLY());
-	
 	UpdateFrameWithoutTransitionAndThinking();
-	
 	
 	if (GetApp()->GetVar("disable_glread")->GetUINT32() == 1)
 	{
@@ -12890,6 +12884,7 @@ void StartScreenScrollTransition(int direction)
 	{
 		g_transitionSurf.CopyFromScreen();
 	}
+
 	ApplyAspectRatioGLMatrix();
 	if (g_dglo.GetActiveView() != DinkGlobals::VIEW_ZOOMED)
 	{
@@ -12946,8 +12941,6 @@ void ProcessTransition(void)
 
 	float inverseProg = 1.0f - g_dglo.m_transitionProgress;
 	
-	
-
 	if (g_dglo.m_transitionProgress >= 1)
 	{
 		g_bTransitionActive = false;
@@ -12961,7 +12954,6 @@ void ProcessTransition(void)
 	float fTemp = inverseProg;
 	//fTemp = 1.0f;
 	glTranslatef((g_dglo.m_transitionOffset.x*fTemp),(g_dglo.m_transitionOffset.y*fTemp), 0);
-	//LogMsg("Trans: %.2f", g_dglo.m_transitionProgress);
 	//glScalef(G_TRANSITION_SCALE_TRICK,G_TRANSITION_SCALE_TRICK,1);
 
 	
@@ -12982,15 +12974,16 @@ void BlitSecondTransitionScreen()
 
 	if (g_bTransitionActive)
 	{
+
 		CheckTransitionSurface();
 		glMatrixMode(GL_MODELVIEW);
 		glPushMatrix();
-	
+
 		float offsetX = g_dglo.m_centeringOffset.x*(1.0f - ((float)GetFakePrimaryScreenSizeX() / (float)C_DINK_SCREENSIZE_X));
 		float offsetY = g_dglo.m_centeringOffset.y*(1.0f - ((float)GetFakePrimaryScreenSizeY() / (float)C_DINK_SCREENSIZE_Y));
-		
+
 		glTranslatef(-offsetX, -offsetY, 0);
-	
+
 		rtRectf dstRect = g_dglo.m_nativeGameArea;
 
 		static rtRectf dstOffset;
@@ -13001,7 +12994,6 @@ void BlitSecondTransitionScreen()
 			//fix black lines due to antialiasing
 			dstOffset = rtRectf(-1, -1, 1, 1);
 			srcOffset = rtRectf(1, 1, -1, -1);
-
 		}
 		else
 		{
@@ -13009,13 +13001,16 @@ void BlitSecondTransitionScreen()
 			dstOffset = rtRectf(-0.05, -0.05f, 0.05f, 0.05);
 			srcOffset = rtRectf(0.4, 0.4, -0.4, -0.4);
 		}
-		
-			dstRect.AdjustPosition( ( -g_dglo.m_transitionOffsetNative.x*g_dglo.m_transitionProgress),
-				 (  -g_dglo.m_transitionOffsetNative.y*g_dglo.m_transitionProgress));
-			
-			
+
+		dstRect.AdjustPosition((-g_dglo.m_transitionOffsetNative.x*g_dglo.m_transitionProgress),
+			(-g_dglo.m_transitionOffsetNative.y*g_dglo.m_transitionProgress));
+	
 			rtRectf srcRect = ConvertFakeScreenRectToReal(g_dglo.m_nativeGameArea);
-		//	LogMsg("Dest rect: %s",PrintRect(dstRect));
+#ifdef _DEBUG
+			//LogMsg("Final Trans Src rect: %s", PrintRect(srcRect).c_str());
+			//LogMsg("Trans Dest rect: %s", PrintRect(dstRect).c_str());
+			//LogMsg("Trans surf size: %s", PrintRect(g_transitionSurf.GetRectf()).c_str());
+#endif
 			g_transitionSurf.BlitEx(dstRect+dstOffset, srcRect+ srcOffset);
 		
 			
@@ -17097,7 +17092,7 @@ void DinkGlobals::SetView( eView view )
 		RecomputeAspectRatio();
 
 #ifdef _DEBUG
-		LogMsg("Rect %s AspectX: %.4f, Aspect Y: %.4f", PrintRect(g_dglo.m_nativeGameArea).c_str(), aspect, aspectY);
+		LogMsg("DinkGlobals::SetView>VIEW_FULL Rect %s AspectX: %.4f, Aspect Y: %.4f", PrintRect(g_dglo.m_nativeGameArea).c_str(), aspect, aspectY);
 #endif
 		}
 		
@@ -17921,7 +17916,6 @@ void RecomputeAspectRatio()
 	else
 	{
 		float aspect_r = (float)GetPrimaryGLX() / (float)GetPrimaryGLY(); // aspect ratio
-
 		const float correctAspectRatio = (float)C_DINK_SCREENSIZE_X / (float)C_DINK_SCREENSIZE_Y;
 
 		/*
@@ -17958,7 +17952,6 @@ void DinkReInitSurfacesAfterVideoChange()
 	{
 		g_transitionSurf.HardKill();
 		//CheckTransitionSurface();
-		
 		bool bHighColor = false;
 		if (lpDDSBackGround && lpDDSBackGround->m_pSurf && lpDDSBackGround->m_pSurf->GetSurfaceType() == SoftSurface::SURFACE_RGBA)
 			bHighColor = true;
@@ -17971,6 +17964,8 @@ void DinkReInitSurfacesAfterVideoChange()
 		lpDDSBackGround->Blt(NULL, NULL, NULL, DDBLT_COLORFILL | DDBLT_WAIT, &ddbltfx);
 
 		g_onePixelSurf.HardKill();
+
+		
 	}
 
 	RecomputeAspectRatio();
@@ -17987,7 +17982,9 @@ void DinkOnForeground()
 		//force reinit on windows even if using iphone or android mode
 		bForceReinit = true;
 #endif
-
+#ifdef PLATFORM_HTML5
+		//bForceReinit = true;
+#endif
 
 		if (IsDesktop() || GetEmulatedPlatformID() == PLATFORM_ID_ANDROID || bForceReinit) //xoom needs this too after a suspend/resume from hitting the power button
 		{

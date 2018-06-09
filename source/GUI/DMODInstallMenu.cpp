@@ -252,7 +252,7 @@ void OnDMODInstallHTTPFinish(VariantList *pVList)
 	Entity *pMenu = pVList->m_variant[0].GetComponent()->GetParent();
 
 #ifdef _DEBUG
-	LogMsg("Finish signal received");
+	LogMsg("Download finished...");
 #endif
 
 	DMODSetTitleLabel(pMenu, string("Installing ")+pMenu->GetVar("originalFileName")->GetString()+"...");

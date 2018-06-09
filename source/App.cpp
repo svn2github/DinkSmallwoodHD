@@ -913,6 +913,11 @@ void App::UpdateVideoSettings()
 	//SetFPSLimit(v);
 };
 
+void App::SaveSettings()
+{
+	m_varDB.Save("save.dat");
+}
+
 void App::SaveAllData()
 {
 
@@ -924,7 +929,7 @@ void App::SaveAllData()
 	}
 
 	//GetAudioManager()->StopMusic();
-	m_varDB.Save("save.dat");
+	SaveSettings();
 }
 
 void App::OnEnterBackground()

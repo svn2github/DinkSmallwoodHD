@@ -72,6 +72,7 @@ public:
 	Variant * GetVarWithDefault(const string &varName, const Variant &var) {return m_varDB.GetVarWithDefault(varName, var);}
 	int GetSpecial();
 	void UpdateVideoSettings();
+	void SaveSettings();
 	void SetUsingTouchScreen(bool bNew) { m_bUsingTouchScreen = bNew; }
 	bool GetUsingTouchScreen() {return m_bUsingTouchScreen;}
 	bool CanDownloadDMODS() {return m_bHasDMODSupport;}

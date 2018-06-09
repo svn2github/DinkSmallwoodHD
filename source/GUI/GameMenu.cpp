@@ -15,13 +15,7 @@
 #include "Entity/ArcadeInputComponent.h"
 #include "Renderer/SoftSurface.h"
 
-#ifdef _DEBUG
-#define AUTO_SAVE_MS (1000*8)
-
-#else
 #define AUTO_SAVE_MS (1000*60*5)
-
-#endif
 
 void UpdatePauseMenuPosition(Entity *pBG);
 

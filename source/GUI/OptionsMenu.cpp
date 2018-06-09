@@ -255,6 +255,7 @@ void OptionsMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity 
 		ZoomToPositionEntity(pMenu, CL_Vec2f(GetScreenSizeXf(),0), 500); //slide up
 		KillEntity(pMenu, 500);
 		AddFocusIfNeeded(pMenu->GetParent(), true, 500);
+		GetApp()->SaveSettings();
 		SyncPersistentData();
 	}
 
