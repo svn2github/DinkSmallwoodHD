@@ -89,6 +89,10 @@ set COMPONENT_SRC=%COMPPATH%\Button2DComponent.cpp %COMPPATH%\FilterInputCompone
 REM **************************************** ZLIB SOURCE CODE FILES
 set ZLIB_SRC=%ZLIBPATH%/deflate.c %ZLIBPATH%/gzio.c %ZLIBPATH%/infback.c %ZLIBPATH%/inffast.c %ZLIBPATH%/inflate.c %ZLIBPATH%/inftrees.c %ZLIBPATH%/trees.c %ZLIBPATH%/uncompr.c %ZLIBPATH%/zutil.c %ZLIBPATH%/adler32.c %ZLIBPATH%/compress.c %ZLIBPATH%/crc32.c
 
+REM ****************************** PNG SUPPORT 
+SET PNG_SRC=%PNGSRC%/png.c %PNGSRC%/pngerror.c %PNGSRC%/pnggccrd.c %PNGSRC%/pngget.c %PNGSRC%/pngmem.c %PNGSRC%/pngpread.c %PNGSRC%/pngread.c ^
+%PNGSRC%/pngrio.c %PNGSRC%/pngrtran.c %PNGSRC%/pngrutil.c %PNGSRC%/pngset.c %PNGSRC%/pngtrans.c %PNGSRC%/pngvcrd.c %PNGSRC%/pngwio.c %PNGSRC%/pngwtran.c
+
 
 REM **************************************** PARTICLE SYSTEM SOURCE CODE FILES
 set PARTICLE_SRC=%PPATH%/L_Defination.cpp %PPATH%/L_DroppingEffect.cpp %PPATH%/L_EffectEmitter.cpp %PPATH%/L_ExplosionEffect.cpp %PPATH%/L_MotionController.cpp %PPATH%/L_Particle.cpp ^
@@ -115,13 +119,13 @@ REM **************************************** END SOURCE
 
 :unused so far: -s USE_GLFW=3 -s NO_EXIT_RUNTIME=1 -s FORCE_ALIGNED_MEMORY=1 -s EMTERPRETIFY=1  -s EMTERPRETIFY_ASYNC=1 -DRT_EMTERPRETER_ENABLED -s TOTAL_MEMORY=16MB
 :To skip font loading so it needs no resource files or zlib, add  -DC_NO_ZLIB
-SET CUSTOM_FLAGS= -DHAS_SOCKLEN_T -DBOOST_ALL_NO_LIB -DPLATFORM_HTML5 -DRT_USE_SDL_AUDIO -DRT_JPG_SUPPORT -DC_GL_MODE -s LEGACY_GL_EMULATION=1 -DPLATFORM_HTML5  -s ALLOW_MEMORY_GROWTH=1 -Wno-c++11-compat-deprecated-writable-strings --ignore-dynamic-linking --memory-init-file 0 -Wno-switch -s PRECISE_F32=2 -Wno-writable-strings -Wno-shift-negative-value
+SET CUSTOM_FLAGS= -DHAS_SOCKLEN_T -DBOOST_ALL_NO_LIB -DPLATFORM_HTML5 -DRT_USE_SDL_AUDIO -DRT_JPG_SUPPORT -DRT_PNG_SUPPORT -DC_GL_MODE -s LEGACY_GL_EMULATION=1 -DPLATFORM_HTML5  -s ALLOW_MEMORY_GROWTH=1 -Wno-c++11-compat-deprecated-writable-strings --ignore-dynamic-linking --memory-init-file 0 -Wno-switch -s PRECISE_F32=2 -Wno-writable-strings -Wno-shift-negative-value
 
 :unused:   -s FULL_ES2=1 --emrun
 
 IF %USE_HTML5_CUSTOM_MAIN% EQU 1 (
 :add this define so we'll manually call mainf from the html later instead of it being auto
-SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -DRT_HTML5_USE_CUSTOM_MAIN -s EXPORTED_FUNCTIONS=['_mainf'] -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall','cwrap']
+SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -DRT_HTML5_USE_CUSTOM_MAIN -s EXPORTED_FUNCTIONS=['_mainf','_PROTON_SystemMessage','_PROTON_GUIMessage'] -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall','cwrap']
 SET FINAL_EXTENSION=js
 ) else (
 SET FINAL_EXTENSION=html
@@ -150,8 +154,13 @@ del %APP_NAME%.data
 del %APP_NAME%.mem
 del temp.bc
 
+:grab our shared WebLoaderData, this has default graphics and scripts that handle various emscripten/html5 communication
+:if you need to customize it, you can stop copying these and customize yours instead
+mkdir WebLoaderData
+copy /Y ..\..\shared\html5\templates\WebLoaderData .\WebLoaderData
+
 call emcc %CUSTOM_FLAGS% %INCLUDE_DIRS% ^
-%ZLIB_SRC% %JPG_SRC% %PARTICLE_SRC% -o temp.bc
+%ZLIB_SRC% %JPG_SRC% %PNG_SRC% %PARTICLE_SRC% -o temp.bc
 
 :../../shared/html5/fmodstudio/api/studio/lib/fmodstudio.bc
 call emcc %CUSTOM_FLAGS% %INCLUDE_DIRS% ^
