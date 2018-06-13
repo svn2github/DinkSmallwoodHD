@@ -1101,7 +1101,7 @@ void OnAutoSave(VariantList *pVList)
 			)
 		{
 			SaveAutoSave();
-
+			SyncPersistentData();
 			//reschedule this function to run again in a bit
 			GetMessageManager()->CallEntityFunction(pVList->Get(0).GetEntity(), AUTO_SAVE_MS, "OnAutoSave", pVList);
 			return;

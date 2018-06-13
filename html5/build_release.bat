@@ -1,5 +1,5 @@
 :Set below to DEBUG=1 for debug mode builds - slower but way easier to see problems. Disables the ASYNC stuff as that doesn't seem to play
-:well with the rest
+:well with the rest.  It uses Emscripten default html setup which doesn't allow uploading/downloading though.
 
 SET DEBUG=0
 
@@ -9,8 +9,10 @@ SET DEBUG=0
 SET USE_HTML5_CUSTOM_MAIN=1
 :If 1, this is used:
 
-SET CUSTOM_TEMPLATE=CustomMain4-3AspectRatioTemplate.html
-:SET CUSTOM_TEMPLATE=CustomMainFullTemplate.html
+
+SET CUSTOM_TEMPLATE=..\..\shared\html5\templates\CustomMain4-3AspectRatioTemplate.html
+:SET CUSTOM_TEMPLATE=..\..\shared\html5\templates\CustomMain3-2AspectRatioTemplate.html
+:SET CUSTOM_TEMPLATE=..\..\shared\html5\templates\CustomMainFullTemplate.html
 
 
 set CURPATH=%cd%

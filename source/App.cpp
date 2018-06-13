@@ -231,6 +231,12 @@ bool App::GetForceAspectRatio()
 
 bool App::UseClassicEscapeMenu()
 {
+
+	if (GetEmulatedPlatformID() == PLATFORM_ID_HTML5)
+	{
+		return true;
+	}
+
 	if (IsDesktop())
 	{
 		return true;
@@ -362,7 +368,11 @@ bool App::Init()
 
 
 #ifdef PLATFORM_HTML5
-	string crap = JLIB_GetURL();
+	
+	char *pStringTemp = JLIB_GetURL();
+
+	string crap = pStringTemp;
+	free(pStringTemp); //emscripten thing, trust me
 
 	int n = crap.find_last_of('?');
 	if (n == string::npos)
@@ -924,12 +934,13 @@ void App::SaveAllData()
 	if (GetDinkGameState() == DINK_GAME_STATE_PLAYING)
 	{
 	//	SaveState(GetSavePath()+"state.dat");
-		SaveState(g_dglo.m_savePath+"continue_state.dat");
+		SaveState(g_dglo.m_savePath+"continue_state.dat", false);
 		WriteLastPathSaved(g_dglo.m_savePath); //so we know what to reload
 	}
 
 	//GetAudioManager()->StopMusic();
 	SaveSettings();
+	SyncPersistentData();
 }
 
 void App::OnEnterBackground()
@@ -1042,6 +1053,55 @@ const char * GetBundleName()
 void App::OnMessage( Message &m )
 {
 	m_adManager.OnMessage(m); //gives the AdManager a way to handle messages
+	
+	
+	if (m.GetClass() == MESSAGE_CLASS_GUI)
+	{
+		if (m.GetType() == MESSAGE_TYPE_HTML5_GOT_UPLOAD)
+		{
+			LogMsg("Got uploaded file %s", m.GetStringParm().c_str());
+			string fName = m.GetStringParm();
+
+
+			size_t index = fName.find_last_of('_');
+			size_t periodPos = fName.find_last_of('.');
+
+			if (periodPos == string::npos || GetFileExtension(fName) != "dat") return;
+
+			string dmodName = "";
+
+			if (index != string::npos)
+			{
+				//yeah, it has one
+				dmodName = fName.substr(index + 1, periodPos - (index + 1));
+			}
+
+			//ok, ready to copy it.  But figure out where, and what the filename should be
+			string destPath = GetSavePath() + "dink/";
+			string destFile = fName;
+
+			//modify if needed for a dmod
+
+			if (!dmodName.empty())
+			{
+				destPath = GetDMODRootPath() + dmodName + "/";
+				destFile = fName.substr(0, index);
+				destFile += fName.substr(periodPos, fName.size() - periodPos);
+			}
+
+			LogMsg("Importing %s to %s", (GetSavePath() + fName).c_str(), (destPath + destFile).c_str());
+
+			/*
+			InitDinkPaths(GetBaseAppPath(), "dink", dmoddir);
+			GameCreate(pBG->GetParent(), 0, "", "Loading " + dmodName);
+			GameCreate(pMenu->GetParent(), 0, g_dglo.m_savePath + "continue_state.dat");
+			Entity *pMenu = DinkQuitGame();
+			PopUpCreate(pMenu, "Error loading save state.  Probably an older version, sorry.", "", "cancel", "Continue", "", "", true);
+			*/
+
+		}
+	}
+
 	BaseApp::OnMessage(m);
 }
 

@@ -950,7 +950,7 @@ void load_map(const int num)
 	FILE *          fp;
 	int holdme,lsize;
 
-	LogMsg("Loading map %d...",num);
+	//LogMsg("Loading map %d...",num);
 	g_dglos.m_bRenderBackgroundOnLoad = true;
 
 	StreamingInstance *pFile = GetFileManager()->GetStreaming(GetFileLocationString(g_dglos.current_map), NULL, false);
@@ -5059,7 +5059,7 @@ bool PlayMidi(const char *sFileName)
 	g_dglo.m_lastMusicPath = sFileName;
 
 	GetAudioManager()->Play(GetFileLocationString(fName), true, true, false);
-	LogMsg("Playing music %s", sFileName);
+	//LogMsg("Playing music %s", sFileName);
 	return true;
 }
 
@@ -7950,13 +7950,14 @@ pass:
 			LogMsg("Was told to kill game, so doing it like a good boy."); 
 			
 			g_sprite[1].freeze = 0;
-			SaveState(g_dglo.m_savePath+"continue_state.dat");
+			SaveState(g_dglo.m_savePath+"continue_state.dat", false);
 			WriteLastPathSaved("");
 
 			//kill our state.dat if it existed, not needed now, this can exist if an iphone goes into suspend, but then is resumed
 			RemoveFile(GetSavePath()+"state.dat", false);
 
 			DinkQuitGame();
+			SyncPersistentData();
 			//uncomment below if you want this to actually work
 			//PostMessage(g_hWndMain, WM_CLOSE, 0, 0);
 			
@@ -17564,7 +17565,7 @@ bool LoadScriptState(FILE *fp)
 }
 
 
-bool SaveState(string const &path)
+bool SaveState(string const &path, bool bSyncSaves)
 {
 	LogMsg("Saving %s (inside %s which is off of %s)", path.c_str(), g_dglo.m_gameDir.c_str(), g_dglo.m_savePath.c_str());
 	CreateDirectoryRecursively(g_dglo.m_savePath, g_dglo.m_gameDir);
@@ -17607,7 +17608,8 @@ bool SaveState(string const &path)
 
 	fclose(fp);
 
-	SyncPersistentData();
+	if (bSyncSaves)
+		SyncPersistentData();
 
 	return bOk; //success
 }
@@ -17983,7 +17985,7 @@ void DinkOnForeground()
 		bForceReinit = true;
 #endif
 #ifdef PLATFORM_HTML5
-		//bForceReinit = true;
+		bForceReinit = true;
 #endif
 
 		if (IsDesktop() || GetEmulatedPlatformID() == PLATFORM_ID_ANDROID || bForceReinit) //xoom needs this too after a suspend/resume from hitting the power button

@@ -835,6 +835,12 @@
     <ClCompile Include="..\..\shared\Irrlicht\source\Irrlicht\libpng\pngwtran.c">
       <Filter>shared\Renderer\libpng</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\shared\util\simple_md5.c">
+      <Filter>shared\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\shared\util\simple_md5_util.cpp">
+      <Filter>shared\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\App.h">
@@ -1403,6 +1409,12 @@
     </ClInclude>
     <ClInclude Include="..\..\shared\html5\SharedJSLIB.h">
       <Filter>shared\html5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\shared\util\simple_md5.h">
+      <Filter>shared\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\shared\util\simple_md5_util.h">
+      <Filter>shared\util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

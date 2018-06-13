@@ -3905,6 +3905,28 @@
     </ClCompile>
     <ClCompile Include="..\..\shared\util\RenderUtils.cpp" />
     <ClCompile Include="..\..\shared\util\ResourceUtils.cpp" />
+    <ClCompile Include="..\..\shared\util\simple_md5.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug GL WinDir|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug WebOS|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release GL WinDir|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release GL AkikoBox|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Common Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseBeta GL|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release GL|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug GL|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Common Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\shared\util\simple_md5_util.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug GL WinDir|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug WebOS|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release GL WinDir|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release GL AkikoBox|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Common Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseBeta GL|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release GL|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug GL|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Common Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\..\shared\util\TextScanner.cpp" />
     <ClCompile Include="..\..\shared\util\unzip\ioapi.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Common Debug|Win32'">
@@ -4303,6 +4325,8 @@
     <ClInclude Include="..\..\shared\util\RenderUtils.h" />
     <ClInclude Include="..\..\shared\util\ResourceUtils.h" />
     <ClInclude Include="..\..\shared\util\RTFileFormat.h" />
+    <ClInclude Include="..\..\shared\util\simple_md5.h" />
+    <ClInclude Include="..\..\shared\util\simple_md5_util.h" />
     <ClInclude Include="..\..\shared\util\TextScanner.h" />
     <ClInclude Include="..\..\shared\util\unzip\crypt.h" />
     <ClInclude Include="..\..\shared\util\unzip\ioapi.h" />

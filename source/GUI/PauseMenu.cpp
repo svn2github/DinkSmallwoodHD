@@ -10,6 +10,20 @@
 #include "PopUpMenu.h"
 #include "Entity/SelectButtonWithCustomInputComponent.h"
 
+
+#if defined _DEBUG || defined PLATFORM_HTML5
+
+const bool G_ALLOW_SAVE_EXPORTING = true;
+
+#else
+const bool G_ALLOW_SAVE_EXPORTING = false;
+#endif
+
+#ifdef PLATFORM_HTML5
+#include "HTML5Utils.h"
+#endif
+
+
 void PlayMenuMusic()
 {
 	
@@ -103,7 +117,7 @@ void PauseEnd(Entity *pMenu)
 	GetMessageManager()->CallEntityFunction(pMenu, 500, "OnDelete", NULL);
 	GetBaseApp()->SetGameTickPause(false);
 
-	SyncPersistentData();
+	//SyncPersistentData();
 
 	
 }
@@ -179,12 +193,13 @@ void PauseMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity se
 	{
 		//slide it off the screen and then kill the whole menu tree
 		RemoveFocusIfNeeded(pMenu);
-		SaveState(g_dglo.m_savePath+"continue_state.dat");
+		SaveState(g_dglo.m_savePath+"continue_state.dat", false);
 		WriteLastPathSaved("");
 		//kill our state.dat if it existed, not needed now, this can exist if an iphone goes into suspend, but then is resumed
 		RemoveFile(GetSavePath()+"state.dat", false);
 		//SlideScreen(pEntClicked->GetParent()->GetParent(), false);			
 		DinkQuitGame();
+		SyncPersistentData();
 	}
 
 	if (pEntClicked->GetName() == "Debug")
@@ -210,6 +225,37 @@ void PauseMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity se
 	{
 		SaveStateWithExtra();
 		UpdatePauseButtons(pMenu);
+		PauseEnd(pMenu);
+
+	}
+
+	if (pEntClicked->GetName() == "ExportQuickSave")
+	{
+		//SaveStateWithExtra(false);
+		//UpdatePauseButtons(pMenu);
+	
+		GetAudioManager()->Play("audio/quick_save.wav");
+		SaveState(DinkGetSavePath() + "quicksave.dat");
+
+		string prepend = g_dglo.m_dmodGameDir;
+
+		if (prepend.empty()) prepend = "dink";
+#ifdef PLATFORM_HTML5
+		
+		HTMLDownloadFileFromFileSystem(DinkGetSavePath() + "quicksave.dat", prepend + "_quicksave.dat");
+#endif
+		PauseEnd(pMenu);
+		ShowQuickMessage("Download started");
+	
+	}
+
+	if (pEntClicked->GetName() == "ImportQuickSave")
+	{
+	
+#ifdef PLATFORM_HTML5
+		HTMLUploadFileToFileSystem();
+//		HTMLDownloadFileFromFileSystem(DinkGetSavePath() + "quicksave.dat", g_dglo.m_dmodGameDir + "_quicksave.dat");
+#endif
 		PauseEnd(pMenu);
 
 	}
@@ -361,10 +407,52 @@ Entity * PauseMenuCreate(Entity *pParentEnt)
 	pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&PauseMenuOnSelect);
 	pButtonEntity->GetVar("alignment")->Set(uint32(ALIGNMENT_CENTER));
 
+	if (G_ALLOW_SAVE_EXPORTING)
+	{
+		Entity *pButton;
 
+		CL_Vec2f vEntSize = GetSize2DEntity(pButtonEntity);
+		CL_Vec2f vEntPos = GetPos2DEntity(pButtonEntity);
+		
+		float spacer = 80;
+		pButton = CreateTextButtonEntity(pBG, "ExportQuickSave", vEntPos.x, (vEntPos.y + vEntSize.y/2) +spacer, "(Export Quicksave to file)", true);
+		SetAlignmentEntity(pButton, ALIGNMENT_DOWN_CENTER);
+		pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&PauseMenuOnSelect);
+
+		//next button
+// 		pButton = CreateTextButtonEntity(pBG, "ExportNormalSave", vEntPos.x, (vEntPos.y + vEntSize.y / 2) + spacer+spacer, "(Export last save slot save)", true);
+// 		SetAlignmentEntity(pButton, ALIGNMENT_DOWN_CENTER);
+// 		pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&PauseMenuOnSelect);
+
+
+	}
+	
 	pButtonEntity = CreateOverlayButtonEntity(pBG , "QuickLoad", ReplaceWithLargeInFileName("interface/iphone/button_quickload.rttex"), iPhoneMapX(395), GetScreenSizeYf()/2); 
 	pButtonEntity->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&PauseMenuOnSelect);
 	pButtonEntity->GetVar("alignment")->Set(uint32(ALIGNMENT_CENTER));
+
+
+	if (G_ALLOW_SAVE_EXPORTING)
+	{
+		Entity *pButton;
+
+		CL_Vec2f vEntSize = GetSize2DEntity(pButtonEntity);
+		CL_Vec2f vEntPos = GetPos2DEntity(pButtonEntity);
+
+		float spacer = 80;
+		pButton = CreateTextButtonEntity(pBG, "ImportQuickSave", vEntPos.x, (vEntPos.y + vEntSize.y / 2) + spacer, "(Import Quicksave file)", true);
+		SetAlignmentEntity(pButton, ALIGNMENT_DOWN_CENTER);
+		pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&PauseMenuOnSelect);
+		SetButtonStyleEntity(pButton, Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH); //to get around HTML5 rules on uploading, required because it's only
+		//allowed when initiated by a user click
+// 		
+// 		//next button
+// 		pButton = CreateTextButtonEntity(pBG, "ImportNormalSave", vEntPos.x, (vEntPos.y + vEntSize.y / 2) + spacer + spacer, "(Import save slot file)", true);
+// 		SetAlignmentEntity(pButton, ALIGNMENT_DOWN_CENTER);
+// 		pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&PauseMenuOnSelect);
+
+
+	}
 
 	UpdatePauseButtons(pBG);
 	
@@ -414,17 +502,20 @@ Entity * PauseMenuCreate(Entity *pParentEnt)
 	SetButtonClickSound(pButtonEntity, ""); //no sound
 
 	EntityComponent *pKeys = AddHotKeyToButton(pButtonEntity, VIRTUAL_KEY_BACK);
+	
 	//work around problem of it instantly closing
 	pKeys->GetVar("disabled")->Set(uint32(1));
 	GetMessageManager()->SetComponentVariable(pKeys, 500, "disabled", uint32(0)); //enable it again
 
-	if (IsDesktop())
+	if (IsDesktop() || GetEmulatedPlatformID() == PLATFORM_ID_HTML5)
 	{
 		EntityComponent *pKeys = AddHotKeyToButton(pButtonEntity, VIRTUAL_KEY_F1);
 		//work around problem of it instantly closing
 		pKeys->GetVar("disabled")->Set(uint32(1));
 		GetMessageManager()->SetComponentVariable(pKeys, 500, "disabled", uint32(0)); //enable it again
 	}
+
+
 
 	/*
 	pKeys = AddHotKeyToButton(pButtonEntity, VIRTUAL_KEY_PROPERTIES);	

@@ -751,7 +751,7 @@ bool DinkLoadPlayerScript(const string fileName);
 void DinkUnloadUnusedGraphicsByUsageTime(unsigned int timeMS);
 
 bool LoadState(string const &path, bool bLoadPathsOnly);
-bool SaveState(string const &path);
+bool SaveState(string const &path, bool bSyncSaves = true);
 eDinkGameState GetDinkGameState();
 void SetDinkGameState(eDinkGameState state);
 void DinkModStrength(int mod);

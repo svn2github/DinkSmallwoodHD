@@ -72,7 +72,7 @@ void CursorComponent::OnInput( VariantList *pVList )
 
 
 
-	if (IsDesktop())
+	if (IsDesktop() || GetEmulatedPlatformID() == PLATFORM_ID_HTML5)
 	{
 
 		//controls for a real mouse

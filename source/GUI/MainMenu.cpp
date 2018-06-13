@@ -640,7 +640,6 @@ Entity * MainMenuCreate( Entity *pParentEnt, bool bFadeIn )
 #endif
 
 
-
 	if (!g_bDidVersionCheck && IsDesktop())
 	{
 		g_bDidVersionCheck = true;
