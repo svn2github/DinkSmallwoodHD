@@ -34,7 +34,7 @@ DinkGlobals g_dglo;
 DinkGlobalsStatic g_dglos; //static data, made to write/read from disk
 
 int32 g_spriteRank[C_MAX_SPRITES_AT_ONCE];
-
+string g_lastSaveSlotFileSaved;
 
 int32 C_DINK_MEM_MAX_ALLOWED = (1024*1024*20);
 int32 C_DINK_TEX_MEM_MAX_ALLOWED = (1024*1024*60);
@@ -1016,6 +1016,7 @@ void save_game(int num)
 	CreateDirectoryRecursively(g_dglo.m_savePath, g_dglo.m_gameDir);
 	sprintf(crap, "%ssave%d.dat", g_dglo.m_savePath.c_str(), num);
 	fp = fopen(crap, "wb");
+	g_lastSaveSlotFileSaved = crap;
 
 	if (!fp)
 	{
@@ -16843,6 +16844,7 @@ string GetDMODRootPath(string *pDMODNameOutOrNull)
 
 void InitDinkPaths(string gamePath, string gameDir, string dmodGameDir)
 {
+	g_lastSaveSlotFileSaved = "";
 
 	string dmodPath;
 	if (!dmodGameDir.empty())
@@ -16881,6 +16883,8 @@ void InitDinkPaths(string gamePath, string gameDir, string dmodGameDir)
 
 bool InitDinkEngine()
 {
+	g_lastSaveSlotFileSaved = "";
+
 	OneTimeDinkInit();
 	finiObjects();
 	SetDefaultVars(true);
@@ -17614,6 +17618,53 @@ bool SaveState(string const &path, bool bSyncSaves)
 	return bOk; //success
 }
 
+bool GetDMODDirFromState(string const &path, string &dmodDirOut)
+{
+	LogMsg("Loading %s", path.c_str());
+	FILE *fp = fopen(path.c_str(), "rb");
+
+	if (!fp)
+	{
+		LogMsg("Unable to load state, file not found");
+		return false;
+	}
+	
+	float version;
+	LoadFromFile(version, fp);
+	if (version < SAVE_FORMAT_VERSION) //save_state_version
+	{
+		LogMsg("Save state from newer version?!");
+		return false;
+	}
+	string unused;
+
+	LoadFromFile(dmodDirOut, fp);
+	LoadFromFile(unused, fp);
+
+	StringReplace("\\", "/", dmodDirOut);
+	bool bDidRemoveTrailingSlash = false;
+
+	if (dmodDirOut[dmodDirOut.length() - 1] == '/')
+	{
+		dmodDirOut = dmodDirOut.substr(0, dmodDirOut.length() - 1);
+		bDidRemoveTrailingSlash = true;
+	}
+	int index = dmodDirOut.find_last_of('/');
+	if (index != string::npos)
+	{
+		//just grab the last dmod dir part
+		dmodDirOut = dmodDirOut.substr(index+1, dmodDirOut.length());
+	}
+
+	fclose(fp);
+
+	if (bDidRemoveTrailingSlash)
+	{
+		//put it back
+		dmodDirOut += "/";
+	}
+	return true;
+}
 
 bool LoadState(string const &path, bool bLoadPathsOnly)
 {
@@ -17853,12 +17904,18 @@ void SaveAutoSave()
 	ShowQuickMessage("(Auto-saved)");
 };
 
-void LoadStateWithExtra()
+void LoadStateWithExtra(string forcedFileName)
 {
 	if (!lpDDSBack || g_dglo.m_curLoadState != FINISHED_LOADING) return;
 
 	//LogMsg("Loading state");
 	string fName = DinkGetSavePath()+"quicksave.dat";
+	
+	if (!forcedFileName.empty())
+	{
+		fName = forcedFileName;
+	}
+
 	GetAudioManager()->Play("audio/quick_load.wav");
 	LoadState(fName, false);
 	ShowQuickMessage("State loaded.");

@@ -69,12 +69,12 @@ Entity * EnterURLMenuCreate(Entity *pParentEnt)
 	pButtonEntity->GetVar("scale2d")->Set(CL_Vec2f(0.6f, 0.6f));
 	vTextAreaPos.y += iPhoneMapY(25);
 
-	string msg = "Enter a URL to a .dmod file to download and install.  (example: http://rtsoft.com/NewQuest.dmod )";
+	string msg = "Enter a URL to a .dmod file to download and install.  (example: https://rtsoft.com/NewQuest.dmod )";
 
 	switch (GetEmulatedPlatformID())
 	{
 		case PLATFORM_ID_WINDOWS:
-			msg = "Enter a URL to a .dmod file to download and install.  (example: http://rtsoft.com/NewQuest.dmod ) Use Ctrl-V to paste from the clipboard.";
+			msg = "Enter a URL to a .dmod file to download and install.  (example: https://rtsoft.com/NewQuest.dmod ) Use Ctrl-V to paste from the clipboard.";
 		break;
 	}
 	

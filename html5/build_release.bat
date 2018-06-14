@@ -119,9 +119,9 @@ set APP_SRC=%APP%\App.cpp %APP%\Component\ActionButtonComponent.cpp %APP%\Compon
 %APP%\GUI\PauseMenu.cpp %APP%\GUI\PopUpMenu.cpp %APP%\GUI\QuickTipMenu.cpp %APP%\GUI\ReadTextMenu.cpp %APP%\GUI\ExpiredMenu.cpp 
 REM **************************************** END SOURCE
 
-:unused so far: -s USE_GLFW=3 -s NO_EXIT_RUNTIME=1 -s FORCE_ALIGNED_MEMORY=1 -s EMTERPRETIFY=1  -s EMTERPRETIFY_ASYNC=1 -DRT_EMTERPRETER_ENABLED -s TOTAL_MEMORY=16MB
+:unused so far: -s USE_GLFW=3 -s NO_EXIT_RUNTIME=1 -s FORCE_ALIGNED_MEMORY=1 -s EMTERPRETIFY=1  -s EMTERPRETIFY_ASYNC=1 -DRT_EMTERPRETER_ENABLED -s TOTAL_MEMORY=16MB  -s PRECISE_F32=2 
 :To skip font loading so it needs no resource files or zlib, add  -DC_NO_ZLIB
-SET CUSTOM_FLAGS= -DHAS_SOCKLEN_T -DBOOST_ALL_NO_LIB -DPLATFORM_HTML5 -DRT_USE_SDL_AUDIO -DRT_JPG_SUPPORT -DRT_PNG_SUPPORT -DC_GL_MODE -s LEGACY_GL_EMULATION=1 -DPLATFORM_HTML5  -s ALLOW_MEMORY_GROWTH=1 -Wno-c++11-compat-deprecated-writable-strings --ignore-dynamic-linking --memory-init-file 0 -Wno-switch -s PRECISE_F32=2 -Wno-writable-strings -Wno-shift-negative-value
+SET CUSTOM_FLAGS= -DHAS_SOCKLEN_T -DBOOST_ALL_NO_LIB -DPLATFORM_HTML5 -DRT_USE_SDL_AUDIO -DRT_JPG_SUPPORT -DRT_PNG_SUPPORT -DC_GL_MODE -s LEGACY_GL_EMULATION=1 -DPLATFORM_HTML5  -s ALLOW_MEMORY_GROWTH=1 -Wno-c++11-compat-deprecated-writable-strings --ignore-dynamic-linking --memory-init-file 0 -Wno-switch -Wno-writable-strings -Wno-shift-negative-value
 
 :unused:   -s FULL_ES2=1 --emrun
 

@@ -21,6 +21,8 @@
 #include <time.h>
 #include "Gamepad/GamepadManager.h"
 #include "Gamepad/GamepadProvideriCade.h"
+#include "GUI/PopUpMenu.h"
+#include "GUI/PauseMenu.h"
 
 #ifdef PLATFORM_HTML5
 #include "html5/HTML5Utils.h"
@@ -232,7 +234,7 @@ bool App::GetForceAspectRatio()
 bool App::UseClassicEscapeMenu()
 {
 
-	if (GetEmulatedPlatformID() == PLATFORM_ID_HTML5)
+	if (GetEmulatedPlatformID() == PLATFORM_ID_HTML5 && !GetApp()->GetUsingTouchScreen())
 	{
 		return true;
 	}
@@ -1050,6 +1052,101 @@ const char * GetBundleName()
 	return bundleName;
 }
 
+
+void ImportSaveState(string physicalFname)
+{
+
+	Entity *pMenu = GetEntityRoot()->GetEntityByName("GameMenu");
+
+	string originalDMODDir = g_dglo.m_dmodGameDir;
+	string newDMODDir;
+
+	bool bSuccess = GetDMODDirFromState(physicalFname, newDMODDir);
+	//newDMODDir += "/";
+
+	if (!bSuccess)
+	{
+		//RemoveFile(fName, false);
+		GetAudioManager()->Play("audio/buzzer2.wav");
+		PopUpCreate(pMenu, "Error loading save state.  Probably an older version, sorry.", "", "cancel", "Continue", "", "", true);
+		SyncPersistentData();
+
+	}
+	else
+	{
+		LogMsg("We are in %s, but now we need %s", originalDMODDir.c_str(), newDMODDir.c_str());
+
+		if (!newDMODDir.empty())
+		{
+
+			if (!FileExists(GetDMODRootPath() + newDMODDir + "dmod.diz"))
+			{
+				PopUpCreate(pMenu, "Can't find file " + newDMODDir + "dmod.diz" + ", maybe you need to install the DMOD first?", "", "cancel", "Continue", "", "", true);
+				return;
+			}
+		}
+
+		if (originalDMODDir == newDMODDir)
+		{
+			LoadStateWithExtra(physicalFname);
+		}
+		else
+		{
+			//whole different dmod, we need to get fancy here
+			LogMsg("Switching to correct DMOD dir for this quicksave...");
+			//SetDinkGameState(DINK_GAME_STATE_NOT_PLAYING);
+
+			Entity *pNewMenu = DinkQuitGame();
+			KillEntity(pMenu);
+
+			DisableAllButtonsEntity(pNewMenu);
+			SlideScreen(pNewMenu, false);
+			GetMessageManager()->CallEntityFunction(pNewMenu, 500, "OnDelete", NULL);
+
+			InitDinkPaths(GetBaseAppPath(), "dink", RemoveTrailingBackslash(newDMODDir));
+			GameCreate(pNewMenu->GetParent(), 0, physicalFname);
+			GetBaseApp()->SetGameTickPause(false);
+		}
+	}
+}
+
+void ImportNormalSaveSlot(string fileName, string outputFileName)
+{
+	//well... directly loading it is possible but.. uhh.. DMODs may need their own startup
+	//scripts so I better just copy the file over instead.
+	Entity *pMenu = GetEntityRoot()->GetEntityByName("GameMenu");
+
+	string path = g_dglo.m_dmodGamePathWithDir;
+
+	if (path.empty())
+	{
+		//must be dink and not a DMOD, special case
+		path = GetSavePath()+"/dink/";
+	}
+
+	//fix outputfilename if it's wrong
+	StripWhiteSpace(outputFileName);
+	int index = outputFileName.find_first_of('(');
+	if (index != string::npos)
+	{
+		//it probably looks like "save2 (2).dat" due to chrome renaming if it existed, fix it
+		outputFileName = outputFileName.substr(0, index - 1) + "."+GetFileExtension(outputFileName);
+	}
+	LogMsg("Copying %s to %s", fileName.c_str(), (path + outputFileName).c_str());
+
+	if (!GetFileManager()->Copy(fileName, path + outputFileName, false))
+	{
+
+		PopUpCreate(pMenu, ("Error copying " + outputFileName + " into "+ g_dglo.m_dmodGamePathWithDir + outputFileName+"!").c_str(), "", "cancel", "Continue", "", "", true);
+
+		return;
+	}
+	
+	PopUpCreate(pMenu, "Ok, we've put " + outputFileName +" into the active game directory. You can now load this save slot like normal.", "", "cancel", "Continue", "", "", true);
+
+}
+
+
 void App::OnMessage( Message &m )
 {
 	m_adManager.OnMessage(m); //gives the AdManager a way to handle messages
@@ -1059,45 +1156,24 @@ void App::OnMessage( Message &m )
 	{
 		if (m.GetType() == MESSAGE_TYPE_HTML5_GOT_UPLOAD)
 		{
-			LogMsg("Got uploaded file %s", m.GetStringParm().c_str());
 			string fName = m.GetStringParm();
+			string physicalFname = "proton_temp.tmp";
+			int fileSize = GetFileSize(physicalFname);
+			LogMsg("Got uploaded file %s (as %s). %d bytes", m.GetStringParm().c_str(), physicalFname.c_str(),
+				fileSize);
+			
 
-
-			size_t index = fName.find_last_of('_');
-			size_t periodPos = fName.find_last_of('.');
-
-			if (periodPos == string::npos || GetFileExtension(fName) != "dat") return;
-
-			string dmodName = "";
-
-			if (index != string::npos)
+			if (fileSize > 1024 * 1000)
 			{
-				//yeah, it has one
-				dmodName = fName.substr(index + 1, periodPos - (index + 1));
+				//well, it's big, let's assume it's a full save state
+				ImportSaveState(physicalFname);
+			}
+			else
+			{
+				ImportNormalSaveSlot(physicalFname, fName);
+
 			}
 
-			//ok, ready to copy it.  But figure out where, and what the filename should be
-			string destPath = GetSavePath() + "dink/";
-			string destFile = fName;
-
-			//modify if needed for a dmod
-
-			if (!dmodName.empty())
-			{
-				destPath = GetDMODRootPath() + dmodName + "/";
-				destFile = fName.substr(0, index);
-				destFile += fName.substr(periodPos, fName.size() - periodPos);
-			}
-
-			LogMsg("Importing %s to %s", (GetSavePath() + fName).c_str(), (destPath + destFile).c_str());
-
-			/*
-			InitDinkPaths(GetBaseAppPath(), "dink", dmoddir);
-			GameCreate(pBG->GetParent(), 0, "", "Loading " + dmodName);
-			GameCreate(pMenu->GetParent(), 0, g_dglo.m_savePath + "continue_state.dat");
-			Entity *pMenu = DinkQuitGame();
-			PopUpCreate(pMenu, "Error loading save state.  Probably an older version, sorry.", "", "cancel", "Continue", "", "", true);
-			*/
 
 		}
 	}

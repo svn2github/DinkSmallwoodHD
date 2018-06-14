@@ -229,6 +229,37 @@ void PauseMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity se
 
 	}
 
+		if (pEntClicked->GetName() == "ExportNormalSave")
+		{
+			if (g_lastSaveSlotFileSaved.empty())
+			{
+				PopUpCreate(pMenu, "You haven't used a save machine recently. Go use one and come back!", "", "cancel", "Continue", "", "", true);
+				return;
+			}
+
+			string fileName = GetFileNameFromString(g_lastSaveSlotFileSaved);
+
+#ifdef PLATFORM_HTML5
+			HTMLDownloadFileFromFileSystem(g_lastSaveSlotFileSaved, fileName);
+#else
+#endif
+			UpdatePauseButtons(pMenu);
+			PauseEnd(pMenu);
+			PopUpCreate(pMenu->GetParent(), "Started download of last save slot saved. (" + fileName + ")", "", "cancel", "Continue", "", "", true);
+		}
+
+		if (pEntClicked->GetName() == "ImportNormalSave")
+		{
+#ifdef PLATFORM_HTML5
+			HTMLUploadFileToFileSystem();
+#else
+
+			GetMessageManager()->SendGUIStringEx(MESSAGE_TYPE_HTML5_GOT_UPLOAD, 0, 0, 0, "purpoise_quicksave.dat", 0);
+#endif
+			PauseEnd(pMenu);
+
+		}
+
 	if (pEntClicked->GetName() == "ExportQuickSave")
 	{
 		//SaveStateWithExtra(false);
@@ -243,6 +274,10 @@ void PauseMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity se
 #ifdef PLATFORM_HTML5
 		
 		HTMLDownloadFileFromFileSystem(DinkGetSavePath() + "quicksave.dat", prepend + "_quicksave.dat");
+#else
+
+		//Fake message for debugging
+
 #endif
 		PauseEnd(pMenu);
 		ShowQuickMessage("Download started");
@@ -255,6 +290,9 @@ void PauseMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity se
 #ifdef PLATFORM_HTML5
 		HTMLUploadFileToFileSystem();
 //		HTMLDownloadFileFromFileSystem(DinkGetSavePath() + "quicksave.dat", g_dglo.m_dmodGameDir + "_quicksave.dat");
+#else
+
+		GetMessageManager()->SendGUIStringEx(MESSAGE_TYPE_HTML5_GOT_UPLOAD, 0, 0, 0, "purpoise_quicksave.dat", 0);
 #endif
 		PauseEnd(pMenu);
 
@@ -420,9 +458,9 @@ Entity * PauseMenuCreate(Entity *pParentEnt)
 		pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&PauseMenuOnSelect);
 
 		//next button
-// 		pButton = CreateTextButtonEntity(pBG, "ExportNormalSave", vEntPos.x, (vEntPos.y + vEntSize.y / 2) + spacer+spacer, "(Export last save slot save)", true);
-// 		SetAlignmentEntity(pButton, ALIGNMENT_DOWN_CENTER);
-// 		pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&PauseMenuOnSelect);
+		pButton = CreateTextButtonEntity(pBG, "ExportNormalSave", vEntPos.x, (vEntPos.y + vEntSize.y / 2) + spacer+spacer, "(Export save slot to file)", true);
+		SetAlignmentEntity(pButton, ALIGNMENT_DOWN_CENTER);
+		pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&PauseMenuOnSelect);
 
 
 	}
@@ -445,11 +483,13 @@ Entity * PauseMenuCreate(Entity *pParentEnt)
 		pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&PauseMenuOnSelect);
 		SetButtonStyleEntity(pButton, Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH); //to get around HTML5 rules on uploading, required because it's only
 		//allowed when initiated by a user click
-// 		
-// 		//next button
-// 		pButton = CreateTextButtonEntity(pBG, "ImportNormalSave", vEntPos.x, (vEntPos.y + vEntSize.y / 2) + spacer + spacer, "(Import save slot file)", true);
-// 		SetAlignmentEntity(pButton, ALIGNMENT_DOWN_CENTER);
-// 		pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&PauseMenuOnSelect);
+		
+		//next button
+		pButton = CreateTextButtonEntity(pBG, "ImportNormalSave", vEntPos.x, (vEntPos.y + vEntSize.y / 2) + spacer + spacer, "(Import save slot file)", true);
+		SetAlignmentEntity(pButton, ALIGNMENT_DOWN_CENTER);
+		pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&PauseMenuOnSelect);
+		SetButtonStyleEntity(pButton, Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH); //to get around HTML5 rules on uploading, required because it's only
+																					   //allowed when initiated by a user click
 
 
 	}

@@ -192,7 +192,7 @@ void AboutMenuAddScrollContent(Entity *pParent)
 	
 
 	string msg =
-		GetAppName()+string("`$ ")+GetApp()->GetVersionString()+" Build "+toString(GetApp()->GetBuild())+"``\nCopyright (c) 1997-2017 Robinson Technologies\n"\
+		GetAppName()+string("`$ ")+GetApp()->GetVersionString()+" Build "+toString(GetApp()->GetBuild())+"``\nCopyright (c) 1997-2018 Robinson Technologies\n"\
 		"\nDink Script Version: `$1.10``\n\n"\
 		;
 
@@ -315,39 +315,38 @@ msg += \
 	//some special links:
 	Entity *pButton;
 
-	pButton = CreateTextButtonEntity(pParent, "email", iPhoneMapX(x), y, "Have a suggestion, bug report, or need help? Tap here to email us", true);
-	pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&AboutMenuOnSelect);
-	y += pButton->GetVar("size2d")->GetVector2().y;
-	y += ySpacer;
+	if (GetApp()->CanDownloadDMODS())
+	{
+		pButton = CreateTextButtonEntity(pParent, "dinknetwork", iPhoneMapX(x), y, "Visit the Dink Network (Dink files, forums and more)", true);
+		pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&AboutMenuOnSelect);
+		y += pButton->GetVar("size2d")->GetVector2().y;
+		y += ySpacer;
+	}
 
-	pButton = CreateTextButtonEntity(pParent, "list", iPhoneMapX(x), y, "Subscribe to the RTsoft Newsletter", true);
-	pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&AboutMenuOnSelect);
-	y += pButton->GetVar("size2d")->GetVector2().y;
-	y += ySpacer;
+// 
+// 	pButton = CreateTextButtonEntity(pParent, "email", iPhoneMapX(x), y, "Have a suggestion, bug report, or need help? Tap here to email us", true);
+// 	pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&AboutMenuOnSelect);
+// 	y += pButton->GetVar("size2d")->GetVector2().y;
+// 	y += ySpacer;
+
+// 
+// 	pButton = CreateTextButtonEntity(pParent, "list", iPhoneMapX(x), y, "Subscribe to the RTsoft Newsletter", true);
+// 	pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&AboutMenuOnSelect);
+// 	y += pButton->GetVar("size2d")->GetVector2().y;
+// 	y += ySpacer;
 	
+
 	pButton = CreateTextButtonEntity(pParent, "twitter", iPhoneMapX(x), y, "Click here for the RTsoft twitter page", true);
 	pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&AboutMenuOnSelect);
 	y += pButton->GetVar("size2d")->GetVector2().y;
 	y += ySpacer;
 
-	pButton = CreateTextButtonEntity(pParent, "forums", iPhoneMapX(x), y, "Visit the official RTsoft Dink Forums", true);
-	pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&AboutMenuOnSelect);
-	y += pButton->GetVar("size2d")->GetVector2().y;
-	y += ySpacer;
+// 
+// 	pButton = CreateTextButtonEntity(pParent, "forums", iPhoneMapX(x), y, "Visit the official RTsoft forums", true);
+// 	pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&AboutMenuOnSelect);
+// 	y += pButton->GetVar("size2d")->GetVector2().y;
+// 	y += ySpacer;
 
-
-	if (GetApp()->CanDownloadDMODS()) 
-	{
-	
-	pButton = CreateTextButtonEntity(pParent, "dinknetwork", iPhoneMapX(x), y, "Want to download/make DMODs? Tap here to visit the Dink Network", true);
-	pButton->GetShared()->GetFunction("OnButtonSelected")->sig_function.connect(&AboutMenuOnSelect);
-	y += pButton->GetVar("size2d")->GetVector2().y;
-	y += ySpacer;
-	}
-
-
-	"\nFound a bug or have a question?  Email us at `wsupport@rtsoft.com``.\n"\
-		"\nCheck out our other wacky games:\n";
 
 	vTextBoxPos = CL_Vec2f(iPhoneMapX(x),y);
 	msg = "\nIf you like Dink, please check out our other games:\n";
@@ -373,9 +372,9 @@ msg += \
 	{
 		string adText = "`wDink Smallwood HD for iOS```8 - Love Dink? Then get it on your iPhone and iPad!";
 		
-		if (GetEmulatedPlatformID() == PLATFORM_ID_WINDOWS)
+		if (GetEmulatedPlatformID() == PLATFORM_ID_WINDOWS || GetEmulatedPlatformID() == PLATFORM_ID_HTML5)
 		{
-			adText = "`wDink Smallwood HD for mobile```8 - Love Dink? Then get it for your iPhone, iPad, or Android device!";
+			adText = "`wDink Smallwood HD for mobile```8 - Dink also has free native mobile versions available!";
 		}
 		AddBlurb(pParent, x, y, "dink_ad", adText);
 	y += iPhoneMapY(blurbSpacingY);
@@ -393,9 +392,9 @@ msg += \
 
 	vTextBoxPos = CL_Vec2f(iPhoneMapX(x),y);
 
-	msg = "`8`$Dink Smallwood HD`` was created by `wSeth A. Robinson`` (code) and `wJustin Martin`` (graphics).\n\n"\
+	msg = "`8`$Dink Smallwood HD`` was created by `wSeth A. Robinson`` (code), `wJustin Martin`` (graphics) and includes additional contributions from Dan Walma.\n\n"\
 		"`8The original `$Dink Smallwood`` was created by `wSeth A. Robinson`` (engine/scripting/music), `wJustin Martin`` (graphics), `wGreg Smith`` (scripting/music), and `wShawn Teal``. It also featured music by `wJoel Bakker`` and `wMitch Brink``."\
-		"\n\nSpecial thanks to `wDan Walma`` and the `wdinksmallwood.net`` community for their `$Dink`` improvements."\
+		"\n\nSpecial thanks to `wDan Walma`` and the `wdinksmallwood.net`` community for their `$Dink`` creations and support over the years!"\
 		"\n\n"\
 		"This product is less buggy thanks to:\n\n`w"\
 		"Shawn Teal\n"\

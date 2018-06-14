@@ -72,7 +72,7 @@ void CursorComponent::OnInput( VariantList *pVList )
 
 
 
-	if (IsDesktop() || GetEmulatedPlatformID() == PLATFORM_ID_HTML5)
+	if (IsDesktop() || (GetEmulatedPlatformID() == PLATFORM_ID_HTML5 && !GetApp()->GetUsingTouchScreen()) )
 	{
 
 		//controls for a real mouse
@@ -111,11 +111,9 @@ void CursorComponent::OnInput( VariantList *pVList )
 		}
 	}
 	else
-
 	{
 
 		//controls for a touch screen.  Selecting is different
-
 
 		switch (eMessageType(int(pVList->Get(0).GetFloat())))
 		{

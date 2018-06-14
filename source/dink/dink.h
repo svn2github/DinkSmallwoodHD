@@ -732,6 +732,7 @@ enum eDinkGameState
 };
 extern DinkGlobals g_dglo;
 extern DinkGlobalsStatic g_dglos; //static data, made to write/read from disk
+extern string g_lastSaveSlotFileSaved;
 
 bool load_game_small(int num, char * line, int *mytime);
 void InitDinkPaths(string gamePath, string gameDir, string dmodGameDir);
@@ -752,6 +753,7 @@ void DinkUnloadUnusedGraphicsByUsageTime(unsigned int timeMS);
 
 bool LoadState(string const &path, bool bLoadPathsOnly);
 bool SaveState(string const &path, bool bSyncSaves = true);
+bool GetDMODDirFromState(string const &path, string &dmodDirOut);
 eDinkGameState GetDinkGameState();
 void SetDinkGameState(eDinkGameState state);
 void DinkModStrength(int mod);
@@ -770,7 +772,7 @@ void DinkAddBow();
 bool DinkGetSpeedUpMode();
 void DinkSetSpeedUpMode(bool bSpeedup);
 void SaveStateWithExtra();
-void LoadStateWithExtra();
+void LoadStateWithExtra(string forcedFileName="");
 void SaveAutoSave();
 void DinkOnForeground(); 
 string GetDMODStaticRootPath();

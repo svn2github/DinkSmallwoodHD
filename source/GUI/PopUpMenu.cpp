@@ -213,6 +213,11 @@ void PopUpCreate(Entity *pEnt, string msg, string url, string button1Action, str
 	pLabel->GetVar("alignment")->Set(uint32(ALIGNMENT_CENTER));
 	pLabel->GetFunction("OnButtonSelected")->sig_function.connect(&PopUpMenuOnSelect);
 	pLabel->GetVar("url")->Set(url); //just in case we want to know this later, store it in the button itself
+	
+	if (!url.empty())
+	{
+		SetButtonStyleEntity(pLabel, Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH); //to get around HTML5 rules on uploading, required because it's only
+	}
 	FadeInEntity(pButton, true, 300, 250);
 	if (button2Label.empty())
 	{
@@ -228,6 +233,11 @@ void PopUpCreate(Entity *pEnt, string msg, string url, string button1Action, str
 		pLabel->GetVar("alignment")->Set(uint32(ALIGNMENT_CENTER));
 		pLabel->GetFunction("OnButtonSelected")->sig_function.connect(&PopUpMenuOnSelect);
 		pLabel->GetVar("url")->Set(url); //just in case we want to know this later, store it in the button itself
+		
+		if (!url.empty())
+		{
+			SetButtonStyleEntity(pLabel, Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH); //to get around HTML5 rules on uploading, required because it's only
+		}
 		FadeInEntity(pButton, true, 300, 350);
 
 		if (button3Label.empty())
@@ -246,6 +256,11 @@ void PopUpCreate(Entity *pEnt, string msg, string url, string button1Action, str
 			pLabel->GetVar("alignment")->Set(uint32(ALIGNMENT_CENTER));
 			pLabel->GetFunction("OnButtonSelected")->sig_function.connect(&PopUpMenuOnSelect);
 			pLabel->GetVar("url")->Set(url); //just in case we want to know this later, store it in the button itself
+			
+			if (!url.empty())
+			{
+				SetButtonStyleEntity(pLabel, Button2DComponent::BUTTON_STYLE_CLICK_ON_TOUCH); //to get around HTML5 rules on uploading, required because it's only
+			}
 			FadeInEntity(pButton, true, 300, 450);
 		}
 	}

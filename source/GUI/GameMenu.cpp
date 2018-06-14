@@ -616,6 +616,15 @@ void BuildControls(float fadeTimeMS)
 	float trans = 0.0f;
 	Entity *pButtonEntity;
 
+#ifdef PLATFORM_HTML5
+	if (GetTouchesReceived() > 0)
+	{
+		//using a touch screen, go into that mode
+		GetApp()->SetUsingTouchScreen(true);
+	}
+
+#endif
+
 	if (GetApp()->GetUsingTouchScreen())
 	{
 		if (g_dglo.GetActiveView() != DinkGlobals::VIEW_ZOOMED && IsDrawingDinkStatusBar())
