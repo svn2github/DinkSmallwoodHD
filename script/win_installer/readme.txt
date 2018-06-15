@@ -300,6 +300,10 @@ use timing (Myster island camera sequence for example) easier though, not sure.
 
  ------ Change log for 1.91 ----------
 
- * This release fixes CVE-2018-0496: Sylvain Beucler and Dan Walma discovered several directory traversal issues in DFArc, an extension manager for the Dink Smallwood game, allowing an attacker to overwrite arbitrary files on the user's system. (While this doesn't use DFArc, some of the same "zip slip" issues applied)
+* This release fixes CVE-2018-0496: Sylvain Beucler and Dan Walma discovered several directory traversal issues in DFArc, an extension manager for the Dink Smallwood game, allowing an attacker to overwrite arbitrary files on the user's system. (While this doesn't use DFArc, some of the same "zip slip" issues applied)
 * Applied Dan Walma's fix so DinkHD would not incorrectly interpret sp_frame(x, -1) as sp_frame(x, 1), this fixes an issue with the Malachi the Jerk DMOD
+
+ ------ Change log for 1.92 ----------
+ * (Bugfix) Fixed issue that caused graphical glitches in the DMOD Revolution
+ * Looping sounds like fire/save machines now properly pause when app loses focus
  

@@ -1328,6 +1328,14 @@ void UpdatePauseMenuPosition(Entity *pBG)
 
 void GameFinishLoading(Entity *pBG)
 {
+
+#ifdef PLATFORM_HTML5
+	if (GetTouchesReceived() > 0)
+	{
+		GetApp()->SetUsingTouchScreen(true);
+	}
+#endif
+
 	float trans = rt_max(0.4, GetApp()->GetVar("gui_transparency")->GetFloat());
 	Entity *pButtonEntity;
 	DestroyUnusedTextures();

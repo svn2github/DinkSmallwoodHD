@@ -19,6 +19,9 @@ void ScanSeqFilesIfNeeded(int seq);
 bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly);
 
 #define C_DINK_SCREEN_TRANSITION_TIME_MS 400
+#ifdef _DEBUG
+int g_debugOps = 0;
+#endif
 
 const float SAVE_FORMAT_VERSION = 3.1f;
 const int C_DINK_FADE_TIME_MS = 300;
@@ -1569,9 +1572,16 @@ void draw_wait()
 }
 
 
-bool LoadSpriteSingleFrame(string fNameBase, int seq, int oo, int picIndex, eTransparencyType transType, FFReader *pReader, rtRect32 hardbox, int xoffset, int yoffset, int notanim)
+bool LoadSpriteSingleFrame(string fNameBase, int seq, int oo, int picIndex, eTransparencyType transType, FFReader *pReader, rtRect32 hardbox, int xoffset, int yoffset, int notanim,
+	bool *pLoadWasTruncated = NULL)
 {
 
+#ifdef _DEBUG
+	if (seq == 12)
+	{
+		//LogMsg("LoadSpriteSingleFrame");
+	}
+#endif
 	int work;
 	string fName = fNameBase;
 	if (oo < 10) fName += "0";
@@ -1585,9 +1595,13 @@ bool LoadSpriteSingleFrame(string fNameBase, int seq, int oo, int picIndex, eTra
 		if (pMem && oo > g_dglos.g_seq[seq].m_spaceAllowed)
 		{
 #ifdef _DEBUG
-			LogMsg("Truncating anim to fit in existing seq %d", seq);
+			LogMsg("Truncating anim %s to fit in existing seq %d?! forcing reload with new length", fName.c_str(), seq);
 #endif
 			SAFE_DELETE_ARRAY(pMem);
+			if (pLoadWasTruncated)
+			{
+				*pLoadWasTruncated = true;
+			}
 		}
 	}
 
@@ -1793,7 +1807,7 @@ bool LoadSpriteSingleFrame(string fNameBase, int seq, int oo, int picIndex, eTra
 }
 
 bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, rtRect32 hardbox, eTransparencyType transType, bool leftalign, bool bScanOnly = false,
-				  int frame = 0)
+				  int frame = 0, bool *bLoadWasTruncated = NULL)
 {
 
 	char hold[5];
@@ -1830,7 +1844,8 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 	{
 		//special code for loading a single frame...
 
-		LoadSpriteSingleFrame(fNameBase, seq, frame, g_dglos.g_seq[seq].s+frame, transType, &reader, hardbox, xoffset, yoffset, false);
+		LoadSpriteSingleFrame(fNameBase, seq, frame, g_dglos.g_seq[seq].s+frame, transType, &reader, hardbox, xoffset, yoffset, false,
+			NULL);
 		return true;
 	}
 
@@ -1878,6 +1893,10 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 			if (oo <= C_MAX_SPRITE_FRAMES && (reader.DoesFileExist(fNameBase+string(hold)+toString(oo)+".bmp", fNameBase + "01.bmp") || 
 											  reader.DoesFileExist(fNameBase+string(hold)+toString(oo)+".png", fNameBase + "01.png")))
 			{
+				if (!reload)
+				{
+					save_cur++;
+				}
 				g_dglos.g_curPicIndex++;
 			} else
 			{
@@ -1904,15 +1923,6 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 	}
 
 
-#ifdef _DEBUG
-
-	if (seq == 424)
-	{
-
-	//LogMsg("hey");
-	
-	}
-#endif
 
 	for (int oo = 1; oo <= C_MAX_SPRITE_FRAMES; oo++)
 	{
@@ -1927,7 +1937,7 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 
 #endif
 
-		if (LoadSpriteSingleFrame(fNameBase, seq, oo, g_dglos.g_curPicIndex, transType, &reader, hardbox, xoffset, yoffset, false))
+		if (LoadSpriteSingleFrame(fNameBase, seq, oo, g_dglos.g_curPicIndex, transType, &reader, hardbox, xoffset, yoffset, false, bLoadWasTruncated))
 		{
 			g_dglos.g_curPicIndex++;
 
@@ -1937,6 +1947,7 @@ bool load_sprites(char org[512], int seq, int speed, int xoffset, int yoffset, r
 		{
 			if (oo > 1)
 			{
+
 				g_dglos.g_seq[seq].m_spaceAllowed = (oo - 1);
 				g_dglos.g_seq[seq].last = (oo - 1);
 				
@@ -2008,13 +2019,6 @@ void ReadFromLoadSequenceString(char ev[15][100] )
 	//           name   seq    speed       offsetx     offsety       hardx      hardy   
 	int seqID = atol(ev[3]);
 
-#ifdef _DEBUG
-
-	if (seqID == 150)
-	{
-		LogMsg("Found seq %d", seqID);
-	}
-#endif
 
 	int speed = 0;
 	rtRect32 hardbox;
@@ -2079,19 +2083,30 @@ bool ReloadSequence(int seqID, int frame, bool bScanOnly)
 	//handle a possible case where we need to always load frame 1 before any other frame to get the correct offset for anims
 	if (frame > 1 && !bScanOnly && g_dglos.g_seq[seqID].m_bIsAnim)
 	{
-#ifdef _DEBUG
-		if (seqID == 855)
-		{
-		//	LogMsg("Hey");
-		}
-#endif
 			if (g_pSpriteSurface[g_dglos.g_seq[seqID].s+1] == 0) //make sure it's not already loaded
 		ReloadSequence(seqID, 1, bScanOnly);
 	}
 
+	bool bLoadWasTruncated = false;
+
 	bool bReturn = load_sprites(g_dglos.g_seq[seqID].m_fileName, seqID, g_dglos.g_seq[seqID].m_speed, g_dglos.g_seq[seqID].m_xoffset, g_dglos.g_seq[seqID].m_yoffset, g_dglos.g_seq[seqID].m_hardbox,
-		g_dglos.g_seq[seqID].m_transType, g_dglos.g_seq[seqID].m_bLeftAlign, bScanOnly, frame); 
-																								
+		g_dglos.g_seq[seqID].m_transType, g_dglos.g_seq[seqID].m_bLeftAlign, bScanOnly, frame, &bLoadWasTruncated);
+					
+	if (bLoadWasTruncated && g_dglos.g_seq[seqID].m_bIsAnim)
+	{
+		//ok, here's the deal, an INI was set that specified X frames, but now we're suddenly loading a different anim which has more.  The original Dink allowed this,
+		//but Dink HD doesn't due to how it has to have the ability to re-load all graphic data at any point for quick saves.  So we're going to "forget" the amount
+		//we reserved previously, and reallocate it
+		
+		//force frames to get recalculated completely
+		g_dglos.g_seq[seqID].m_bDidFileScan = false;
+		g_dglos.g_seq[seqID].last = 0;
+		g_dglos.g_seq[seqID].s = -1;
+		g_dglos.g_seq[seqID].m_spaceAllowed = 0;
+		g_dglos.g_seq[seqID].frame[1] = 0;
+
+		return ReloadSequence(seqID, frame, bScanOnly);
+	}
 	if (g_dglos.g_seq[seqID].m_bFrameSetUsed)
 	{
 		//a set_frame_frame has been used here.  This means we may reference another sprite that isn't loaded yet, better check
@@ -2147,17 +2162,7 @@ bool figure_out(const char *line, int load_seq)
 		
 		
 		int seqID = atol(ev[3]);
-		
-#ifdef _DEBUG
-		if (seqID == 439)
-		{
 
-			LogMsg("Loading sand stuff");
-		}
-
-#endif
-
-		
 
 		if (!g_dglos.g_seq[seqID].active)
 		{
@@ -3749,6 +3754,9 @@ int get_var(int script, char* name)
 		int var = 1;
 		while (var < max_vars)
 		{
+#ifdef _DEBUG
+			g_debugOps++;
+#endif
 			//Okay... make sure the var is active,
 			//The scope should match the script,
 			//Then make sure the name is the same.
@@ -3787,6 +3795,11 @@ bool recurse_var_replace(int i, int script, char* line, char* prevar)
 		//Then, make sure it is in scope,
 		//Then, see if the variable name is in the line
 		//Then, prevar is null, or if prevar isn't null, see if current variable starts with prevar
+		
+#ifdef _DEBUG
+		g_debugOps++;
+#endif
+		
 		if (g_dglos.g_playerInfo.var[i].active &&
 			i == get_var(script, g_dglos.g_playerInfo.var[i].name) &&
 			strstr(line, g_dglos.g_playerInfo.var[i].name) &&
@@ -3807,6 +3820,8 @@ bool recurse_var_replace(int i, int script, char* line, char* prevar)
 	return false;
 }
 
+
+
 void decipher_string(char line[512], int script)
 {
 	char crap[255];
@@ -3815,20 +3830,44 @@ void decipher_string(char line[512], int script)
 	int mytime;
 
 	//redink1 replaced with recursive function for finding longest variable
+
+//	string original = line;
+
+#ifdef _DEBUG
+	g_debugOps = 0;
+#endif
 	recurse_var_replace(1, script, line, NULL);
+#ifdef _DEBUG
+	LogMsg("recurse_var_replace looked at %d vars", g_debugOps);
+#endif
 
-	/*for (int i = 1; i < max_vars; i ++)
-	{
-	if (play.var[i].active == true)
-	if (  (play.var[i].scope == 0) || recurse_scope(play.var[i].scope, script) )
-	{
-	sprintf(crap, "%d", play.var[i].var);
-	replace(play.var[i].name, crap, line);
+	/*
+	string changed = line;
 
-	//        check_for_real_vars(crap, i);
-	//break;
+
+	if (original != changed)
+	{
+		LogMsg("Changed %s into %s", original.c_str(), changed.c_str());
 	}
-	}*/
+	*/
+
+	//  	
+// Old version that can make mistakes, I turned it back on to test the difference in speed...
+// Hmm, Dan had recurse_scope(g_dglos.g_playerInfo.var[i].scope, script) in here but I don't see that function so
+// skipping for now
+//
+// 	for (int i = 1; i < max_vars; i ++)
+// 	{
+// 		
+// 		if (g_dglos.g_playerInfo.var[i].active == true)
+// 			if ( g_dglos.g_playerInfo.var[i].scope == 0 || g_dglos.g_playerInfo.var[i].scope == script)
+// 			{
+// 			sprintf(crap, "%d", g_dglos.g_playerInfo.var[i].var);
+// 			replace(g_dglos.g_playerInfo.var[i].name, crap, line);
+// 			
+// 			}
+// 	}
+
 
 	if ((strchr(line, '&') != NULL) && (script != 0))
 	{
@@ -10715,7 +10754,6 @@ void run_script (int script)
 			strip_beginning_spaces(line);
 			if (compare(line, "\n")) break;
 
-
 			result = process_line(script,line, false);
 			if (result == 3) 
 			{
@@ -15754,7 +15792,6 @@ void drawscreenlock( void )
   }
 	
 }    
-
 
 
 void ThinkSprite(int h, bool get_frame)

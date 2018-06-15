@@ -191,8 +191,8 @@ App::App()
 	m_bDidPostInit = false;
 	m_bHasDMODSupport = true;
 	//for mobiles
-	m_version = 1.91f;
-	m_versionString = "V1.91";
+	m_version = 1.92f;
+	m_versionString = "V1.92";
 	m_build = 1;
 	m_bCheatsEnabled = false;
 

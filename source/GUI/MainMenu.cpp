@@ -54,7 +54,6 @@ void OnVersionDownloadError(VariantList *pVList)
 	GetMessageManager()->CallStaticFunction(ReloadMainMenu, 1000, &vList, TIMER_SYSTEM);
 }
 
-
 Entity * VersionShowScoreMessage(Entity *pMenu, string msg)
 {
 	Entity *pInfo = pMenu->GetEntityByName("Info");
