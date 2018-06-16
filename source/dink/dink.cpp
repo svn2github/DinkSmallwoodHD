@@ -19,9 +19,7 @@ void ScanSeqFilesIfNeeded(int seq);
 bool pre_figure_out(const char *line, int load_seq, bool bLoadSpriteOnly);
 
 #define C_DINK_SCREEN_TRANSITION_TIME_MS 400
-#ifdef _DEBUG
-int g_debugOps = 0;
-#endif
+
 
 const float SAVE_FORMAT_VERSION = 3.1f;
 const int C_DINK_FADE_TIME_MS = 300;
@@ -3328,7 +3326,11 @@ bool read_next_line(int script, char *line)
 	if (  (g_scriptInstance[script] == NULL) || (g_scriptBuffer == NULL) )
 	{
 
+		//this happens a lot in the revolution mod, enough that I'm commenting out in release mode because it can slow
+		//down the game
+#ifdef _DEBUG
 		LogMsg("  ERROR:  Tried to read script %d, it doesn't exist.", script);
+#endif
 		return(false);
 	}
 
@@ -3754,9 +3756,6 @@ int get_var(int script, char* name)
 		int var = 1;
 		while (var < max_vars)
 		{
-#ifdef _DEBUG
-			g_debugOps++;
-#endif
 			//Okay... make sure the var is active,
 			//The scope should match the script,
 			//Then make sure the name is the same.
@@ -3796,10 +3795,6 @@ bool recurse_var_replace(int i, int script, char* line, char* prevar)
 		//Then, see if the variable name is in the line
 		//Then, prevar is null, or if prevar isn't null, see if current variable starts with prevar
 		
-#ifdef _DEBUG
-		g_debugOps++;
-#endif
-		
 		if (g_dglos.g_playerInfo.var[i].active &&
 			i == get_var(script, g_dglos.g_playerInfo.var[i].name) &&
 			strstr(line, g_dglos.g_playerInfo.var[i].name) &&
@@ -3820,7 +3815,52 @@ bool recurse_var_replace(int i, int script, char* line, char* prevar)
 	return false;
 }
 
+bool var_compare( varman* lhs, varman* rhs )
+{
+    // Primarily sort by var string length descending (long strings take precedence over short strings).
+    // Also, long global variables take precedence over short local variables.
+    return (strlen( lhs->name ) > strlen( rhs->name )) ||
+           // If strings are the same length, then sort by scope descending
+           (strlen( lhs->name ) == strlen( rhs->name ) &&
+             // Sort by scope descending (local scope takes precedence over global scope); not as important as string length.
+             (lhs->scope > rhs->scope));
+}
 
+//redink1 changes for replacing var in string, 13 years later, not as hellish.
+//Still seems inefficient to create a vector on every line of DinkC that contains
+//a variable though.
+void var_replace( int script, char* line )
+{
+    char crap[255];
+    if ( strchr( line, '&' ) != nullptr ) //This may not be necessary
+    {
+        // Filter vars to those only in script scope and global scope
+        std::vector<varman*> vars;
+        for ( int i = 1; i < max_vars; i++ )
+        {
+            auto& var = g_dglos.g_playerInfo.var[i];
+            if ( var.active == true && ( var.scope == 0 || var.scope == script ) )
+            {
+                vars.push_back( &var );
+            }
+        }
+
+        // Sort so long variables first, then local variables first.
+        std::sort( vars.begin(), vars.end(), var_compare );
+
+        // Now replace
+        for ( auto& var : vars )
+        {
+            sprintf( crap, "%d", var->var );
+            replace( var->name, crap, line );
+
+            if ( strchr( line, '&' ) == nullptr )
+            {
+                break;
+            }
+        }
+    }
+}
 
 void decipher_string(char line[512], int script)
 {
@@ -3830,32 +3870,16 @@ void decipher_string(char line[512], int script)
 	int mytime;
 
 	//redink1 replaced with recursive function for finding longest variable
-
-//	string original = line;
-
-#ifdef _DEBUG
-	g_debugOps = 0;
-#endif
-	recurse_var_replace(1, script, line, NULL);
-#ifdef _DEBUG
-	LogMsg("recurse_var_replace looked at %d vars", g_debugOps);
-#endif
-
-	/*
-	string changed = line;
-
-
-	if (original != changed)
-	{
-		LogMsg("Changed %s into %s", original.c_str(), changed.c_str());
-	}
-	*/
+    //recurse_var_replace( 1, script, line, NULL );
+    var_replace(script, line);
 
 	//  	
 // Old version that can make mistakes, I turned it back on to test the difference in speed...
 // Hmm, Dan had recurse_scope(g_dglos.g_playerInfo.var[i].scope, script) in here but I don't see that function so
 // skipping for now
 //
+
+// 
 // 	for (int i = 1; i < max_vars; i ++)
 // 	{
 // 		
@@ -5935,7 +5959,7 @@ void place_sprites_game(bool bBackgroundOnly )
 				if (strlen(g_dglos.g_smallMap.sprite[j].script) > 1)
 				{
 #ifdef _DEBUG
-					LogMsg("Sprite %d is requesting that script %s is loaded when the map is drawn, vision is %d", j, g_dglos.g_smallMap.sprite[j].script, *pvision);
+					//LogMsg("Sprite %d is requesting that script %s is loaded when the map is drawn, vision is %d", j, g_dglos.g_smallMap.sprite[j].script, *pvision);
 #endif
 					g_sprite[sprite].script = load_script(g_dglos.g_smallMap.sprite[j].script, sprite, true);
 				}
