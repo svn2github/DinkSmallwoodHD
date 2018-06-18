@@ -2096,12 +2096,14 @@ bool ReloadSequence(int seqID, int frame, bool bScanOnly)
 		//but Dink HD doesn't due to how it has to have the ability to re-load all graphic data at any point for quick saves.  So we're going to "forget" the amount
 		//we reserved previously, and reallocate it
 		
+		
 		//force frames to get recalculated completely
 		g_dglos.g_seq[seqID].m_bDidFileScan = false;
 		g_dglos.g_seq[seqID].last = 0;
 		g_dglos.g_seq[seqID].s = -1;
 		g_dglos.g_seq[seqID].m_spaceAllowed = 0;
 		g_dglos.g_seq[seqID].frame[1] = 0;
+		g_dglos.g_seq[seqID].m_bFrameSetUsed = false;
 
 		return ReloadSequence(seqID, frame, bScanOnly);
 	}
