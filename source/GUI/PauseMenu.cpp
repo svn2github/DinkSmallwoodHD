@@ -271,6 +271,7 @@ void PauseMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity se
 		string prepend = g_dglo.m_dmodGameDir;
 
 		if (prepend.empty()) prepend = "dink";
+		prepend = RemoveTrailingBackslash(prepend);
 #ifdef PLATFORM_HTML5
 		
 		HTMLDownloadFileFromFileSystem(DinkGetSavePath() + "quicksave.dat", prepend + "_quicksave.dat");
@@ -289,9 +290,8 @@ void PauseMenuOnSelect(VariantList *pVList) //0=vec2 point of click, 1=entity se
 	
 #ifdef PLATFORM_HTML5
 		HTMLUploadFileToFileSystem();
-//		HTMLDownloadFileFromFileSystem(DinkGetSavePath() + "quicksave.dat", g_dglo.m_dmodGameDir + "_quicksave.dat");
 #else
-
+		LogMsg("Um, not a browser version, what are we supposed to do here?  Here's a way to just loading a quicksave for testing though.");
 		GetMessageManager()->SendGUIStringEx(MESSAGE_TYPE_HTML5_GOT_UPLOAD, 0, 0, 0, "purpoise_quicksave.dat", 0);
 #endif
 		PauseEnd(pMenu);
