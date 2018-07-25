@@ -4418,6 +4418,9 @@ int say_text_xy(char text[512], int mx, int my, int script)
 	g_sprite[crap2].owner = 1000;
 	g_sprite[crap2].hard = 1;
 	g_sprite[crap2].script = script;
+#ifdef _DEBUG
+  	LogMsg("Setting say_xy script to %d, returning sprite %d", script, crap2);
+#endif
 	return(crap2);
 }
 
@@ -5085,14 +5088,16 @@ bool PlayMidi(const char *sFileName)
 		}
 		
 
-		string tempName;
+		string tempName = fName;
 		
+		/*
 		if (GetEmulatedPlatformID() == PLATFORM_ID_HTML5)
 		{
 			//ios browsers don't support ogg?!  Fine, let's assume we have MP3 versions
 			tempName = ModifyFileExtension(fName, "mp3");
 		}
 		else
+		*/
 		{
 			tempName = ModifyFileExtension(fName, "ogg");
 		}
@@ -5122,9 +5127,28 @@ bool PlayMidi(const char *sFileName)
 
 	}
 
+	string finalPath = GetFileLocationString(fName);
+	if (FileExists(finalPath))
+	{
+		GetAudioManager()->Play(GetFileLocationString(fName), true, true, false);
+	}
+	else
+	{
+
+		return false;
+	}
+
 	g_dglo.m_lastMusicPath = sFileName;
 
-	GetAudioManager()->Play(GetFileLocationString(fName), true, true, false);
+	/*
+	if (!FileExists(fName) && !g_dglo.m_dmodGameDir.empty())
+	{
+		//asking for a mid that doesn't exist in the DMOD dir probably, let's use the original Dink one
+		fName = g_dglo.m_gamePathWithDir+
+	}
+	*/
+
+	
 	//LogMsg("Playing music %s", sFileName);
 	return true;
 }
@@ -7778,6 +7802,12 @@ pass:
 				//           Msg("Wait called for %d.", nlist[0]);
 				strcpy(pLineIn, h);  
 				kill_returning_stuff(script);
+				
+				
+#ifdef _DEBUG
+				//seth's hack so glittering's crazy long intro goes faster
+				//g_nlist[0] = 100;
+#endif
 				int cb1 = add_callback("",g_nlist[0],0,script);        
 
 				return(2);
@@ -11130,13 +11160,11 @@ void text_draw(int h)
    // SetTextColor(hdc,RGB(8,14,21));
     if (g_sprite[h].owner == 1200)
     {
-        
-        
-        
 		GetApp()->GetFont(FONT_SMALL)->DrawWrapped(rTemp, cr, false, false, rgbColor, g_dglo.m_fontSize, false, bgColor);
     } else
     {
-		if ( (cr[0] == ' ' && cr[1] == 0) || (cr[0] == ' ' && cr[1] == ' ' && cr[2] == 0)  || (cr[0] == ' ' && cr[1] == ' ' && cr[2] == ' ' && cr[3] == 0) )
+		
+		if (StripWhiteSpace(cr) == "")
 		{
 			//skip it, it's just blank, otherwise it will draw the bg which looks dumb
 		} else

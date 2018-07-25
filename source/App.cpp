@@ -105,8 +105,9 @@ GamepadManager * GetGamepadManager() {return &g_gamepadManager;}
   AudioManagerBBX g_audioManager;
 #elif defined PLATFORM_HTML5
 #include "Audio/AudioManagerFMODStudio.h"
-//AudioManager g_audioManager; //to disable sound
 AudioManagerFMOD g_audioManager;
+
+//AudioManager g_audioManager; //to disable sound
 
 #elif defined PLATFORM_FLASH
   //AudioManager g_audioManager; //to disable sound

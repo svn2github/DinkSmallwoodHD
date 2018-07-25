@@ -121,13 +121,16 @@ REM **************************************** END SOURCE
 
 :unused so far: -s USE_GLFW=3 -s NO_EXIT_RUNTIME=1 -s FORCE_ALIGNED_MEMORY=1 -s EMTERPRETIFY=1  -s EMTERPRETIFY_ASYNC=1 -DRT_EMTERPRETER_ENABLED -s TOTAL_MEMORY=16MB  -s PRECISE_F32=2 
 :To skip font loading so it needs no resource files or zlib, add  -DC_NO_ZLIB
-SET CUSTOM_FLAGS= -DHAS_SOCKLEN_T -DBOOST_ALL_NO_LIB -DPLATFORM_HTML5 -DRT_USE_SDL_AUDIO -DRT_JPG_SUPPORT -DRT_PNG_SUPPORT -DC_GL_MODE -s LEGACY_GL_EMULATION=1 -DPLATFORM_HTML5  -s ALLOW_MEMORY_GROWTH=1 -Wno-c++11-compat-deprecated-writable-strings --ignore-dynamic-linking --memory-init-file 0 -Wno-switch -Wno-writable-strings -Wno-shift-negative-value
+SET CUSTOM_FLAGS= -DHAS_SOCKLEN_T -DBOOST_ALL_NO_LIB -DPLATFORM_HTML5 -DRT_USE_SDL_AUDIO -DRT_JPG_SUPPORT ^
+-DRT_PNG_SUPPORT -DC_GL_MODE -s LEGACY_GL_EMULATION=1 -DPLATFORM_HTML5  -s ALLOW_MEMORY_GROWTH=1 ^
+-Wno-c++11-compat-deprecated-writable-strings --ignore-dynamic-linking --memory-init-file 0 ^
+-Wno-switch -Wno-writable-strings -Wno-shift-negative-value -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall','cwrap']
 
 :unused:   -s FULL_ES2=1 --emrun
 
 IF %USE_HTML5_CUSTOM_MAIN% EQU 1 (
 :add this define so we'll manually call mainf from the html later instead of it being auto
-SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -DRT_HTML5_USE_CUSTOM_MAIN -s EXPORTED_FUNCTIONS=['_mainf','_PROTON_SystemMessage','_PROTON_GUIMessage'] -s EXTRA_EXPORTED_RUNTIME_METHODS=['ccall','cwrap']
+SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -DRT_HTML5_USE_CUSTOM_MAIN -s EXPORTED_FUNCTIONS=['_mainf','_PROTON_SystemMessage','_PROTON_GUIMessage'] 
 SET FINAL_EXTENSION=js
 ) else (
 SET FINAL_EXTENSION=html
@@ -139,8 +142,9 @@ echo Compiling in release mode
 SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -O2 -DNDEBUG
 ) else (
 echo Compiling in debug mode
-:removed -s SAFE_HEAP=1 , causes alignment error with FMOD
-SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -D_DEBUG -s GL_UNSAFE_OPTS=0 -s WARN_ON_UNDEFINED_SYMBOLS=1 -s EXCEPTION_DEBUG=1 -s ASSERTIONS=2 -s DEMANGLE_SUPPORT=1 -s ALIASING_FUNCTION_POINTERS=0 --emrun 
+:removed -s SAFE_HEAP=1 , causes alignment error with FMOD  -g4 
+set EMCC_DEBUG=1
+SET CUSTOM_FLAGS=%CUSTOM_FLAGS% -D_DEBUG -s GL_UNSAFE_OPTS=0 -s SAFE_HEAP=1 -s WARN_ON_UNDEFINED_SYMBOLS=1 -s EXCEPTION_DEBUG=1 -s STACK_OVERFLOW_CHECK=2 -s ASSERTIONS=1 -s DEMANGLE_SUPPORT=1 -s ALIASING_FUNCTION_POINTERS=0 --emrun 
 )
 
 SET INCLUDE_DIRS=-I%SHARED% -I%APP% -I../../shared/util/boost -I../../shared/ClanLib-2.0/Sources -I../../shared/Network/enet/include ^
